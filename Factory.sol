@@ -1,21 +1,21 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "./Greeter.sol";
+import "./Service.sol";
 
-contract Factory {
-   Greeter[] public GreeterArray;
+contract SubscriptionFactory {
+   Service[] public services;
 
-   function CreateNewGreeter(string memory _greeting) public {
-     Greeter greeter = new Greeter(_greeting);
-     GreeterArray.push(greeter);
+   function CreateNewService(string memory _subscription) public {
+     Service subscription = new Service(_subscription);
+     SubscriptionsArray.push(subscription);
    }
 
-   function gfSetter(uint256 _greeterIndex, string memory _greeting) public {
-     Greeter(address(GreeterArray[_greeterIndex])).setGreeting(_greeting);
+   function gfSetter(uint256 _subscriptionIndex, string memory _subscription) public {
+    //  Service(address(SubscriptionsArray[_subscriptionIndex])).setGreeting(_subscription);
    }
 
-   function gfGetter(uint256 _greeterIndex) public view returns (string memory) {
-    return Greeter(address(GreeterArray[_greeterIndex])).greet();
+   function gfGetter(uint256 _subscriptionIndex) public view returns (string memory) {
+    // return Service(address(SubscriptionsArray[_subscriptionIndex])).greet();
    }
 }
