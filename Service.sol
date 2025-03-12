@@ -3,11 +3,12 @@ pragma solidity ^0.8.20;
 
 contract Service {
     
-    // ####################### VARIABLES ###########################
+    // ####################### VARIABLES #######################
 
     address private immutable ownerDeploy;
     string private name;
     string private description;
+    bool private isActive = true;
 
     struct Subscription {
         address user;
@@ -21,18 +22,24 @@ contract Service {
     uint256 private subscriptionCounter = 0;
     mapping(uint256 => Subscription) private subscriptions;
 
-    // ####################### CONSTRUCTOR #########################
+    // ###################### CONSTRUCTOR ######################
 
     constructor(
+        address _authorizedaddress,
         string memory _name,
         string memory _description
     ) {
-        ownerDeploy = msg.sender;
+        ownerDeploy = _authorizedaddress;
         name = _name;
         description = _description;
     }
 
-    // ####################### MODIFIERS ###########################
+    // ####################### MODIFIERS #######################
+
+    modifier isActiveService() {
+        require(isActive, "Service is not active");
+        _;
+    }
 
     // Modifier to check if the caller is the owner
     modifier onlyOwner() {
@@ -69,13 +76,42 @@ contract Service {
         _;
     }
 
-    // ####################### EVENTS ##############################
+    // ################# GETTERS AND SETTERS #################
+
+    function getName() public view returns (string memory) {
+        return name;
+    }
+
+    function setName(string memory _name) public onlyOwner isActiveService {
+        name = _name;
+        emit DataUpdated();
+    }
+
+    function getDescription() public view returns (string memory) {
+        return description;
+    }
+
+    function setDescription(string memory _description) public onlyOwner isActiveService {
+        description = _description;
+        emit DataUpdated();
+    }
+
+    function getIsActive() public view returns (bool) {
+        return isActive;
+    }
+
+    function setIsActive(bool _isActive) public onlyOwner {
+        isActive = _isActive;
+        emit DataUpdated();
+    }
+
+    // ######################## EVENTS ########################
     
     event DataUpdated();
 
-    // ####################### FUNCTIONS ###########################
+    // ####################### FUNCTIONS #######################
 
-    function getSubscriptions() public view returns (Subscription[] memory) {
+    function getSubscriptions() isActiveService public view returns (Subscription[] memory) {
         Subscription[] memory _subscriptions = new Subscription[](subscriptionCounter);
         for (uint256 i = 0; i < subscriptionCounter; i++) {
             _subscriptions[i] = subscriptions[i];
@@ -87,7 +123,11 @@ contract Service {
         address _user,
         uint256 _price,
         uint256 _duration
-    ) public onlyOwner subscriberAlreadyExists(_user) valueGreaterThanZero(_price) {
+    ) public 
+        onlyOwner
+        subscriberAlreadyExists(_user)
+        valueGreaterThanZero(_price)
+        isActiveService {
         
         Subscription memory newSubscription = Subscription({
             user: _user,
@@ -108,7 +148,8 @@ contract Service {
         uint256 _tokenId
     ) public 
         onlyActiveSubscription(_tokenId)
-        subscriptionExists(_tokenId) {
+        subscriptionExists(_tokenId)
+        isActiveService {
         
         subscriptions[_tokenId].endDate = block.timestamp;
 
@@ -120,6 +161,7 @@ contract Service {
     ) public 
         onlyActiveSubscription(_tokenId)
         subscriptionExists(_tokenId)
+        isActiveService
         payable {
         
         uint256 _valuePaid = msg.value;

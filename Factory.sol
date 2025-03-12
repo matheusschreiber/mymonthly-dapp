@@ -4,18 +4,46 @@ pragma solidity ^0.8.0;
 import "./Service.sol";
 
 contract ServiceFactory {
-   Service[] public services;
+    Service[] public services;
 
-   function CreateNewService(string memory _servicename, string memory _servicedescription) public {
-     Service service = new Service(_servicename, _servicedescription);
-     services.push(service);
-   }
+	address private immutable ownerDeploy;
 
-   function gfSetter(uint256 _serviceIndex, string memory _service) public {
-    //  Service(address(ServicesArray[_serviceIndex])).setGreeting(_service);
-   }
+	// ####################### CONSTRUCTOR #########################
 
-   function gfGetter(uint256 _serviceIndex) public view returns (string memory) {
-    // return Service(address(ServicesArray[_ServiceIndex])).greet();
-   }
+	constructor() {
+        ownerDeploy = msg.sender;
+    }
+
+    // ####################### MODIFIERS ###########################
+
+	// Modifier to check if the caller is the owner
+    modifier onlyOwner() {
+        require(msg.sender == ownerDeploy, "Only owner is allowed");
+        _;
+    }
+
+	modifier onlyAuthorizedStaff(){
+		// TODO: Implement this modifier
+		_;
+	}
+
+	// ####################### EVENTS ##############################
+    
+    event DataUpdated();
+
+    // ####################### FUNCTIONS ###########################
+
+	function CreateNewService(
+        string memory _servicename,
+        string memory _servicedescription
+    ) public {
+        Service service = new Service(msg.sender, _servicename, _servicedescription);
+        services.push(service);
+    }
+
+	function getServices() public view returns (Service[] memory) {
+		return services;
+	}
+
+
 }

@@ -38,8 +38,7 @@ Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da ass
     - [x] Cancelar a assinatura
     - [ ] (BONUS) Reembolso parcial ao cancelar
 
-- [ ] Os pagamentos são feitos em cryptomoedas (Seria apenas ETH por ser sepolia?).
-- usar tokens inicialmente
+- [ ] Os pagamentos são feitos em cryptomoedas (Seria apenas ETH por ser sepolia?). (Usar tokens inicialmente)
 
 - [ ] Caso o comprador não pague o serviço até a data de expiração, o acesso ao serviço é revogado. 
     - Events
