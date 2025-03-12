@@ -34,8 +34,9 @@ Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da ass
 
 - [ ] O contrato filho deve gerenciar pagamentos e datas e expiração. Isso deve ser visível para o comprador (identificado pela chave publica). O comprador deve conseguir:
     - [x] Contratar nova assinatura
-    - [ ] Pagar a assinatura existente
-    - [ ] (BONUS) Cancelar a assinatura, recebendo reembolso parcial
+    - [x] Pagar a assinatura existente
+    - [x] Cancelar a assinatura
+    - [ ] (BONUS) Reembolso parcial ao cancelar
 
 - [ ] Os pagamentos são feitos em cryptomoedas (Seria apenas ETH por ser sepolia?).
 - usar tokens inicialmente

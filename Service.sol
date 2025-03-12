@@ -130,4 +130,12 @@ contract Service {
 
         emit DataUpdated();
     }
+    
+    function updateSubscriptions() public {
+        for (uint256 i = 0; i < subscriptionCounter; i++) {
+            if (subscriptions[i].endDate == 0 && block.timestamp > subscriptions[i].startDate) {
+                subscriptions[i].endDate = block.timestamp;
+            }
+        }
+    }
 }
