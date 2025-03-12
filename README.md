@@ -26,14 +26,14 @@ Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da ass
 
 ### Vendedor
 
-- [ ] O vendedor deve poder criar contratos para inscrições feitas por clientes em algum de seus serviços. Ex.: Netflix, GYM, Heatlh, Insurance, Newspaper, OpenAI, etc.
+- [x] O vendedor deve poder criar contratos para inscrições feitas por clientes em algum de seus serviços. Ex.: Netflix, GYM, Heatlh, Insurance, Newspaper, OpenAI, etc.
 
-- [ ] Cada contrato filho é um serviço cadastrado por um vendedor, que contém os compradores que assinaram esse serviço.
+- [x] Cada contrato filho é um serviço cadastrado por um vendedor, que contém os compradores que assinaram esse serviço.
 
 ### Comprador
 
 - [ ] O contrato filho deve gerenciar pagamentos e datas e expiração. Isso deve ser visível para o comprador (identificado pela chave publica). O comprador deve conseguir:
-    - [ ] Contratar nova assinatura
+    - [x] Contratar nova assinatura
     - [ ] Pagar a assinatura existente
     - [ ] (BONUS) Cancelar a assinatura, recebendo reembolso parcial
 

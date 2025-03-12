@@ -10,7 +10,6 @@ contract Service {
     string private description;
 
     struct Subscription {
-        uint256 id;
         address user;
         uint256 tokenId;
         uint256 price;
@@ -19,7 +18,7 @@ contract Service {
         uint256 endDate;
     }
 
-    uint256[] private subscribersTokensIds;
+    uint256 private subscriptionCounter = 0;
     mapping(uint256 => Subscription) private subscriptions;
 
     // ####################### CONSTRUCTOR #########################
@@ -35,27 +34,38 @@ contract Service {
 
     // ####################### MODIFIERS ###########################
 
+    // Modifier to check if the caller is the owner
     modifier onlyOwner() {
         require(msg.sender == ownerDeploy, "Only owner is allowed");
         _;
     }
 
+    // Modifier to check if the end date of subscription hasnt expired
     modifier onlyActiveSubscription(uint256 _tokenId) {
         require(
-            subscriptions[_tokenId].endDate 
-            &
-            block.timestamp < subscriptions[_tokenId].endDate,
-            "Subscription has expired");
+            subscriptions[_tokenId].endDate == 0 || block.timestamp < subscriptions[_tokenId].endDate,
+            "Subscription has expired"
+        );
         _;
     }
 
+    // Modifier to check if the value is greater than zero
     modifier valueGreaterThanZero(uint256 _value) {
         require(_value > 0, "Value must be greater than zero");
         _;
     }
 
+    // Modifier to check if the subscription exists
     modifier subscriptionExists(uint256 _tokenId) {
-        require(subscriptions[_tokenId].id != 0, "Subscription does not exist");
+        require(subscriptions[_tokenId].user != address(0), "Subscription does not exist");
+        _;
+    }
+
+    // Modifier to check if the subscriber already exists
+    modifier subscriberAlreadyExists(address _user) {
+        for (uint256 i = 0; i < subscriptionCounter; i++) {
+            require(subscriptions[i].user != _user, "Subscriber already exists");
+        }
         _;
     }
 
@@ -66,9 +76,9 @@ contract Service {
     // ####################### FUNCTIONS ###########################
 
     function getSubscriptions() public view returns (Subscription[] memory) {
-        Subscription[] memory _subscriptions = new Subscription[](subscribersTokensIds.length);
-        for (uint256 i = 0; i < subscribersTokensIds.length; i++) {
-            _subscriptions[i] = subscriptions[subscribersTokensIds[i]];
+        Subscription[] memory _subscriptions = new Subscription[](subscriptionCounter);
+        for (uint256 i = 0; i < subscriptionCounter; i++) {
+            _subscriptions[i] = subscriptions[i];
         }
         return _subscriptions;
     }
@@ -77,19 +87,19 @@ contract Service {
         address _user,
         uint256 _price,
         uint256 _duration
-    ) public onlyOwner {
-
+    ) public onlyOwner subscriberAlreadyExists(_user) valueGreaterThanZero(_price) {
+        
         Subscription memory newSubscription = Subscription({
-            id: block.timestamp,
             user: _user,
-            tokenId: subscribersTokensIds.length,
+            tokenId: subscriptionCounter,
             price: _price,
             duration: _duration,
             startDate: block.timestamp,
             endDate: 0
         });
 
-        subscriptions[subscribersTokensIds.length] = newSubscription;
+        subscriptions[subscriptionCounter] = newSubscription;
+        subscriptionCounter++;
         
         emit DataUpdated();
     }
@@ -112,8 +122,11 @@ contract Service {
         subscriptionExists(_tokenId)
         payable {
         
-        require(msg.value == subscriptions[_tokenId].price, "Invalid amount");
+        uint256 _valuePaid = msg.value;
+        uint256 _valueToPay = subscriptions[_tokenId].price;
+        require(_valuePaid == _valueToPay, "Invalid amount");
         subscriptions[_tokenId].endDate = 0;
+        subscriptions[_tokenId].startDate = block.timestamp + (subscriptions[_tokenId].duration * 1 days);
 
         emit DataUpdated();
     }

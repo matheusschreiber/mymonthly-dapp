@@ -3,19 +3,19 @@ pragma solidity ^0.8.0;
 
 import "./Service.sol";
 
-contract SubscriptionFactory {
+contract ServiceFactory {
    Service[] public services;
 
-   function CreateNewService(string memory _subscription) public {
-     Service subscription = new Service(_subscription);
-     SubscriptionsArray.push(subscription);
+   function CreateNewService(string memory _servicename, string memory _servicedescription) public {
+     Service service = new Service(_servicename, _servicedescription);
+     services.push(service);
    }
 
-   function gfSetter(uint256 _subscriptionIndex, string memory _subscription) public {
-    //  Service(address(SubscriptionsArray[_subscriptionIndex])).setGreeting(_subscription);
+   function gfSetter(uint256 _serviceIndex, string memory _service) public {
+    //  Service(address(ServicesArray[_serviceIndex])).setGreeting(_service);
    }
 
-   function gfGetter(uint256 _subscriptionIndex) public view returns (string memory) {
-    // return Service(address(SubscriptionsArray[_subscriptionIndex])).greet();
+   function gfGetter(uint256 _serviceIndex) public view returns (string memory) {
+    // return Service(address(ServicesArray[_ServiceIndex])).greet();
    }
 }
