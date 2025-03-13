@@ -12,17 +12,11 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import PaySubscriptionModal from "../pay-subscription"
 import CancelSubscription from "../cancel-subscription"
+import { SubscriptionType } from "@/types"
+import { getStatus } from "@/lib/data"
+import { Badge } from "../ui/badge"
 
-export type Subscription = {
-    user: string
-    tokenId: string
-    price: number
-    duration: number
-    startDate: number
-    endDate: number
-}
-
-export const columns: ColumnDef<Subscription>[] = [
+export const columns: ColumnDef<SubscriptionType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -114,7 +108,7 @@ export const columns: ColumnDef<Subscription>[] = [
                 </Button>
             )
         },
-        cell: ({ getValue }) => new Date(getValue<number>()).toLocaleDateString(),
+        cell: ({ getValue }) => new Date(getValue<number>()).toLocaleDateString("pt-BR"),
     },
     {
         accessorKey: "endDate",
@@ -130,8 +124,25 @@ export const columns: ColumnDef<Subscription>[] = [
             )
         },
         cell: ({ getValue }) => {
-            if (getValue<number>() != 0) return new Date(getValue<number>()).toLocaleDateString()
+            if (getValue<number>() != 0) return new Date(getValue<number>()).toLocaleDateString("pt-BR")
             else return <span className="text-gray-400">Not set</span>
+        },
+    },
+    {
+        id: "status",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Status
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+            return <Badge>{getStatus(row.original)}</Badge>
         },
     },
     {

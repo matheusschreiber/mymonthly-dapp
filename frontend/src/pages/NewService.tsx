@@ -39,12 +39,18 @@ function NewService() {
     }
 
     return (
-        <main className="min-w-[400px]">
+        <main className="lg:min-w-[400px] lg:p-0 p-16">
             <Navbar />
 
             <Form {...form}>
 
-            <p className="text-6xl mb-16 font-semibold">New Service</p>
+            <div className="mb-16">
+                <p className="text-6xl font-semibold">New Service</p>
+                <p className="mt-3 text-md text-zinc-400">
+                    Complete the form to add a new service to the Blockchain. <br/>You can interact with subscriptions later on.
+                </p>
+            </div>
+            
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}
@@ -67,7 +73,7 @@ function NewService() {
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                <Input placeholder="eg.: This is a movie streaming service" {...field} />
+                                <Input placeholder="eg.: An amazing movie streaming service" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

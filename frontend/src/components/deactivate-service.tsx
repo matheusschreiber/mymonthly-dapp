@@ -16,8 +16,10 @@ function DeactivateService() {
 
     return (
         <AlertDialog>
-            <AlertDialogTrigger>
-                <Button variant="destructive">Deactivate service</Button>
+            <AlertDialogTrigger asChild>
+                <Button className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600">
+                    Deactivate service
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
