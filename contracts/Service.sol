@@ -4,18 +4,17 @@ pragma solidity ^0.8.20;
 contract Service {
     
     // ####################### VARIABLES #######################
-
+    
     address private immutable ownerDeploy;
-    // TODO: id? picture?
-    string private name;
-    string private description;
-    bool private isActive = true;
+    string public name;
+    string public description;
+    bool public isActive = true;
 
     struct Subscription {
         address user;
         uint256 tokenId;
         uint256 price;
-        uint256 duration;
+        uint256 duration; // duration in days
         uint256 startDate;
         uint256 endDate;
     }
@@ -24,7 +23,7 @@ contract Service {
     mapping(uint256 => Subscription) private subscriptions;
 
     // ###################### CONSTRUCTOR ######################
-
+    
     constructor(
         address _authorizedaddress,
         string memory _name,
@@ -37,6 +36,7 @@ contract Service {
 
     // ####################### MODIFIERS #######################
 
+    // Modifier to check if the service is active
     modifier isActiveService() {
         require(isActive, "Service is not active");
         _;
@@ -48,37 +48,49 @@ contract Service {
         _;
     }
 
-    // Modifier to check if the end date of subscription hasnt expired
-    modifier onlyActiveSubscription(uint256 _tokenId) {
-        require(
-            subscriptions[_tokenId].endDate == 0 || block.timestamp < subscriptions[_tokenId].endDate,
-            "Subscription has expired"
-        );
-        _;
-    }
-
-    // Modifier to check if the value is greater than zero
-    modifier valueGreaterThanZero(uint256 _value) {
-        require(_value > 0, "Value must be greater than zero");
-        _;
-    }
-
     // Modifier to check if the subscription exists
     modifier subscriptionExists(uint256 _tokenId) {
         require(subscriptions[_tokenId].user != address(0), "Subscription does not exist");
         _;
     }
 
+    // Modifier to check if the subscription is active
+    modifier onlyActiveSubscription(uint256 _tokenId) {
+        require(block.timestamp < subscriptions[_tokenId].endDate, "Subscription has expired");
+        _;
+    }
+
+    // Modifier to check if the sent value is greater than zero
+    modifier valueGreaterThanZero(uint256 _value) {
+        require(_value > 0, "Value must be greater than zero");
+        _;
+    }
+
+    // Ensures that only the subscriber can call the function
+    modifier onlySubscriber(uint256 _tokenId) {
+        require(subscriptions[_tokenId].user == msg.sender, "Caller is not the subscriber");
+        _;
+    }
+
     // Modifier to check if the subscriber already exists
-    modifier subscriberAlreadyExists(address _user) {
+    modifier subscriberNotSubscribed(address _user) {
         for (uint256 i = 0; i < subscriptionCounter; i++) {
-            require(subscriptions[i].user != _user, "Subscriber already exists");
+            if (subscriptions[i].user == _user && block.timestamp < subscriptions[i].endDate) {
+                revert("Subscriber already has an active subscription");
+            }
         }
         _;
     }
 
-    // ################# GETTERS AND SETTERS #################
+    // ######################## EVENTS ########################
+    
+    event DataUpdated();
+    event SubscriptionAdded(uint256 indexed tokenId, address indexed user);
+    event SubscriptionPaid(uint256 indexed tokenId, address indexed user, uint256 newEndDate);
+    event SubscriptionCancelled(uint256 indexed tokenId, address indexed user);
 
+    // ####################### GETTERS AND SETTERS #######################
+    
     function getName() public view returns (string memory) {
         return name;
     }
@@ -106,13 +118,7 @@ contract Service {
         emit DataUpdated();
     }
 
-    // ######################## EVENTS ########################
-    
-    event DataUpdated();
-
-    // ####################### FUNCTIONS #######################
-
-    function getSubscriptions() isActiveService public view returns (Subscription[] memory) {
+    function getSubscriptions() public view isActiveService returns (Subscription[] memory) {
         Subscription[] memory _subscriptions = new Subscription[](subscriptionCounter);
         for (uint256 i = 0; i < subscriptionCounter; i++) {
             _subscriptions[i] = subscriptions[i];
@@ -120,64 +126,85 @@ contract Service {
         return _subscriptions;
     }
 
-    function addSubscription(
-        address _user,
+    function getOwner() public view returns (address) {
+        return ownerDeploy;
+    }
+
+    // ####################### FUNCTIONS #######################
+
+    // Allows a subscriber to subscribe to the service
+    function createSubscription(
         uint256 _price,
         uint256 _duration
-    ) public 
-        onlyOwner
-        subscriberAlreadyExists(_user)
+    ) public
+        subscriberNotSubscribed(msg.sender)
         valueGreaterThanZero(_price)
         isActiveService {
-        
+
         Subscription memory newSubscription = Subscription({
-            user: _user,
+            user: msg.sender,
             tokenId: subscriptionCounter,
             price: _price,
             duration: _duration,
-            startDate: block.timestamp,
+            startDate: 0,
             endDate: 0
         });
 
         subscriptions[subscriptionCounter] = newSubscription;
+        emit SubscriptionAdded(subscriptionCounter, msg.sender);
         subscriptionCounter++;
-        
-        emit DataUpdated();
     }
 
-    function cancelSubscription(
-        uint256 _tokenId
-    ) public 
-        onlyActiveSubscription(_tokenId)
-        subscriptionExists(_tokenId)
-        isActiveService {
-        
-        subscriptions[_tokenId].endDate = block.timestamp;
-
-        emit DataUpdated();
-    }
-
+    // Allows a subscriber to pay for the subscription
     function paySubscription(
         uint256 _tokenId
-    ) public 
-        onlyActiveSubscription(_tokenId)
+    ) public
         subscriptionExists(_tokenId)
+        onlySubscriber(_tokenId)
         isActiveService
         payable {
-        
+
         uint256 _valuePaid = msg.value;
         uint256 _valueToPay = subscriptions[_tokenId].price;
         require(_valuePaid == _valueToPay, "Invalid amount");
-        subscriptions[_tokenId].endDate = 0;
-        subscriptions[_tokenId].startDate = block.timestamp + (subscriptions[_tokenId].duration * 1 days);
 
-        emit DataUpdated();
+        subscriptions[_tokenId].startDate = block.timestamp;
+        subscriptions[_tokenId].endDate = block.timestamp + (subscriptions[_tokenId].duration * 1 days);
+
+        emit SubscriptionPaid(_tokenId, msg.sender, subscriptions[_tokenId].endDate);
     }
-    
-    function updateSubscriptions() public {
+
+    // Subscriber can cancel its own subscription
+    function cancelSubscriptionBySubscriber(
+        uint256 _tokenId
+    ) public
+        subscriptionExists(_tokenId)
+        onlySubscriber(_tokenId)
+        isActiveService {
+
+        subscriptions[_tokenId].endDate = block.timestamp;
+        emit SubscriptionCancelled(_tokenId, msg.sender);
+    }
+
+    // Seller owner of the service can cancel a subscription
+    function cancelSubscriptionBySeller(
+        uint256 _tokenId
+    ) public 
+        onlyOwner
+        isActiveService
+    {
+        
+        subscriptions[_tokenId].endDate = block.timestamp;
+        emit SubscriptionCancelled(_tokenId, msg.sender);
+    }
+
+    // Update subscriptions to check if they have expired
+    function updateSubscriptions() public isActiveService {
         for (uint256 i = 0; i < subscriptionCounter; i++) {
-            if (subscriptions[i].endDate == 0 && block.timestamp > subscriptions[i].startDate) {
-                subscriptions[i].endDate = block.timestamp;
+            // Se a assinatura já tiver sido paga e expirou, pode emitir um evento ou executar ações adicionais.
+            if (subscriptions[i].endDate != 0 && block.timestamp >= subscriptions[i].endDate) {
+                // Aqui, poderia ser feito algo como revogar acesso (por exemplo, removendo um NFT de credencial)
+                // emit algum evento ou realizar uma chamada para notificar uma interface.
             }
         }
     }
