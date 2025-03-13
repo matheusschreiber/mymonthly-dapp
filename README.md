@@ -4,6 +4,8 @@
 
 Factory de contrato para gerenciamento pagamentos e datas de expiração/vencimento de serviços por assinatura.
 
+![foto](diagram.png)
+
 ## Descrição
 
 ### Domínio e motivação
