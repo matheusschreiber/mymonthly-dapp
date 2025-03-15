@@ -4,6 +4,7 @@ import DeactivateService from "@/components/deactivate-service";
 import Navbar from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { UpdateService } from "@/components/update-service";
 import { getServices } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { Loader2, X } from "lucide-react";
@@ -11,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 
-function DetailsService() {
+export default function SellerDetailService() {
 
     const navigate = useNavigate();
 
@@ -46,8 +47,9 @@ function DetailsService() {
                             {service['isActive'] ? <Badge>Active</Badge> : <Badge>Inactive</Badge>}
                         </div>
                         { service['isActive'] && (
-                            <div className="flex gap-4">
-                                <Button variant="secondary" onClick={() => navigate(`/subscription/new/?name=${service['name']}`)} className="cursor-pointer">Add subscription</Button>
+                            <div className="flex lg:flex-row flex-col gap-4">
+                                <Button variant="outline" onClick={() => navigate(`/subscription/new/?name=${service['name']}`)} className="cursor-pointer">Add subscription</Button>
+                                <UpdateService service={service}/>
                                 <DeactivateService />
                             </div>
                         )}
@@ -80,5 +82,3 @@ function DetailsService() {
         </div>
     );
 }
-
-export default DetailsService;

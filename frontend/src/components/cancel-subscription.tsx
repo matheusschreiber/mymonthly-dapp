@@ -10,18 +10,21 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
+import { SubscriptionType } from "@/types";
+import { Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
   
-function CancelSubscription() {
-
+export function CancelSubscriptionModal({subscription}: {subscription: SubscriptionType}) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger className="text-[var(--destructive)] font-bold">
-                Cancel subscription
+            <AlertDialogTrigger>
+                <Button variant="destructive" title="Cancel Subscription">
+                    <Trash2 />
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Cancel subscription</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently cancel the subscription
                         by adding an end date as today's date.
@@ -37,5 +40,3 @@ function CancelSubscription() {
         </AlertDialog>
     )
 }
-
-export default CancelSubscription;

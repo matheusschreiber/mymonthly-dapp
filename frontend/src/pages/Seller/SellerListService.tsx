@@ -13,7 +13,7 @@ import { ServiceType } from "@/types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-function ListServices() {
+export default function SellerListServices() {
 
     const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ function ListServices() {
 
             <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-4">
                 <p className="text-6xl font-semibold">Services</p>
-                <Button variant="secondary" onClick={() => navigate("/service/new/")} className="cursor-pointer">Add service</Button>
+                <Button variant="secondary" onClick={() => navigate("/seller/service/new/")} className="cursor-pointer">Add service</Button>
             </div>
             <p className="mt-3 text-md text-zinc-400 mb-16">
                 Complete list of services registered on the Blockchain. <br />You can interact with each service individually.
@@ -53,6 +53,7 @@ function ListServices() {
                             {service['metadata'] && service['metadata']['subscribers'] && (
                                 <>
                                     <p className="mb-3">Subscriptions</p>
+                                    {/* TODO: this info shouldnt be here, this shouldt be viewable for everyone */}
                                     <ul>
                                         <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['ongoing']}</span> ongoing subscriptions</li>
                                         <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['expired']}</span> expired subscriptions</li>
@@ -65,7 +66,7 @@ function ListServices() {
                         <CardFooter>
                             <div className="flex justify-between items-center w-full">
                                 <p>Active? {service['isActive'] ? <span className="text-green-400 font-bold">YES</span> : <span className="text-[var(--destructive)] font-bold">NO</span>}</p>
-                                <Button variant="link" onClick={() => navigate(`/service/details/?name=${service['name']}`)} className="cursor-pointer">
+                                <Button variant="link" onClick={() => navigate(`/seller/service/details/?name=${service['name']}`)} className="cursor-pointer">
                                     See Details
                                 </Button>
                             </div>
@@ -76,5 +77,3 @@ function ListServices() {
         </main>
     )
 }
-
-export default ListServices

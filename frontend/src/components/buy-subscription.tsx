@@ -10,30 +10,32 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
+import { ServiceType } from "@/types";
 import { Button } from "./ui/button";
+import { Plus } from "lucide-react";
+
   
-export default function DeactivateService() {
+export default function BuySubscriptionModal({service}:{service:ServiceType}) {
 
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600">
-                    Deactivate service
+                <Button variant="outline" title="Buy subscription">
+                    <Plus />
+                    Subscribe
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Buy subscription</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently deactivate the service,
-                        preventing it from receving/paying/cancel any subscription.
+                        This will add a payment to the subscription and the user
+                        will be able to use the service.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600">
-                        Deactivate service
-                    </AlertDialogAction>
+                    <AlertDialogAction>Confirm payment</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

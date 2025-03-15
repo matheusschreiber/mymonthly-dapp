@@ -22,7 +22,7 @@ const formSchema = z.object({
     }),
 })
 
-function NewService() {
+export default function SellerNewService() {
     
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -86,5 +86,3 @@ function NewService() {
         </main>
     )
 }
-
-export default NewService

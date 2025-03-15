@@ -10,21 +10,25 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
+import { SubscriptionType } from "@/types";
+import { Button } from "./ui/button";
+import { DollarSign } from "lucide-react";
 
   
-function PaySubscriptionModal() {
+export default function PaySubscriptionModal({subscription}:{subscription?:SubscriptionType}) {
 
     return (
         <AlertDialog>
-            <AlertDialogTrigger>
-                Pay subscription
+            <AlertDialogTrigger asChild>
+                <Button variant="outline" title="Pay Subscription">
+                    <DollarSign />
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Pay subscription</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will add a payment to the subscription. 
-                        In other words, the start date will be set to today's date and the user
+                        This will add a payment to the subscription and the user
                         will be able to use the service.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -36,5 +40,3 @@ function PaySubscriptionModal() {
         </AlertDialog>
     )
 }
-
-export default PaySubscriptionModal;

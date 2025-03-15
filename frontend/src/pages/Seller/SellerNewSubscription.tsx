@@ -31,7 +31,7 @@ const formSchema = z.object({
     }),
 })
 
-function NewSubscription() {
+export default function SellerNewSubscription() {
 
     const [service, setService] = useState<ServiceType>()
     const [error, setError] = useState<boolean>(false)
@@ -155,5 +155,3 @@ function NewSubscription() {
         </main>
     )
 }
-
-export default NewSubscription

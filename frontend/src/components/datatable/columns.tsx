@@ -1,20 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "../ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import PaySubscriptionModal from "../pay-subscription"
-import CancelSubscription from "../cancel-subscription"
+import { ArrowUpDown } from "lucide-react"
+import { CancelSubscriptionModal } from "../cancel-subscription"
 import { SubscriptionType } from "@/types"
 import { getStatus } from "@/lib/data"
 import { Badge } from "../ui/badge"
+import PaySubscriptionModal from "../pay-subscription"
 
 export const columns: ColumnDef<SubscriptionType>[] = [
     {
@@ -51,6 +43,23 @@ export const columns: ColumnDef<SubscriptionType>[] = [
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
+        },
+    },
+    {
+        id: "service",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Service
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+            return row.original.service
         },
     },
     {
@@ -147,34 +156,21 @@ export const columns: ColumnDef<SubscriptionType>[] = [
     },
     {
         id: "actions",
+        header: "Actions",
         cell: ({ row }) => {
             const subscription = row.original
+            const isBuyerRoute = window.location.href.includes("buyer")
+            const isOngoingSubscription = getStatus(subscription) == "Ongoing"
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(subscription.user)}>
-                            Copy user address
-                        </DropdownMenuItem>
-
-                        <DropdownMenuSeparator />
-
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <PaySubscriptionModal />
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <CancelSubscription/>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-2">
+                    {
+                        isBuyerRoute && isOngoingSubscription && (
+                            <PaySubscriptionModal subscription={subscription} />
+                        )
+                    }
+                    <CancelSubscriptionModal subscription={subscription} />
+                </div>
             )
         },
     },
