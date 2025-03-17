@@ -165,7 +165,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
             const subscription = row.original
             const isBuyerRoute = window.location.href.includes("buyer")
             const isValidSubscription = getStatus(subscription) == "Expired" || getStatus(subscription) == "New"
-            const isCanceled = getStatus(subscription) == "Canceled"
+            const isCancelled = getStatus(subscription) == "Cancelled"
 
             return (
                 <div className="flex items-center gap-2">
@@ -175,13 +175,13 @@ export const columns: ColumnDef<SubscriptionType>[] = [
                         )
                     }
                     {
-                        !isCanceled && (
+                        !isCancelled && (
                             <CancelSubscriptionModal subscription={subscription} />
                         )
                     }
                     {
-                        isCanceled && (
-                            <span className="text-[var(--destructive)] font-bold">Canceled</span>
+                        isCancelled && (
+                            <span className="text-[var(--destructive)] font-bold">Cancelled</span>
                         )
                     }
                 </div>

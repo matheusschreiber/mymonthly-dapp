@@ -19,7 +19,7 @@ export type ServiceType = {
         subscribers?: {
             ongoing: number;
             expired: number;
-            canceled: number;
+            cancelled: number;
         },
     }
 }

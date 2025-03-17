@@ -60,7 +60,7 @@ export default function SellerListServices() {
                                     <ul>
                                         <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['ongoing']}</span> ongoing subscriptions</li>
                                         <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['expired']}</span> expired subscriptions</li>
-                                        <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['canceled']}</span> canceled subscriptions</li>
+                                        <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['cancelled']}</span> cancelled subscriptions</li>
                                     </ul>
                                 </>
                             )}

@@ -78,7 +78,7 @@ class ServiceFactoryContract {
                 "subscribers": {
                     "ongoing": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Ongoing').length,
                     "expired": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Expired' || getStatus(sub) == 'New').length,
-                    "canceled": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Canceled').length,
+                    "cancelled": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Cancelled').length,
                 }
             }
             services[i]['subscriptions'] = services[i]['subscriptions'].map((sub: any) => {
@@ -153,7 +153,7 @@ export function getStatus(subscription: SubscriptionType) {
     const MILISECONDS_IN_DAY = 60 * 60 * 24 * 1000;
 
     if (Number(subscription['endDate']) == 0) return "New"
-    else if (new Date(Number(subscription['endDate'])) < new Date()) return "Canceled"
+    else if (new Date(Number(subscription['endDate'])) < new Date()) return "Cancelled"
     else if (new Date(Number(subscription['endDate'])) > new Date()) return "Ongoing"
     else if ((Number(subscription['startDate']) + Number(subscription['duration']) * MILISECONDS_IN_DAY) <= subscription['endDate']) return "Expired"
     else return "Error"

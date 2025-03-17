@@ -10,11 +10,9 @@ contract ServiceFactory {
 
     // ####################### CONSTRUCTOR #########################
 
-    event ServiceCreated(address indexed seller, address serviceAddress);
-
-    event ServiceDeactivate(address indexed seller, address serviceAddress);
-
-    event ServiceUpdated(address indexed seller, address serviceAddress);
+    event ServiceCreated(address serviceAddress);
+    event ServiceDeactivated(address serviceAddress);
+    event ServiceUpdated(address serviceAddress);
 
     // ####################### CONSTRUCTOR #########################
     
@@ -68,7 +66,7 @@ contract ServiceFactory {
         Service service = new Service(msg.sender, _servicename, _servicedescription);
         services.push(service);
         
-        emit ServiceCreated(msg.sender, address(service));
+        emit ServiceCreated(address(service));
 
     }
 
@@ -84,7 +82,7 @@ contract ServiceFactory {
                 require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
                 services[i].setIsActive(false);
 
-                emit ServiceDeactivate(msg.sender, address(services[i]));
+                emit ServiceDeactivated(address(services[i]));
                 break;
             }
         }
@@ -104,7 +102,7 @@ contract ServiceFactory {
                 services[i].setName(_servicename);
                 services[i].setDescription(_servicedescription);
 
-                emit ServiceUpdated(msg.sender, address(services[i]));
+                emit ServiceUpdated(address(services[i]));
                 break;
             }
         }
