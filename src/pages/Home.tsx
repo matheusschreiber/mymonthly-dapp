@@ -10,13 +10,14 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function Home() {
 
 	const navigate = useNavigate();
 
 	return (
-		<div className="flex flex-col items-center justify-center lg:p-0 p-16">
+		<main className="flex flex-col items-center justify-center lg:p-0 p-16">
 			<Topper />
 
 			<div className="flex items-center lg:flex-row flex-col justify-center gap-5 mt-16">
@@ -56,6 +57,7 @@ export default function Home() {
 					</CardFooter>
 				</Card>
 			</div>
-		</div>
+			<Toaster />
+		</main>
 	)
 }

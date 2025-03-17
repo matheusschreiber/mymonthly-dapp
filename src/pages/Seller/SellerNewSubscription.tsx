@@ -18,16 +18,18 @@ import { ServiceType } from "@/types"
 import { dAppContract } from "@/lib/data"
 import { Loader2, X } from "lucide-react"
 import { useNavigate } from "react-router"
+import { Toaster } from "@/components/ui/sonner"
+import { Topper } from "@/components/topper"
 
 const uint256Max = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
 const formSchema = z.object({
-    user: z.string().nonempty({ 
-        message: "The subscription user address cannot be empty." 
-    }).regex(/^0x[a-fA-F0-9]{40}$/, { 
-        message: "Invalid address." 
+    user: z.string().nonempty({
+        message: "The subscription user address cannot be empty."
+    }).regex(/^0x[a-fA-F0-9]{40}$/, {
+        message: "Invalid address."
     }),
-    
+
     price: z.string().nonempty({
         message: "The subscription price must be a number greater than 0.",
     }).refine((val) => {
@@ -89,18 +91,20 @@ export default function SellerNewSubscription() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        try{
+        try {
             if (!service) throw new Error("Service not found.")
-            
+
             await dAppContract._addSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
             navigate("/seller/service/details/?name=" + service.name)
-        } catch(error:any){
+        } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
         }
     }
 
     return (
-        <main className="lg:min-w-[400px] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] p-16">
+            <Topper />
+            
             {service && (
                 <>
                     <Navbar />
@@ -181,6 +185,7 @@ export default function SellerNewSubscription() {
                     <Button onClick={() => navigate('/')} variant="secondary" className="cursor-pointer">Go Home</Button>
                 </div>
             )}
+            <Toaster />
         </main>
     )
 }

@@ -27,7 +27,6 @@ export default function DeactivateService() {
 
         try {
             await dAppContract._deactivateService(serviceFound.address)
-            window.location.reload()
         } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
         }

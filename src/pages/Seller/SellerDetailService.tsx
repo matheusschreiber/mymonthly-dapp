@@ -2,8 +2,10 @@ import { columns } from "@/components/datatable/columns";
 import { DataTable } from "@/components/datatable/datatable";
 import DeactivateService from "@/components/deactivate-service";
 import Navbar from "@/components/navbar";
+import { Topper } from "@/components/topper";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import { UpdateService } from "@/components/update-service";
 import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
@@ -37,7 +39,9 @@ export default function SellerDetailService() {
     }, [])
 
     return (
-        <div className="lg:p-0 p-16">
+        <main className="lg:min-w-[50%] p-16">
+            <Topper />
+
             {service && (
                 <>
                     <Navbar />
@@ -49,7 +53,7 @@ export default function SellerDetailService() {
                         { service['isActive'] && (
                             <div className="flex lg:flex-row flex-col gap-4">
                                 <Button variant="outline" onClick={() => navigate(`/seller/subscription/new/?name=${service['name']}`)} className="cursor-pointer">Add subscription</Button>
-                                {/* <UpdateService service={service}/> TODO: */} 
+                                <UpdateService service={service}/> 
                                 <DeactivateService />
                             </div>
                         )}
@@ -79,6 +83,7 @@ export default function SellerDetailService() {
                     <Button onClick={()=>navigate('/')} variant="secondary" className="cursor-pointer">Go Home</Button>
                 </div>
             )}
-        </div>
+            <Toaster />
+        </main>
     );
 }

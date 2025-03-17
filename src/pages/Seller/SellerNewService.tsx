@@ -14,6 +14,8 @@ import { z } from "zod"
 import Navbar from "@/components/navbar"
 import { dAppContract } from "@/lib/data"
 import { useNavigate } from "react-router"
+import { Toaster } from "@/components/ui/sonner"
+import { Topper } from "@/components/topper"
 
 const formSchema = z.object({
     name: z.string().min(5, {
@@ -26,7 +28,7 @@ const formSchema = z.object({
 
 export default function SellerNewService() {
 
-    const navigate  = useNavigate()
+    const navigate = useNavigate()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -37,59 +39,62 @@ export default function SellerNewService() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        try{
+        try {
             await dAppContract._addService(values.name, values.description)
             navigate("/seller/services/list/")
-        } catch(error:any){
+        } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
         }
     }
 
     return (
-        <main className="lg:min-w-[400px] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] p-16">
+            <Topper />
+
             <Navbar />
 
             <Form {...form}>
 
-            <div className="mb-16">
-                <p className="text-6xl font-semibold">New Service</p>
-                <p className="mt-3 text-md text-zinc-400">
-                    Complete the form to add a new service to the Blockchain. <br/>You can interact with subscriptions later on.
-                </p>
-            </div>
-            
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="eg.: Netflix, Twitch, etc" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="mb-16">
+                    <p className="text-6xl font-semibold">New Service</p>
+                    <p className="mt-3 text-md text-zinc-400">
+                        Complete the form to add a new service to the Blockchain. <br />You can interact with subscriptions later on.
+                    </p>
+                </div>
 
-                <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                                <Input placeholder="eg.: An amazing movie streaming service" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="eg.: Netflix, Twitch, etc" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                <Button type="submit" variant="secondary">Submit</Button>
-            </form>
-        </Form>
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="eg.: An amazing movie streaming service" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <Button type="submit" variant="secondary">Submit</Button>
+                </form>
+            </Form>
+            <Toaster />
         </main>
     )
 }

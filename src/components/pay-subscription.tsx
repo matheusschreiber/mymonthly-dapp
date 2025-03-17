@@ -23,7 +23,6 @@ export default function PaySubscriptionModal({subscription}:{subscription?:Subsc
 
         try {
             await dAppContract._paySubscription(subscription.serviceAddress, subscription.tokenId, subscription.price)
-            window.location.reload()
         } catch(error:any){
             alert("Problem on blockchain: " + error.message)
         }

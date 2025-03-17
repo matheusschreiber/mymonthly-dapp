@@ -11,9 +11,31 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { dAppContract } from "@/lib/data"
 import { ServiceType } from "@/types"
+import { useState } from "react"
 
 export function UpdateService({service}: {service: ServiceType}) {
+
+    const [name, setName] = useState<string>(service.name)
+    const [description, setDescription] = useState<string>(service.description)
+
+    async function updateService() {
+        const _services = await dAppContract._getServices()
+
+        const params = new URLSearchParams(window.location.search)
+        let serviceName = params.get('name')
+        let serviceFound = _services.filter(service => service['name'] === serviceName)[0]
+        if (!serviceFound) {
+            return
+        }
+
+        try {
+            await dAppContract._updateService(serviceFound.address, name, description)
+        } catch (error: any) {
+            alert("Problem on blockchain: " + error.message)
+        }
+    }
 
     return (
         <Dialog>
@@ -36,6 +58,7 @@ export function UpdateService({service}: {service: ServiceType}) {
                             id="name"
                             placeholder="eg.: Netflix, Twitch, etc"
                             defaultValue={service.name}
+                            onChange={(e)=>setName(e.target.value)}
                         />
                     </div>
                     <div className="grid flex-1 gap-2">
@@ -46,6 +69,7 @@ export function UpdateService({service}: {service: ServiceType}) {
                             id="description"
                             placeholder="eg.: An amazing movie streaming service"
                             defaultValue={service.description}
+                            onChange={(e)=>setDescription(e.target.value)}
                         />
                     </div>
                     
@@ -57,7 +81,7 @@ export function UpdateService({service}: {service: ServiceType}) {
                         </Button>
                     </DialogClose>
                     
-                    <Button type="submit" size="sm" className="px-3">
+                    <Button type="button" size="sm" className="px-3" onClick={() => updateService()}>
                         Update
                     </Button>
                 </DialogFooter>

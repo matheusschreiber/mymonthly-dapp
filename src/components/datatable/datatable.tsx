@@ -64,7 +64,7 @@ export function DataTable<TData, TValue>({
 	})
 
 	return (
-		<div className="lg:w-auto w-[400px] mx-auto">
+		<div className="lg:max-w-[100%] max-w-[400px] mx-auto">
 			<div className="flex items-center py-4">
 				<Input
 					placeholder="Filter user address"

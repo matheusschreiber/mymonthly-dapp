@@ -25,7 +25,6 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
             if (!service) throw new Error("Service not found.")
             const user = await getUserAddress()
             await dAppContract._buySubscription(service.address, user, price, duration)
-            window.location.reload()
         } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
         }

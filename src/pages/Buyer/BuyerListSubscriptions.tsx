@@ -1,7 +1,9 @@
 import { columns } from "@/components/datatable/columns";
 import { DataTable } from "@/components/datatable/datatable";
 import Navbar from "@/components/navbar";
+import { Topper } from "@/components/topper";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import { dAppContract, getUserAddress } from "@/lib/data";
 import { SubscriptionType } from "@/types";
 import { useEffect, useState } from "react";
@@ -28,7 +30,8 @@ export default function BuyerListSubscriptions() {
     }, [])
 
     return (
-        <main className="lg:min-w-[700px] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] p-16">
+            <Topper />
 
             <Navbar />
 
@@ -45,6 +48,8 @@ export default function BuyerListSubscriptions() {
                     <DataTable columns={columns} data={subscriptions} />
                 )}
             </div>
+
+            <Toaster />
         </main>
     )
 }

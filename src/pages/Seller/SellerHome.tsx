@@ -11,13 +11,30 @@ import {
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
+import { Toaster } from "@/components/ui/sonner";
+import { useEffect, useState } from "react";
+import { dAppContract } from "@/lib/data";
+import { ServiceType } from "@/types";
 
 export default function SellerHome() {
 
 	const navigate = useNavigate();
+	const [services, setServices] = useState<ServiceType[]>([]);
+
+	useEffect(() => {
+		async function fetchServices() {
+			try {
+				const _services = await dAppContract._getServices()
+				setServices(_services)
+			} catch (error:any) {
+				alert("Problem on blockchain: " + error.message)
+			}
+		}
+		fetchServices()
+	}, [])
 
 	return (
-		<div className="flex flex-col items-center justify-center lg:p-0 p-16">
+		<main className="flex flex-col items-center justify-center lg:p-0 p-16">
 			<Topper />
 
             <div className="w-full mb-16 mt-8">
@@ -56,10 +73,11 @@ export default function SellerHome() {
 					</CardContent>
 
 					<CardFooter>
-						<p>There are currently <span className="font-mono font-bold">02</span> registered services.</p>
+						<p>There are currently <span className="font-mono font-bold">{services.length}</span> registered services.</p>
 					</CardFooter>
 				</Card>
 			</div>
-		</div>
+			<Toaster />
+		</main>
 	)
 }

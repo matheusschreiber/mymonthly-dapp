@@ -1,6 +1,7 @@
 import BuySubscriptionModal from "@/components/buy-subscription";
 import Navbar from "@/components/navbar";
 import PaySubscriptionModal from "@/components/pay-subscription";
+import { Topper } from "@/components/topper";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +11,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { Toaster } from "@/components/ui/sonner";
 import { dAppContract, getStatus, getUserAddress } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { Check, Hourglass } from "lucide-react";
@@ -39,7 +41,8 @@ export default function BuyerListServices() {
     }, [])
 
     return (
-        <main className="lg:min-w-[700px] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] lg:p-0 p-16">
+            <Topper />
 
             <Navbar />
 
@@ -93,6 +96,7 @@ export default function BuyerListServices() {
                     </Card>
                 ))}
             </div>
+            <Toaster />
         </main>
     )
 }

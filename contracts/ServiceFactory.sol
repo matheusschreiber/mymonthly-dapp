@@ -29,10 +29,10 @@ contract ServiceFactory {
     }
 
     // Ensures that only the seller that owns the service can call the function
-    modifier onlySellerOwner(string memory _servicename) {
+    modifier onlySellerOwner(address _serviceaddress) {
         bool serviceFound = false;
         for (uint i = 0; i < services.length; i++) {
-            if (keccak256(abi.encodePacked(services[i].name())) == keccak256(abi.encodePacked(_servicename))) {
+            if (address(services[i]) == _serviceaddress) {
                 require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
                 serviceFound = true;
                 break;
@@ -43,10 +43,10 @@ contract ServiceFactory {
     }
 
     // Ensures that only active services can call the function
-    modifier onlyActiveService(string memory _servicename) {
+    modifier onlyActiveService(address _serviceaddress) {
         bool serviceFound = false;
         for (uint i = 0; i < services.length; i++) {
-            if (keccak256(abi.encodePacked(services[i].name())) == keccak256(abi.encodePacked(_servicename))) {
+            if (address(services[i]) == _serviceaddress) {
                 require(services[i].isActive(), "Service is not active");
                 serviceFound = true;
                 break;
@@ -71,14 +71,14 @@ contract ServiceFactory {
     }
 
     function deactivateService(
-        string memory _servicename
+        address _serviceaddress
     ) public 
-        onlySellerOwner(_servicename)
-        onlyActiveService(_servicename)
+        onlySellerOwner(_serviceaddress)
+        onlyActiveService(_serviceaddress)
     {
 
         for (uint i = 0; i < services.length; i++) {
-            if (keccak256(abi.encodePacked(services[i].name())) == keccak256(abi.encodePacked(_servicename))) {
+            if (address(services[i]) == _serviceaddress) {
                 require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
                 services[i].setIsActive(false);
 
@@ -89,18 +89,19 @@ contract ServiceFactory {
     }
 
     function updateService(
-        string memory _servicename,
-        string memory _servicedescription
+        address _serviceaddress,
+        string memory _newname,
+        string memory _newdescription
     ) public 
-        onlySellerOwner(_servicename)
-        onlyActiveService(_servicename)
+        onlySellerOwner(_serviceaddress)
+        onlyActiveService(_serviceaddress)
     {
 
         for (uint i = 0; i < services.length; i++) {
-            if (keccak256(abi.encodePacked(services[i].name())) == keccak256(abi.encodePacked(_servicename))) {
+            if (address(services[i]) == _serviceaddress) {
                 require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
-                services[i].setName(_servicename);
-                services[i].setDescription(_servicedescription);
+                services[i].setName(_newname);
+                services[i].setDescription(_newdescription);
 
                 emit ServiceUpdated(address(services[i]));
                 break;

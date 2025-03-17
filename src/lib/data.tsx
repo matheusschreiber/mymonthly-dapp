@@ -1,9 +1,10 @@
-import { ethers, JsonRpcProvider, parseUnits } from 'ethers'
+import { ethers, JsonRpcProvider } from 'ethers'
 
 import { ServiceType, SubscriptionType } from "@/types"
 
 import ServiceFactoryArtifact from "@/artifacts/contracts/ServiceFactory.sol/ServiceFactory.json"
 import ServiceArtifact from "@/artifacts/contracts/Service.sol/Service.json"
+import { toast } from 'sonner';
 
 class ServiceFactoryContract {
 
@@ -34,6 +35,22 @@ class ServiceFactoryContract {
             ServiceFactoryArtifact.abi,
             this.signer
         );
+
+        this.contract.on("ServiceCreated", (serviceAddress: string) => {
+            // window.location.reload() //TODO: improve this, maybe just update the data beeing re-rendered
+            toast("Service created: " + serviceAddress)
+        })
+
+        this.contract.on("ServiceDeactivated", (serviceAddress: string) => {
+            // window.location.reload() //TODO: improve this, maybe just update the data beeing re-rendered
+            toast("Service deactivated: " + serviceAddress)
+        })
+        
+        this.contract.on("ServiceUpdated", (serviceAddress: string) => {
+            // window.location.reload() //TODO: improve this, maybe just update the data beeing re-rendered
+            toast("Service updated: " + serviceAddress)
+        })
+
     }
 
     async _getServices() {
@@ -95,6 +112,14 @@ class ServiceFactoryContract {
         return await this.contract.createService(name, description)
     }
 
+    async _updateService(serviceAddress: string, name: string, description: string) {
+        return await this.contract.updateService(serviceAddress, name, description)
+    }
+
+    async _deactivateService(serviceAddress: string) {
+        return await this.contract.deactivateService(serviceAddress)
+    }
+
     async _addSubscription(serviceAddress: string, user: string, price: number, duration: number) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
@@ -136,16 +161,6 @@ class ServiceFactoryContract {
         );
 
         return await serviceContract.cancelSubscription(tokenId)
-    }
-
-    async _deactivateService(serviceAddress: string) {
-        const serviceContract = new ethers.Contract(
-            serviceAddress,
-            ServiceArtifact.abi,
-            this.signer
-        );
-
-        return await serviceContract.setIsActive(false)
     }
 }
 

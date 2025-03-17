@@ -165,7 +165,6 @@ export default function Navbar() {
 
     return (
         <>
-            <img src="/logo.png" alt="Logo" className="w-[200px] mx-auto mb-16" />
             <Breadcrumb className="mb-4">
                 <BreadcrumbList>
 

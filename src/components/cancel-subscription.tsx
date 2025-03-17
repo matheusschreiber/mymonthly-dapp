@@ -22,7 +22,6 @@ export function CancelSubscriptionModal({ subscription }: { subscription: Subscr
 
         try {
             await dAppContract._cancelSubscription(subscription.serviceAddress, subscription.tokenId)
-            window.location.reload()
         } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
         }

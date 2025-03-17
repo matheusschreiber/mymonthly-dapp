@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import { Topper } from "@/components/topper";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -8,6 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { Toaster } from "@/components/ui/sonner";
 import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { useEffect, useState } from "react";
@@ -33,7 +35,8 @@ export default function SellerListServices() {
     }, [])
 
     return (
-        <main className="lg:min-w-[400px] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] lg:p-0 p-16">
+            <Topper />
 
             <Navbar />
 
@@ -77,6 +80,7 @@ export default function SellerListServices() {
                     </Card>
                 ))}
             </div>
+            <Toaster />
         </main>
     )
 }
