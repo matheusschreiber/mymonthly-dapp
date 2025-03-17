@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { ethers, JsonRpcProvider, parseUnits } from 'ethers'
 
 import { ServiceType, SubscriptionType } from "@/types"
 
@@ -9,15 +9,26 @@ class ServiceFactoryContract {
 
     // address of deployed contract on hardhat
     contractAddressFactory: string = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    loaded: Promise<boolean>;
     contract: ethers.Contract;
     signer: ethers.Signer;
 
     constructor() {
-        const provider = new (ethers as any).providers.JsonRpcProvider('http://localhost:8545') // hardhat local address
+        this.contract = {} as ethers.Contract
+        this.signer = {} as ethers.Signer
+
+        this.loaded = this.initializeContract().then(() => {
+            return true
+        }).catch(() => {
+            return false
+        })
+    }
+    
+    async initializeContract() {
+        const provider = new JsonRpcProvider('http://localhost:8545') // hardhat local address
         // const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-        this.signer = provider.getSigner();
-
+        this.signer = await provider.getSigner();
         this.contract = new ethers.Contract(
             this.contractAddressFactory,
             ServiceFactoryArtifact.abi,
@@ -52,8 +63,8 @@ class ServiceFactoryContract {
                     "tokenId": subscriptions[1][j],
                     "price": subscriptions[2][j],
                     "duration": subscriptions[3][j],
-                    "startDate": (ethers as any).BigNumber.from(subscriptions[4][j]).toNumber(),
-                    "endDate": (ethers as any).BigNumber.from(subscriptions[5][j]).toNumber()
+                    "startDate": BigInt(subscriptions[4][j]),
+                    "endDate": BigInt(subscriptions[5][j])
                 })
             }
         }
@@ -91,7 +102,7 @@ class ServiceFactoryContract {
             this.signer
         );
 
-        const priceParsed = (ethers as any).utils.parseUnits((price / 10).toString(), 1).toString()
+        const priceParsed = price.toString()
         return await serviceContract.createSubscription(user, priceParsed, duration)
     }
 
@@ -102,7 +113,7 @@ class ServiceFactoryContract {
             this.signer
         );
 
-        const priceParsed = (ethers as any).utils.parseUnits((price / 10).toString(), 1).toString()
+        const priceParsed = price.toString()
         return await serviceContract.paySubscription(tokenId, {value: priceParsed})
     }
 
@@ -113,7 +124,7 @@ class ServiceFactoryContract {
             this.signer
         );
 
-        const priceParsed = (ethers as any).utils.parseUnits((price / 10).toString(), 1).toString()
+        const priceParsed = price.toString()
         return await serviceContract.buySubscription(user, price, duration, {value: priceParsed})
     }
 
@@ -138,15 +149,13 @@ class ServiceFactoryContract {
     }
 }
 
-export const dAppContract = new ServiceFactoryContract();
-
 export function getStatus(subscription: SubscriptionType) {
     const MILISECONDS_IN_DAY = 60 * 60 * 24 * 1000;
 
-    if (new Date(subscription['endDate']) > new Date()) return "Ongoing"
-    else if ((subscription['startDate'] + subscription['duration'] * MILISECONDS_IN_DAY) <= subscription['endDate']) return "Expired"
-    else if (subscription['endDate'] == 0) return "New"
-    else if (new Date(subscription['endDate']) < new Date()) return "Canceled"
+    if (Number(subscription['endDate']) == 0) return "New"
+    else if (new Date(Number(subscription['endDate'])) < new Date()) return "Canceled"
+    else if (new Date(Number(subscription['endDate'])) > new Date()) return "Ongoing"
+    else if ((Number(subscription['startDate']) + Number(subscription['duration']) * MILISECONDS_IN_DAY) <= subscription['endDate']) return "Expired"
     else return "Error"
 
 }
@@ -155,3 +164,7 @@ export async function getUserAddress() {
     // return "0x78eaaE5dE26E7D4855Da96Bb1463eAf8f1137496" // matheus
     return "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 }
+
+const dAppContract = new ServiceFactoryContract();
+await dAppContract.loaded
+export { dAppContract }

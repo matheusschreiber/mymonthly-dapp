@@ -99,7 +99,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Duration
+                    Duration (days)
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -119,7 +119,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
             )
         },
         cell: ({ getValue }) => {
-            if (getValue<number>() != 0) return new Date(getValue<number>()).toLocaleDateString("pt-BR")
+            if (getValue<number>() != 0) return new Date(Number(getValue<number>())).toLocaleDateString("pt-BR")
             else return <span className="text-gray-400">Not set</span>
         },
     },
@@ -137,7 +137,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
             )
         },
         cell: ({ getValue }) => {
-            if (getValue<number>() != 0) return new Date(getValue<number>()).toLocaleDateString("pt-BR")
+            if (getValue<number>() != 0) return new Date(Number(getValue<number>())).toLocaleDateString("pt-BR")
             else return <span className="text-gray-400">Not set</span>
         },
     },
@@ -164,7 +164,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
         cell: ({ row }) => {
             const subscription = row.original
             const isBuyerRoute = window.location.href.includes("buyer")
-            const isValidSubscription = getStatus(subscription) == "Ongoing" || getStatus(subscription) == "New"
+            const isValidSubscription = getStatus(subscription) == "Expired" || getStatus(subscription) == "New"
             const isCanceled = getStatus(subscription) == "Canceled"
 
             return (

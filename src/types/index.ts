@@ -3,8 +3,8 @@ export type SubscriptionType = {
     tokenId: number;
     price: number;
     duration: number;
-    startDate: number;
-    endDate: number;
+    startDate: bigint;
+    endDate: bigint;
     serviceAddress?: string;
     serviceName?: string;
 }

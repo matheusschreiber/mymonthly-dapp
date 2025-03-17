@@ -50,7 +50,7 @@ contract Service {
 
     // Modifier to check if the subscription exists
     modifier subscriptionExists(uint256 _tokenId) {
-        require(subscriptions[_tokenId].user != address(0) && subscriptions[_tokenId].endDate > block.timestamp * 1000, "Subscription does not exist");
+        require(subscriptions[_tokenId].user != address(0), "Subscription does not exist");
         _;
     }
 
@@ -75,7 +75,7 @@ contract Service {
     // Modifier to check if the subscriber already exists
     modifier subscriberNotSubscribed(address _user) {
         for (uint256 i = 0; i < subscriptionCounter; i++) {
-            if (subscriptions[i].user == _user && block.timestamp < subscriptions[i].endDate) {
+            if (subscriptions[i].user == _user && block.timestamp * 1000 < subscriptions[i].endDate) {
                 revert("Subscriber already has an active subscription");
             }
         }
