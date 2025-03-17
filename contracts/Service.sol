@@ -15,8 +15,8 @@ contract Service {
         uint256 tokenId;
         uint256 price;
         uint256 duration; // duration in days
-        uint256 startDate;
-        uint256 endDate;
+        uint256 startDate; // timestamp in milliseconds (from January 1, 1970)
+        uint256 endDate; // timestamp in milliseconds (from January 1, 1970)
     }
 
     uint256 private subscriptionCounter = 0;
@@ -50,7 +50,7 @@ contract Service {
 
     // Modifier to check if the subscription exists
     modifier subscriptionExists(uint256 _tokenId) {
-        require(subscriptions[_tokenId].user != address(0), "Subscription does not exist");
+        require(subscriptions[_tokenId].user != address(0) && subscriptions[_tokenId].endDate > block.timestamp * 1000, "Subscription does not exist");
         _;
     }
 
@@ -67,8 +67,8 @@ contract Service {
     }
 
     // Ensures that only the subscriber can call the function
-    modifier onlySubscriber(uint256 _tokenId) {
-        require(subscriptions[_tokenId].user == msg.sender, "Caller is not the subscriber");
+    modifier onlySubscriberOrSeller(uint256 _tokenId) {
+        require(subscriptions[_tokenId].user == msg.sender || msg.sender == ownerDeploy, "Caller is not the subscriber");
         _;
     }
 
@@ -85,9 +85,9 @@ contract Service {
     // ######################## EVENTS ########################
     
     event DataUpdated();
-    event SubscriptionAdded(uint256 indexed tokenId, address indexed user);
-    event SubscriptionPaid(uint256 indexed tokenId, address indexed user, uint256 newEndDate);
-    event SubscriptionCancelled(uint256 indexed tokenId, address indexed user);
+    event SubscriptionCreated(uint256 indexed tokenId);
+    event SubscriptionPaid(uint256 indexed tokenId);
+    event SubscriptionCancelled(uint256 indexed tokenId);
 
     // ####################### GETTERS AND SETTERS #######################
     
@@ -118,12 +118,23 @@ contract Service {
         emit DataUpdated();
     }
 
-    function getSubscriptions() public view isActiveService returns (Subscription[] memory) {
-        Subscription[] memory _subscriptions = new Subscription[](subscriptionCounter);
-        for (uint256 i = 0; i < subscriptionCounter; i++) {
-            _subscriptions[i] = subscriptions[i];
+    function getSubscriptions() public view returns (address[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory) {
+        address[] memory subscriptionUser = new address[](subscriptionCounter);
+        uint256[] memory subscriptionTokenId = new uint256[](subscriptionCounter);
+        uint256[] memory subscriptionPrice = new uint256[](subscriptionCounter);
+        uint256[] memory subscriptionDuration = new uint256[](subscriptionCounter);
+        uint256[] memory subscriptionStartDate = new uint256[](subscriptionCounter);
+        uint256[] memory subscriptionEndDate = new uint256[](subscriptionCounter);
+
+        for (uint i = 0; i < subscriptionCounter; i++) {
+            subscriptionUser[i] = subscriptions[i].user;
+            subscriptionTokenId[i] = subscriptions[i].tokenId;
+            subscriptionPrice[i] = subscriptions[i].price;
+            subscriptionDuration[i] = subscriptions[i].duration;
+            subscriptionStartDate[i] = subscriptions[i].startDate;
+            subscriptionEndDate[i] = subscriptions[i].endDate;
         }
-        return _subscriptions;
+        return (subscriptionUser, subscriptionTokenId, subscriptionPrice, subscriptionDuration, subscriptionStartDate, subscriptionEndDate);
     }
 
     function getOwner() public view returns (address) {
@@ -134,15 +145,16 @@ contract Service {
 
     // Allows a subscriber to subscribe to the service
     function createSubscription(
+        address _user,
         uint256 _price,
         uint256 _duration
     ) public
-        subscriberNotSubscribed(msg.sender)
+        subscriberNotSubscribed(_user)
         valueGreaterThanZero(_price)
         isActiveService {
 
         Subscription memory newSubscription = Subscription({
-            user: msg.sender,
+            user: _user,
             tokenId: subscriptionCounter,
             price: _price,
             duration: _duration,
@@ -151,7 +163,7 @@ contract Service {
         });
 
         subscriptions[subscriptionCounter] = newSubscription;
-        emit SubscriptionAdded(subscriptionCounter, msg.sender);
+        emit SubscriptionCreated(subscriptionCounter);
         subscriptionCounter++;
     }
 
@@ -160,7 +172,7 @@ contract Service {
         uint256 _tokenId
     ) public
         subscriptionExists(_tokenId)
-        onlySubscriber(_tokenId)
+        onlySubscriberOrSeller(_tokenId)
         isActiveService
         payable {
 
@@ -168,44 +180,47 @@ contract Service {
         uint256 _valueToPay = subscriptions[_tokenId].price;
         require(_valuePaid == _valueToPay, "Invalid amount");
 
-        subscriptions[_tokenId].startDate = block.timestamp;
-        subscriptions[_tokenId].endDate = block.timestamp + (subscriptions[_tokenId].duration * 1 days);
+        subscriptions[_tokenId].startDate = block.timestamp * 1000;
+        subscriptions[_tokenId].endDate = (block.timestamp + (subscriptions[_tokenId].duration * 1 days)) * 1000;
 
-        emit SubscriptionPaid(_tokenId, msg.sender, subscriptions[_tokenId].endDate);
+        emit SubscriptionPaid(_tokenId);
     }
 
-    // Subscriber can cancel its own subscription
-    function cancelSubscriptionBySubscriber(
+    // Allows a subscriber to buy a subscription (first payment)
+    function buySubscription(
+        address _user,
+        uint256 _price,
+        uint256 _duration
+    ) public
+        subscriberNotSubscribed(_user)
+        valueGreaterThanZero(_price)
+        isActiveService
+        payable {
+
+        Subscription memory newSubscription = Subscription({
+            user: _user,
+            tokenId: subscriptionCounter,
+            price: _price,
+            duration: _duration,
+            startDate: block.timestamp * 1000,
+            endDate: (block.timestamp + (_duration * 1 days)) * 1000
+        });
+
+        subscriptions[subscriptionCounter] = newSubscription;
+        emit SubscriptionCreated(subscriptionCounter);
+        emit SubscriptionPaid(subscriptionCounter);
+        subscriptionCounter++;
+    }
+
+    // Subscriber can cancel its own subscription or Seller can cancel subscriber's subscription
+    function cancelSubscription(
         uint256 _tokenId
     ) public
         subscriptionExists(_tokenId)
-        onlySubscriber(_tokenId)
+        onlySubscriberOrSeller(_tokenId)
         isActiveService {
 
-        subscriptions[_tokenId].endDate = block.timestamp;
-        emit SubscriptionCancelled(_tokenId, msg.sender);
-    }
-
-    // Seller owner of the service can cancel a subscription
-    function cancelSubscriptionBySeller(
-        uint256 _tokenId
-    ) public 
-        onlyOwner
-        isActiveService
-    {
-        
-        subscriptions[_tokenId].endDate = block.timestamp;
-        emit SubscriptionCancelled(_tokenId, msg.sender);
-    }
-
-    // Update subscriptions to check if they have expired
-    function updateSubscriptions() public isActiveService {
-        for (uint256 i = 0; i < subscriptionCounter; i++) {
-            // Se a assinatura já tiver sido paga e expirou, pode emitir um evento ou executar ações adicionais.
-            if (subscriptions[i].endDate != 0 && block.timestamp >= subscriptions[i].endDate) {
-                // Aqui, poderia ser feito algo como revogar acesso (por exemplo, removendo um NFT de credencial)
-                // emit algum evento ou realizar uma chamada para notificar uma interface.
-            }
-        }
+        subscriptions[_tokenId].endDate = block.timestamp * 1000;
+        emit SubscriptionCancelled(_tokenId);
     }
 }

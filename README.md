@@ -32,6 +32,10 @@ Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da ass
 
 - [x] Cada contrato filho é um serviço cadastrado por um vendedor, que contém os compradores que assinaram esse serviço.
 
+- [ ] O vendedor deve poder alterar o nome e a descrição do serviço após a sua criação.
+
+- [ ] Os nomes dos serviços devem ser únicos (sem repetição).
+
 ### Comprador
 
 - [ ] O contrato filho deve gerenciar pagamentos e datas e expiração. Isso deve ser visível para o comprador (identificado pela chave publica). O comprador deve conseguir:
@@ -40,7 +44,7 @@ Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da ass
     - [x] Cancelar a assinatura
     - [ ] (BONUS) Reembolso parcial ao cancelar
 
-- [ ] Os pagamentos são feitos em cryptomoedas (Seria apenas ETH por ser sepolia?). (Usar tokens inicialmente)
+- [x] Os pagamentos são feitos em cryptomoedas (ETH).
 
 - [ ] Caso o comprador não pague o serviço até a data de expiração, o acesso ao serviço é revogado. 
     - Events

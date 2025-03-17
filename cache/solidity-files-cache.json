@@ -1,0 +1,79 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/matheus/Documents/disciplinas/blockchain/mymonthly-dapp/contracts/Service.sol": {
+      "lastModificationDate": 1742187401896,
+      "contentHash": "1418f2996ea28bc3f9b3b01cca4f4a25",
+      "sourceName": "contracts/Service.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Service"
+      ]
+    },
+    "/home/matheus/Documents/disciplinas/blockchain/mymonthly-dapp/contracts/ServiceFactory.sol": {
+      "lastModificationDate": 1742182861120,
+      "contentHash": "cb64bd542b9e7450ccc75458d8edb0a2",
+      "sourceName": "contracts/ServiceFactory.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Service.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ServiceFactory"
+      ]
+    }
+  }
+}
