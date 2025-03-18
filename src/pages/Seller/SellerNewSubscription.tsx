@@ -20,6 +20,7 @@ import { Loader2, X } from "lucide-react"
 import { useNavigate } from "react-router"
 import { Toaster } from "@/components/ui/sonner"
 import { Topper } from "@/components/topper"
+import { toast } from "sonner"
 
 const uint256Max = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
@@ -97,7 +98,7 @@ export default function SellerNewSubscription() {
             await dAppContract._addSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
             navigate("/seller/service/details/?name=" + service.name)
         } catch (error: any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
         }
     }
 

@@ -17,6 +17,7 @@ import { ServiceType } from "@/types";
 import { Check, Hourglass } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export default function BuyerListServices() {
 
@@ -32,7 +33,7 @@ export default function BuyerListServices() {
             const _buyerAddress = await getUserAddress()
             setBuyerAddress(_buyerAddress)
         } catch(error:any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
         }
     }
 

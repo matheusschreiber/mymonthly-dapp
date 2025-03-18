@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { ServiceType } from "@/types";
 import { dAppContract } from "@/lib/data";
+import { toast } from "sonner";
 
 export default function BuyerHome() {
 
@@ -27,7 +28,7 @@ export default function BuyerHome() {
 				const _services = await dAppContract._getServices()
 				setServices(_services)
 			} catch (error:any) {
-				alert("Problem on blockchain: " + error.message)
+				toast("Problem on blockchain: " + error.message)
 			}
 		}
 		fetchServices()

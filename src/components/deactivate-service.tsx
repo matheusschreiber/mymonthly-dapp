@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { dAppContract } from "@/lib/data";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function DeactivateService() {
 
@@ -34,7 +35,7 @@ export default function DeactivateService() {
         try {
             await dAppContract._deactivateService(serviceFound.address)
         } catch (error: any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
             setLoading(false)
         }
     }

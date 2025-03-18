@@ -14,6 +14,7 @@ import { dAppContract, getUserAddress } from "@/lib/data"
 import { ServiceType } from "@/types"
 import { Loader2, Plus } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function BuySubscriptionModal({ service }: { service: ServiceType }) {
 
@@ -31,7 +32,7 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
             const user = await getUserAddress()
             await dAppContract._buySubscription(service.address, user, price, duration)
         } catch (error: any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
             setLoading(false)
         }
     }

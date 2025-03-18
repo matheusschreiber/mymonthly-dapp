@@ -14,6 +14,7 @@ import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export default function SellerListServices() {
 
@@ -26,7 +27,7 @@ export default function SellerListServices() {
             const _services = await dAppContract._getServices()
             setServices(_services)
         } catch(error:any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
         }
     }
 

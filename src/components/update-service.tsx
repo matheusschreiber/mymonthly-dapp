@@ -13,14 +13,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { dAppContract } from "@/lib/data"
 import { ServiceType } from "@/types"
+import { Loader2 } from "lucide-react"
 import { useState } from "react"
+import { useNavigate } from "react-router"
+import { toast } from "sonner"
 
-export function UpdateService({service}: {service: ServiceType}) {
+export function UpdateService({ service }: { service: ServiceType }) {
 
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState<boolean>(false)
     const [name, setName] = useState<string>(service.name)
     const [description, setDescription] = useState<string>(service.description)
 
     async function updateService() {
+        setLoading(true)
         const _services = await dAppContract._getServices()
 
         const params = new URLSearchParams(window.location.search)
@@ -32,8 +38,10 @@ export function UpdateService({service}: {service: ServiceType}) {
 
         try {
             await dAppContract._updateService(serviceFound.address, name, description)
+            navigate("/seller/service/details/?name=" + name)
         } catch (error: any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
@@ -58,7 +66,7 @@ export function UpdateService({service}: {service: ServiceType}) {
                             id="name"
                             placeholder="eg.: Netflix, Twitch, etc"
                             defaultValue={service.name}
-                            onChange={(e)=>setName(e.target.value)}
+                            onChange={(e) => setName(e.target.value)}
                         />
                     </div>
                     <div className="grid flex-1 gap-2">
@@ -69,10 +77,10 @@ export function UpdateService({service}: {service: ServiceType}) {
                             id="description"
                             placeholder="eg.: An amazing movie streaming service"
                             defaultValue={service.description}
-                            onChange={(e)=>setDescription(e.target.value)}
+                            onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
-                    
+
                 </div>
                 <DialogFooter className="sm:justify-end">
                     <DialogClose asChild>
@@ -80,9 +88,18 @@ export function UpdateService({service}: {service: ServiceType}) {
                             Close
                         </Button>
                     </DialogClose>
-                    
-                    <Button type="button" size="sm" className="px-3" onClick={() => updateService()}>
-                        Update
+
+                    <Button type="button" size="sm" className="px-3" onClick={() => updateService()} disabled={loading}>
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    <p>Loading</p>
+                                </>
+                            ) : (
+                                <p>Update</p>
+                            )
+                        }
                     </Button>
                 </DialogFooter>
             </DialogContent>

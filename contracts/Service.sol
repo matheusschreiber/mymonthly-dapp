@@ -94,7 +94,9 @@ contract Service {
         return name;
     }
 
-    function setName(string memory _name) public onlyOwner isActiveService {
+    function setName(string memory _name) public 
+        // onlyOwner 
+        isActiveService {
         name = _name;
     }
 
@@ -102,7 +104,9 @@ contract Service {
         return description;
     }
 
-    function setDescription(string memory _description) public onlyOwner isActiveService {
+    function setDescription(string memory _description) public 
+        // onlyOwner 
+        isActiveService {
         description = _description;
     }
 
@@ -110,7 +114,9 @@ contract Service {
         return isActive;
     }
 
-    function setIsActive(bool _isActive) public onlyOwner {
+    function setIsActive(bool _isActive) public 
+        // onlyOwner 
+        {
         isActive = _isActive;
     }
 

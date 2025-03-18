@@ -16,6 +16,7 @@ import { dAppContract } from "@/lib/data"
 import { useNavigate } from "react-router"
 import { Toaster } from "@/components/ui/sonner"
 import { Topper } from "@/components/topper"
+import { toast } from "sonner"
 
 const formSchema = z.object({
     name: z.string().min(5, {
@@ -43,7 +44,7 @@ export default function SellerNewService() {
             await dAppContract._addService(values.name, values.description)
             navigate("/seller/services/list/")
         } catch (error: any) {
-            alert("Problem on blockchain: " + error.message)
+            toast("Problem on blockchain: " + error.message)
         }
     }
 

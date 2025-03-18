@@ -46,12 +46,13 @@ class ServiceFactoryContract {
 
             this.contract.removeAllListeners("ServiceDeactivated");
             this.contract.on("ServiceDeactivated", (serviceAddress: string) => {
-                toast("Service deactivated: " + serviceAddress)
+                toast("Service deactivated: " + serviceAddress + ". Refreshing page...")
+                window.location.reload()
             })
         
             this.contract.removeAllListeners("ServiceUpdated");
             this.contract.on("ServiceUpdated", (serviceAddress: string) => {
-                toast("Service updated: " + serviceAddress)
+                toast("Service updated: " + serviceAddress + ". Refreshing page...")
             })
         });
 
@@ -199,7 +200,7 @@ export function getStatus(subscription: SubscriptionType) {
 
 export async function getUserAddress() {
     // return "0x78eaaE5dE26E7D4855Da96Bb1463eAf8f1137496" // matheus
-    return "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    return "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" // hardhat
 }
 
 const dAppContract = new ServiceFactoryContract();
