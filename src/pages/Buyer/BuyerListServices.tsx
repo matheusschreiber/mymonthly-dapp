@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Card,
+    CardContent,
     CardDescription,
     CardFooter,
     CardHeader,
@@ -57,11 +58,15 @@ export default function BuyerListServices() {
 
             <div className="flex flex-wrap gap-8 justify-center">
                 {services.map((service, index) => (
-                    <Card key={index} className={`w-[300px] duration-300 ${service.isActive ? 'hover:border-2 hover:border-[var(--primary)]' : ''}`}>
+                    <Card key={index} className={`w-[500px] duration-300 ${service.isActive ? 'hover:border-2 hover:border-[var(--primary)]' : ''}`}>
                         <CardHeader>
                             <CardTitle>{service['name']}</CardTitle>
                             <CardDescription>{service['description']}</CardDescription>
                         </CardHeader>
+
+                        <CardContent>
+                            <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
+                        </CardContent>
 
                         <CardFooter>
                             <div className="flex justify-between items-center w-full">

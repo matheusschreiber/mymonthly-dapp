@@ -14,5 +14,5 @@ DUVIDAS
 
 TASKS
 
-- [ ] Ver sobre o disparo periodico de eventos
+- [ ] Ver sobre uso de WEI
 - [ ] Ao pagar/comprar, o buyer recebe o NFT dele (campo de copia-e-cola que soma igual github ssh key)

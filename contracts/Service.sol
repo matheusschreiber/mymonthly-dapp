@@ -286,9 +286,27 @@ contract Service {
     // Function to check the subscriptions
     function checkSubscriptions() public {
         for (uint256 i = 0; i < subscriptionCounter; i++) {
-            if (block.timestamp * 1000 > subscriptions[i].endDate) {
+            if (block.timestamp * 1000 > subscriptions[i].endDate && subscriptions[i].status == Status.Ongoing) {
                 subscriptions[i].status = Status.Expired;
+                emit ServiceUpdated(address(this), name);
             }
         }
+    }
+
+    // Function to add an expired subscription for testing purposes
+    function addExpiredSubscription() public {
+        Subscription memory newSubscription = Subscription({
+            user: msg.sender,
+            tokenId: subscriptionCounter,
+            price: 100,
+            duration: 30,
+            startDate: (block.timestamp - (60 days)) * 1000, 
+            endDate: (block.timestamp - (30 days)) * 1000,
+            status: Status.Ongoing
+        });
+
+        subscriptions[subscriptionCounter] = newSubscription;
+        emit SubscriptionCreated(subscriptionCounter);
+        subscriptionCounter++;
     }
 }

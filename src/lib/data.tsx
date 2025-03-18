@@ -120,7 +120,23 @@ class ServiceFactoryContract {
 
     // ########################## CONTRACT RELATED FUNCTIONS ##########################
 
+    async _checkSubscriptionsExpiration(){
+        await this.contract.checkServices()
+    }
+
+    async _addExpiredSubscription(serviceAddress: string){
+        const serviceContract = new ethers.Contract(
+            serviceAddress,
+            ServiceArtifact.abi,
+            this.signer
+        );
+        
+        await serviceContract.addExpiredSubscription()
+    }
+
     async _getServices() {
+        // await this._checkSubscriptionsExpiration()
+
         let serviceContractsAddresses = await this.contract.getServicesAddresses()
 
         let services: ServiceType[] = [];
@@ -200,8 +216,6 @@ class ServiceFactoryContract {
             })
 
         }
-
-
 
         for (let i = 0; i < services.length; i++) {
             if (!services[i]['subscriptions'] || services[i]['subscriptions'].length == 0) continue

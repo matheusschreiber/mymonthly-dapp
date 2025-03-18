@@ -8,7 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { dAppContract } from "@/lib/data"
 import { ServiceType } from "@/types"
@@ -63,20 +63,30 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
                         will be able to use the service.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="price" className="text-right">
-                            Price (ETH)
-                        </Label>
-                        <Input id="price" placeholder="eg.: 0.1, 0.15, 0.3, etc" className="col-span-2" type="number" onChange={(e) => setPrice(parseFloat(e.target.value))} />
+
+                <RadioGroup defaultValue="option-one">
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="option-one" id="option-one" onClick={()=>{setPrice(0.25); setDuration(7);}}/>
+                        <Label htmlFor="option-one">Weekly plan (7 days, 0.25 ETH)</Label>
                     </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="duration" className="text-right">
-                            Duration (days)
-                        </Label>
-                        <Input id="duration" placeholder="eg.: 30, 90, 365, etc" className="col-span-2" type="number" onChange={(e) => setDuration(parseInt(e.target.value))} />
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="option-twp" id="option-twp" onClick={()=>{setPrice(0.5); setDuration(41);}}/>
+                        <Label htmlFor="option-twp">Bi-weekly plan (14 days, 0.5 ETH)</Label>
                     </div>
-                </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="option-three" id="option-three" onClick={()=>{setPrice(1); setDuration(30);}}/>
+                        <Label htmlFor="option-three">Monthly plan (30 days, 1 ETH)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="option-fourth" id="option-fourth" onClick={()=>{setPrice(6); setDuration(180);}}/>
+                        <Label htmlFor="option-fourth">Semester plan (180 days, 6 ETH)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="option-fifth" id="option-fifth" onClick={()=>{setPrice(12); setDuration(365);}}/>
+                        <Label htmlFor="option-fifth">Annual plan (365 days, 12 ETH)</Label>
+                    </div>
+                </RadioGroup>
+
                 <DialogFooter>
                     <Button type="button" onClick={(e: any) => confirmBuySubscription(e)} disabled={loading}>
                         {

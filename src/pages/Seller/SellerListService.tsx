@@ -51,13 +51,15 @@ export default function SellerListServices() {
 
             <div className="flex flex-wrap gap-8 justify-center">
                 {services.map((service, index) => (
-                    <Card key={index} className="w-[300px] hover:border-2 hover:border-[var(--primary)] duration-300">
+                    <Card key={index} className="w-[500px] hover:border-2 hover:border-[var(--primary)] duration-300">
                         <CardHeader>
                             <CardTitle>{service['name']}</CardTitle>
                             <CardDescription>{service['description']}</CardDescription>
                         </CardHeader>
 
                         <CardContent>
+                            <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
+
                             {service['metadata'] && service['metadata']['subscribers'] && (
                                 <>
                                     <p className="mb-3">Subscriptions</p>

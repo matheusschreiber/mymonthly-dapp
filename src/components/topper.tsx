@@ -42,7 +42,7 @@ export function Topper() {
         setLoading(true)
         try {
             const contractaddress = await dAppContract.getContractAddress()
-            if (!contractaddress){
+            if (!contractaddress) {
                 setContractConnected(false)
             } else {
                 setContractAddress(contractaddress)
@@ -54,6 +54,17 @@ export function Topper() {
         setLoading(false)
     }
 
+    async function _temporaryCheckExp() {
+        await dAppContract._checkSubscriptionsExpiration()
+        window.location.reload()
+    }
+
+    async function _temporaryAddExp() {
+        let _services = await dAppContract._getServices()
+        await dAppContract._addExpiredSubscription(_services[0].address)
+        window.location.reload()
+    }
+
     useEffect(() => {
         checkWalletConnected()
         connectContract()
@@ -61,7 +72,7 @@ export function Topper() {
 
     return (
         <header className="flex flex-col items-center justify-center mb-16">
-            
+
             <img src="/logo.png" alt="Logo" className="w-[400px]" />
 
             <div className="flex items-center gap-5 mt-16">
@@ -85,7 +96,7 @@ export function Topper() {
                             <AlertDescription>
                                 To use the dApp, connect to you Metamask wallet.
                                 <Button variant="secondary" onClick={() => connectWallet()} disabled={loading} className="mt-4 cursor-pointer">
-                                    {loading ? <><Loader2 className="animate-spin" />Connecting...</> : <><Plus/> Connect Wallet</>}
+                                    {loading ? <><Loader2 className="animate-spin" />Connecting...</> : <><Plus /> Connect Wallet</>}
                                 </Button>
                             </AlertDescription>
                         </Alert>
@@ -116,6 +127,19 @@ export function Topper() {
                         </Alert>
                     )
                 }
+
+                <Alert>
+                    <AlertTitle>
+                        Testing actions (temporary)
+                    </AlertTitle>
+                    <AlertDescription>
+                        These buttons are for testing purposes only.
+                        <div className="flex gap-2 mt-2">
+                            <Button variant="outline" onClick={() => _temporaryAddExp()}>Add expired service</Button>
+                            <Button variant="outline" onClick={() => _temporaryCheckExp()}>Update expirations</Button>
+                        </div>
+                    </AlertDescription>
+                </Alert>
             </div>
 
             {
