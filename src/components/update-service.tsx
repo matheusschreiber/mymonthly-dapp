@@ -15,12 +15,10 @@ import { dAppContract } from "@/lib/data"
 import { ServiceType } from "@/types"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
-import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
 export function UpdateService({ service }: { service: ServiceType }) {
 
-    const navigate = useNavigate()
     const [loading, setLoading] = useState<boolean>(false)
     const [name, setName] = useState<string>(service.name)
     const [description, setDescription] = useState<string>(service.description)
@@ -38,7 +36,6 @@ export function UpdateService({ service }: { service: ServiceType }) {
 
         try {
             await dAppContract._updateService(serviceFound.address, name, description)
-            navigate("/seller/service/details/?name=" + name)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

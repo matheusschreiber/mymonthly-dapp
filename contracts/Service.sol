@@ -2,9 +2,8 @@
 pragma solidity ^0.8.20;
 
 contract Service {
-    
     // ####################### VARIABLES #######################
-    
+
     address private immutable ownerDeploy;
     string public name;
     string public description;
@@ -23,7 +22,7 @@ contract Service {
     mapping(uint256 => Subscription) private subscriptions;
 
     // ###################### CONSTRUCTOR ######################
-    
+
     constructor(
         address _deployeraddress,
         string memory _name,
@@ -50,13 +49,19 @@ contract Service {
 
     // Modifier to check if the subscription exists
     modifier subscriptionExists(uint256 _tokenId) {
-        require(subscriptions[_tokenId].user != address(0), "Subscription does not exist");
+        require(
+            subscriptions[_tokenId].user != address(0),
+            "Subscription does not exist"
+        );
         _;
     }
 
     // Modifier to check if the subscription is active
     modifier onlyActiveSubscription(uint256 _tokenId) {
-        require(block.timestamp < subscriptions[_tokenId].endDate, "Subscription has expired");
+        require(
+            block.timestamp < subscriptions[_tokenId].endDate,
+            "Subscription has expired"
+        );
         _;
     }
 
@@ -68,14 +73,21 @@ contract Service {
 
     // Ensures that only the subscriber can call the function
     modifier onlySubscriberOrSeller(uint256 _tokenId) {
-        require(subscriptions[_tokenId].user == msg.sender || msg.sender == ownerDeploy, "Caller is not the subscriber");
+        require(
+            subscriptions[_tokenId].user == msg.sender ||
+                msg.sender == ownerDeploy,
+            "Caller is not the subscriber"
+        );
         _;
     }
 
     // Modifier to check if the subscriber already exists
     modifier subscriberNotSubscribed(address _user) {
         for (uint256 i = 0; i < subscriptionCounter; i++) {
-            if (subscriptions[i].user == _user && block.timestamp * 1000 < subscriptions[i].endDate) {
+            if (
+                subscriptions[i].user == _user &&
+                block.timestamp * 1000 < subscriptions[i].endDate
+            ) {
                 revert("Subscriber already has an active subscription");
             }
         }
@@ -83,20 +95,20 @@ contract Service {
     }
 
     // ######################## EVENTS ########################
-    
+
     event SubscriptionCreated(uint256 indexed tokenId);
     event SubscriptionPaid(uint256 indexed tokenId);
     event SubscriptionCancelled(uint256 indexed tokenId);
+    event ServiceDeactivated(address serviceAddress);
+    event ServiceUpdated(address serviceAddress, string name);
 
-    // ####################### GETTERS AND SETTERS #######################
-    
+    // ####################### GETTERS AND SETTERS ######################
+
     function getName() public view returns (string memory) {
         return name;
     }
 
-    function setName(string memory _name) public 
-        // onlyOwner 
-        isActiveService {
+    function setName(string memory _name) public onlyOwner isActiveService {
         name = _name;
     }
 
@@ -104,9 +116,9 @@ contract Service {
         return description;
     }
 
-    function setDescription(string memory _description) public 
-        // onlyOwner 
-        isActiveService {
+    function setDescription(
+        string memory _description
+    ) public onlyOwner isActiveService {
         description = _description;
     }
 
@@ -114,13 +126,11 @@ contract Service {
         return isActive;
     }
 
-    function setIsActive(bool _isActive) public 
-        // onlyOwner 
-        {
+    function setIsActive(bool _isActive) public onlyOwner {
         isActive = _isActive;
     }
 
-    function getSubscriptions() public view returns (address[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory) {
+    function getSubscriptions() public view returns (address[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory ) {
         address[] memory subscriptionUser = new address[](subscriptionCounter);
         uint256[] memory subscriptionTokenId = new uint256[](subscriptionCounter);
         uint256[] memory subscriptionPrice = new uint256[](subscriptionCounter);
@@ -136,7 +146,15 @@ contract Service {
             subscriptionStartDate[i] = subscriptions[i].startDate;
             subscriptionEndDate[i] = subscriptions[i].endDate;
         }
-        return (subscriptionUser, subscriptionTokenId, subscriptionPrice, subscriptionDuration, subscriptionStartDate, subscriptionEndDate);
+
+        return (
+            subscriptionUser,
+            subscriptionTokenId,
+            subscriptionPrice,
+            subscriptionDuration,
+            subscriptionStartDate,
+            subscriptionEndDate
+        );
     }
 
     function getOwner() public view returns (address) {
@@ -150,11 +168,12 @@ contract Service {
         address _user,
         uint256 _price,
         uint256 _duration
-    ) public
+    )
+        public
         subscriberNotSubscribed(_user)
         valueGreaterThanZero(_price)
-        isActiveService {
-
+        isActiveService
+    {
         Subscription memory newSubscription = Subscription({
             user: _user,
             tokenId: subscriptionCounter,
@@ -172,12 +191,13 @@ contract Service {
     // Allows a subscriber to pay for the subscription
     function paySubscription(
         uint256 _tokenId
-    ) public
+    )
+        public
+        payable
         subscriptionExists(_tokenId)
         onlySubscriberOrSeller(_tokenId)
         isActiveService
-        payable {
-
+    {
         uint256 _valuePaid = msg.value;
         uint256 _valueToPay = subscriptions[_tokenId].price;
         require(_valuePaid == _valueToPay, "Invalid amount");
@@ -193,12 +213,13 @@ contract Service {
         address _user,
         uint256 _price,
         uint256 _duration
-    ) public
+    )
+        public
+        payable
         subscriberNotSubscribed(_user)
         valueGreaterThanZero(_price)
         isActiveService
-        payable {
-
+    {
         Subscription memory newSubscription = Subscription({
             user: _user,
             tokenId: subscriptionCounter,
@@ -217,12 +238,27 @@ contract Service {
     // Subscriber can cancel its own subscription or Seller can cancel subscriber's subscription
     function cancelSubscription(
         uint256 _tokenId
-    ) public
+    )
+        public
         subscriptionExists(_tokenId)
         onlySubscriberOrSeller(_tokenId)
-        isActiveService {
-
+        isActiveService
+    {
         subscriptions[_tokenId].endDate = block.timestamp * 1000;
         emit SubscriptionCancelled(_tokenId);
+    }
+
+    function deactivateService() public onlyOwner isActiveService {
+        isActive = false;
+        emit ServiceDeactivated(address(this));
+    }
+
+    function updateService(
+        string memory _newname,
+        string memory _newdescription
+    ) public onlyOwner isActiveService {
+        name = _newname;
+        description = _newdescription;
+        emit ServiceUpdated(address(this), name);
     }
 }

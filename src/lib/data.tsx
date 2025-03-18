@@ -42,17 +42,9 @@ class ServiceFactoryContract {
             this.contract.on("ServiceCreated", (serviceAddress: string) => {
                 toast("Service created: " + serviceAddress)
             })
-
-
-            this.contract.removeAllListeners("ServiceDeactivated");
-            this.contract.on("ServiceDeactivated", (serviceAddress: string) => {
-                toast("Service deactivated: " + serviceAddress + ". Refreshing page...")
-                window.location.reload()
-            })
-        
-            this.contract.removeAllListeners("ServiceUpdated");
-            this.contract.on("ServiceUpdated", (serviceAddress: string) => {
-                toast("Service updated: " + serviceAddress + ". Refreshing page...")
+            this.contract.removeAllListeners("ServiceNotFound");
+            this.contract.on("ServiceNotFound", (serviceAddress: string) => {
+                toast("Service not found: " + serviceAddress)
             })
         });
 
@@ -69,7 +61,7 @@ class ServiceFactoryContract {
                 ServiceArtifact.abi,
                 this.signer
             );
-
+            
             services.push({
                 "address": serviceContractsAddresses[i],
                 "name": await serviceContract.getName(), 
@@ -105,6 +97,16 @@ class ServiceFactoryContract {
                     toast("Subscription cancelled. ID: " + tokenId + ". Refreshing page...")
                     setTimeout(()=>window.location.reload(), 500)
                 })
+                serviceContract.removeAllListeners("ServiceDeactivated");
+                serviceContract.on("ServiceDeactivated", (serviceAddress: string) => {
+                    toast("Service deactivated: " + serviceAddress + ". Refreshing page...")
+                    window.location.reload()
+                })
+                serviceContract.removeAllListeners("ServiceUpdated");
+                serviceContract.on("ServiceUpdated", (serviceAddress: string, serviceName:string) => {
+                    toast("Service updated: " + serviceAddress + ". Refreshing page...")
+                    window.location.href = window.location.origin + "/seller/service/details/?name=" + serviceName
+                })
             })
 
         }
@@ -136,11 +138,23 @@ class ServiceFactoryContract {
     }
 
     async _updateService(serviceAddress: string, name: string, description: string) {
-        return await this.contract.updateService(serviceAddress, name, description)
+        const serviceContract = new ethers.Contract(
+            serviceAddress,
+            ServiceArtifact.abi,
+            this.signer
+        );
+
+        return await serviceContract.updateService(name, description)
     }
 
     async _deactivateService(serviceAddress: string) {
-        return await this.contract.deactivateService(serviceAddress)
+        const serviceContract = new ethers.Contract(
+            serviceAddress,
+            ServiceArtifact.abi,
+            this.signer
+        );
+
+        return await serviceContract.deactivateService()
     }
 
     async _addSubscription(serviceAddress: string, user: string, price: number, duration: number) {
