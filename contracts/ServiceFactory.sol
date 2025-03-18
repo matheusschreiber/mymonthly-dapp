@@ -6,8 +6,6 @@ import "./Service.sol";
 contract ServiceFactory {
     Service[] public services;
 
-    address private immutable ownerDeploy;
-
     // ####################### CONSTRUCTOR #########################
 
     event ServiceCreated(address serviceAddress);
@@ -16,9 +14,7 @@ contract ServiceFactory {
 
     // ####################### CONSTRUCTOR #########################
     
-    constructor() {
-        ownerDeploy = msg.sender;
-    }
+    constructor() {}
 
     // ####################### MODIFIERS ###########################
 

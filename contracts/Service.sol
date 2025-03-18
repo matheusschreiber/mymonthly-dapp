@@ -15,8 +15,8 @@ contract Service {
         uint256 tokenId;
         uint256 price;
         uint256 duration; // duration in days
-        uint256 startDate; // timestamp in milliseconds (from January 1, 1970)
-        uint256 endDate; // timestamp in milliseconds (from January 1, 1970)
+        uint256 startDate; // timestamp in milliseconds (from January 1st, 1970)
+        uint256 endDate; // timestamp in milliseconds (from January 1st, 1970)
     }
 
     uint256 private subscriptionCounter = 0;
@@ -25,11 +25,11 @@ contract Service {
     // ###################### CONSTRUCTOR ######################
     
     constructor(
-        address _authorizedaddress,
+        address _deployeraddress,
         string memory _name,
         string memory _description
     ) {
-        ownerDeploy = _authorizedaddress;
+        ownerDeploy = _deployeraddress;
         name = _name;
         description = _description;
     }

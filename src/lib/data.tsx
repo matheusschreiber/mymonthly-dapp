@@ -16,7 +16,9 @@ class ServiceFactoryContract {
     signer: ethers.Signer;
 
     constructor() {
-        this.provider = {} as JsonRpcProvider
+        this.provider = new JsonRpcProvider('http://localhost:8545') // hardhat local address
+        // this.provider = new ethers.providers.Web3Provider(window.ethereum);
+
         this.contract = {} as ethers.Contract
         this.signer = {} as ethers.Signer
 
@@ -28,9 +30,6 @@ class ServiceFactoryContract {
     }
     
     async initializeContract() {
-        this.provider = new JsonRpcProvider('http://localhost:8545') // hardhat local address
-        // const provider = new ethers.providers.Web3Provider(window.ethereum);
-
         this.signer = await this.provider.getSigner();
         this.contract = new ethers.Contract(
             this.contractAddressFactory,
