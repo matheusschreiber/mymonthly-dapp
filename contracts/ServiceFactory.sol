@@ -62,6 +62,7 @@ contract ServiceFactory {
 
     // ####################### FUNCTIONS ###########################
 
+    // Function to deploy child contract
     function createService(
         string memory _servicename,
         string memory _servicedescription
@@ -76,12 +77,14 @@ contract ServiceFactory {
         emit ServiceCreated(address(service));
     }
 
+    // Function to check if the service name is available
     function checkNameAvailability(
         string memory _servicename
     ) public view nameAvailable(_servicename) returns (bool) {
         return true;
     }
 
+    // Function to get the addresses of all deployed contracts
     function getServicesAddresses() public view returns (address[] memory) {
         address[] memory deployedServices = new address[](services.length);
 
@@ -90,5 +93,12 @@ contract ServiceFactory {
         }
 
         return deployedServices;
+    }
+
+    // Function to check for expired subscriptions on each service
+    function checkServices() public {
+        for (uint i = 0; i < services.length; i++) {
+            services[i].checkSubscriptions();
+        }
     }
 }

@@ -13,10 +13,11 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import Navbar from "@/components/navbar"
 import { dAppContract } from "@/lib/data"
-import { useNavigate } from "react-router"
 import { Toaster } from "@/components/ui/sonner"
 import { Topper } from "@/components/topper"
 import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
+import { useState } from "react"
 
 const formSchema = z.object({
     name: z.string().min(5, {
@@ -29,7 +30,7 @@ const formSchema = z.object({
 
 export default function SellerNewService() {
 
-    const navigate = useNavigate()
+    const [loading, setLoading] = useState<boolean>(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -40,11 +41,12 @@ export default function SellerNewService() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setLoading(true)
         try {
             await dAppContract._addService(values.name, values.description)
-            navigate("/seller/services/list/")
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
@@ -92,7 +94,18 @@ export default function SellerNewService() {
                         )}
                     />
 
-                    <Button type="submit" variant="secondary">Submit</Button>
+                    <Button type="submit" variant="secondary" disabled={loading}>
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    <p>Loading</p>
+                                </>
+                            ) : (
+                                <p>Submit</p>
+                            )
+                        }
+                    </Button>
                 </form>
             </Form>
             <Toaster />

@@ -5,6 +5,7 @@ export type SubscriptionType = {
     duration: number;
     startDate: bigint;
     endDate: bigint;
+    status: string;
     serviceAddress?: string;
     serviceName?: string;
 }

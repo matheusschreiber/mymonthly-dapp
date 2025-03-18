@@ -1,6 +1,6 @@
 import { ethers, JsonRpcProvider } from 'ethers'
 
-import { ServiceType, SubscriptionType } from "@/types"
+import { ServiceType } from "@/types"
 
 import ServiceFactoryArtifact from "@/artifacts/contracts/ServiceFactory.sol/ServiceFactory.json"
 import ServiceArtifact from "@/artifacts/contracts/Service.sol/Service.json"
@@ -41,6 +41,7 @@ class ServiceFactoryContract {
             this.contract.removeAllListeners("ServiceCreated");
             this.contract.on("ServiceCreated", (serviceAddress: string) => {
                 toast("Service created: " + serviceAddress)
+                window.location.href = window.location.origin + "/seller/services/list/"
             })
             this.contract.removeAllListeners("ServiceNotFound");
             this.contract.on("ServiceNotFound", (serviceAddress: string) => {
@@ -78,34 +79,54 @@ class ServiceFactoryContract {
                     "price": subscriptions[2][j],
                     "duration": subscriptions[3][j],
                     "startDate": BigInt(subscriptions[4][j]),
-                    "endDate": BigInt(subscriptions[5][j])
+                    "endDate": BigInt(subscriptions[5][j]),
+                    "status": subscriptions[6][j]
                 })
             }
 
             this.provider.once("block", () => {
                 serviceContract.removeAllListeners("SubscriptionCreated");
-                serviceContract.on("SubscriptionCreated", (tokenId:string) => {
-                    toast("Subscription created. ID: " + tokenId)
+                serviceContract.on("SubscriptionCreated", (_:string) => {
+                    toast("Subscription created. Redirecting...")
+                    const params = new URLSearchParams(window.location.search)
+                    setTimeout(()=>{
+                        window.location.href = window.location.origin + "/seller/service/details/?name=" + params.get('name')
+                    }, 500)
                 })
                 serviceContract.removeAllListeners("SubscriptionPaid");
-                serviceContract.on("SubscriptionPaid", (tokenId:string) => {
-                    toast("Subscription paid. ID: " + tokenId + ". Refreshing page...")
-                    setTimeout(()=>window.location.reload(), 500)
+                serviceContract.on("SubscriptionPaid", (_:string) => {
+                    toast("Subscription paid. Refreshing page...")
+                    setTimeout(()=>{
+                        window.location.reload()
+                    }, 500)
+                })
+                serviceContract.removeAllListeners("SubscriptionBought");
+                serviceContract.on("SubscriptionBought", (_:string) => {
+                    toast("Subscription bought. Refreshing page...")
+                    setTimeout(()=>{
+                        window.location.reload()
+                    }, 500)
                 })
                 serviceContract.removeAllListeners("SubscriptionCancelled");
-                serviceContract.on("SubscriptionCancelled", (tokenId:string) => {
-                    toast("Subscription cancelled. ID: " + tokenId + ". Refreshing page...")
-                    setTimeout(()=>window.location.reload(), 500)
+                serviceContract.on("SubscriptionCancelled", (_:string) => {
+                    toast("Subscription cancelled. Refreshing page...")
+                    setTimeout(()=>{
+                        window.location.reload()
+                    }, 500)
                 })
                 serviceContract.removeAllListeners("ServiceDeactivated");
                 serviceContract.on("ServiceDeactivated", (serviceAddress: string) => {
                     toast("Service deactivated: " + serviceAddress + ". Refreshing page...")
-                    window.location.reload()
+                    setTimeout(()=>{
+                        window.location.reload()
+                    }, 500)
                 })
                 serviceContract.removeAllListeners("ServiceUpdated");
                 serviceContract.on("ServiceUpdated", (serviceAddress: string, serviceName:string) => {
-                    toast("Service updated: " + serviceAddress + ". Refreshing page...")
-                    window.location.href = window.location.origin + "/seller/service/details/?name=" + serviceName
+                    toast("Service updated: " + serviceAddress + ". Redirecting...")
+                    setTimeout(()=>{
+                        window.location.href = window.location.origin + "/seller/service/details/?name=" + serviceName
+                    }, 500)
                 })
             })
 
@@ -118,9 +139,9 @@ class ServiceFactoryContract {
 
             services[i]['metadata'] = {
                 "subscribers": {
-                    "ongoing": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Ongoing').length,
-                    "expired": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Expired' || getStatus(sub) == 'New').length,
-                    "cancelled": services[i]['subscriptions'].filter((sub: any) => getStatus(sub) == 'Cancelled').length,
+                    "ongoing": services[i]['subscriptions'].filter((sub: any) => sub.status == 'Ongoing').length,
+                    "expired": services[i]['subscriptions'].filter((sub: any) => sub.status == 'Expired' || sub.status == 'New').length,
+                    "cancelled": services[i]['subscriptions'].filter((sub: any) => sub.status == 'Cancelled').length,
                 }
             }
             services[i]['subscriptions'] = services[i]['subscriptions'].map((sub: any) => {
@@ -205,17 +226,6 @@ class ServiceFactoryContract {
 
         return await serviceContract.cancelSubscription(tokenId)
     }
-}
-
-export function getStatus(subscription: SubscriptionType) {
-    const MILISECONDS_IN_DAY = 60 * 60 * 24 * 1000;
-
-    if (Number(subscription['endDate']) == 0) return "New"
-    else if (new Date(Number(subscription['endDate'])) < new Date()) return "Cancelled"
-    else if (new Date(Number(subscription['endDate'])) > new Date()) return "Ongoing"
-    else if ((Number(subscription['startDate']) + Number(subscription['duration']) * MILISECONDS_IN_DAY) <= subscription['endDate']) return "Expired"
-    else return "Error"
-
 }
 
 export async function getUserAddress() {

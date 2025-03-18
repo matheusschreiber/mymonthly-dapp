@@ -9,6 +9,13 @@ contract Service {
     string public description;
     bool public isActive = true;
 
+    enum Status {
+        New,
+        Ongoing,
+        Expired,
+        Cancelled
+    }
+
     struct Subscription {
         address user;
         uint256 tokenId;
@@ -16,6 +23,7 @@ contract Service {
         uint256 duration; // duration in days
         uint256 startDate; // timestamp in milliseconds (from January 1st, 1970)
         uint256 endDate; // timestamp in milliseconds (from January 1st, 1970)
+        Status status;
     }
 
     uint256 private subscriptionCounter = 0;
@@ -56,15 +64,6 @@ contract Service {
         _;
     }
 
-    // Modifier to check if the subscription is active
-    modifier onlyActiveSubscription(uint256 _tokenId) {
-        require(
-            block.timestamp < subscriptions[_tokenId].endDate,
-            "Subscription has expired"
-        );
-        _;
-    }
-
     // Modifier to check if the sent value is greater than zero
     modifier valueGreaterThanZero(uint256 _value) {
         require(_value > 0, "Value must be greater than zero");
@@ -98,6 +97,7 @@ contract Service {
 
     event SubscriptionCreated(uint256 indexed tokenId);
     event SubscriptionPaid(uint256 indexed tokenId);
+    event SubscriptionBought(uint256 indexed tokenId);
     event SubscriptionCancelled(uint256 indexed tokenId);
     event ServiceDeactivated(address serviceAddress);
     event ServiceUpdated(address serviceAddress, string name);
@@ -130,31 +130,45 @@ contract Service {
         isActive = _isActive;
     }
 
-    function getSubscriptions() public view returns (address[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory ) {
-        address[] memory subscriptionUser = new address[](subscriptionCounter);
-        uint256[] memory subscriptionTokenId = new uint256[](subscriptionCounter);
-        uint256[] memory subscriptionPrice = new uint256[](subscriptionCounter);
-        uint256[] memory subscriptionDuration = new uint256[](subscriptionCounter);
-        uint256[] memory subscriptionStartDate = new uint256[](subscriptionCounter);
-        uint256[] memory subscriptionEndDate = new uint256[](subscriptionCounter);
+    function getSubscriptions()
+        public
+        view
+        returns (
+            address[] memory,
+            uint256[] memory,
+            uint256[] memory,
+            uint256[] memory,
+            uint256[] memory,
+            uint256[] memory,
+            string[] memory
+        )
+    {
+        address[] memory users = new address[](subscriptionCounter);
+        uint256[] memory tokensids = new uint256[](subscriptionCounter);
+        uint256[] memory prices = new uint256[](subscriptionCounter);
+        uint256[] memory durations = new uint256[](subscriptionCounter);
+        uint256[] memory startdates = new uint256[](subscriptionCounter);
+        uint256[] memory enddates = new uint256[](subscriptionCounter);
+        string[] memory statuses = new string[](subscriptionCounter);
 
         for (uint i = 0; i < subscriptionCounter; i++) {
-            subscriptionUser[i] = subscriptions[i].user;
-            subscriptionTokenId[i] = subscriptions[i].tokenId;
-            subscriptionPrice[i] = subscriptions[i].price;
-            subscriptionDuration[i] = subscriptions[i].duration;
-            subscriptionStartDate[i] = subscriptions[i].startDate;
-            subscriptionEndDate[i] = subscriptions[i].endDate;
+            users[i] = subscriptions[i].user;
+            tokensids[i] = subscriptions[i].tokenId;
+            prices[i] = subscriptions[i].price;
+            durations[i] = subscriptions[i].duration;
+            startdates[i] = subscriptions[i].startDate;
+            enddates[i] = subscriptions[i].endDate;
+            
+            statuses[i] = subscriptions[i].status == Status.New
+                ? "New"
+                : subscriptions[i].status == Status.Ongoing
+                ? "Ongoing"
+                : subscriptions[i].status == Status.Expired
+                ? "Expired"
+                : "Cancelled";
         }
 
-        return (
-            subscriptionUser,
-            subscriptionTokenId,
-            subscriptionPrice,
-            subscriptionDuration,
-            subscriptionStartDate,
-            subscriptionEndDate
-        );
+        return (users, tokensids, prices, durations, startdates, enddates, statuses);
     }
 
     function getOwner() public view returns (address) {
@@ -180,7 +194,8 @@ contract Service {
             price: _price,
             duration: _duration,
             startDate: 0,
-            endDate: 0
+            endDate: 0,
+            status: Status.New
         });
 
         subscriptions[subscriptionCounter] = newSubscription;
@@ -203,7 +218,10 @@ contract Service {
         require(_valuePaid == _valueToPay, "Invalid amount");
 
         subscriptions[_tokenId].startDate = block.timestamp * 1000;
-        subscriptions[_tokenId].endDate = (block.timestamp + (subscriptions[_tokenId].duration * 1 days)) * 1000;
+        subscriptions[_tokenId].endDate =
+            (block.timestamp + (subscriptions[_tokenId].duration * 1 days)) *
+            1000;
+        subscriptions[_tokenId].status = Status.Ongoing;
 
         emit SubscriptionPaid(_tokenId);
     }
@@ -226,12 +244,12 @@ contract Service {
             price: _price,
             duration: _duration,
             startDate: block.timestamp * 1000,
-            endDate: (block.timestamp + (_duration * 1 days)) * 1000
+            endDate: (block.timestamp + (_duration * 1 days)) * 1000,
+            status: Status.Ongoing
         });
 
         subscriptions[subscriptionCounter] = newSubscription;
-        emit SubscriptionCreated(subscriptionCounter);
-        emit SubscriptionPaid(subscriptionCounter);
+        emit SubscriptionBought(subscriptionCounter);
         subscriptionCounter++;
     }
 
@@ -245,14 +263,17 @@ contract Service {
         isActiveService
     {
         subscriptions[_tokenId].endDate = block.timestamp * 1000;
+        subscriptions[_tokenId].status = Status.Cancelled;
         emit SubscriptionCancelled(_tokenId);
     }
 
+    // Allows the owner to deactivate the service
     function deactivateService() public onlyOwner isActiveService {
         isActive = false;
         emit ServiceDeactivated(address(this));
     }
 
+    // Allows the owner to update the service
     function updateService(
         string memory _newname,
         string memory _newdescription
@@ -260,5 +281,14 @@ contract Service {
         name = _newname;
         description = _newdescription;
         emit ServiceUpdated(address(this), name);
+    }
+
+    // Function to check the subscriptions
+    function checkSubscriptions() public {
+        for (uint256 i = 0; i < subscriptionCounter; i++) {
+            if (block.timestamp * 1000 > subscriptions[i].endDate) {
+                subscriptions[i].status = Status.Expired;
+            }
+        }
     }
 }

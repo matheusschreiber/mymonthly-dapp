@@ -12,9 +12,9 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Toaster } from "@/components/ui/sonner";
-import { dAppContract, getStatus, getUserAddress } from "@/lib/data";
+import { dAppContract, getUserAddress } from "@/lib/data";
 import { ServiceType } from "@/types";
-import { Check, Hourglass } from "lucide-react";
+import { Check, Hourglass, Sparkle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export default function BuyerListServices() {
     const navigate = useNavigate()
     const [services, setServices] = useState<ServiceType[]>([])
     const [buyerAddress, setBuyerAddress] = useState<string>('')
-    
+
     async function fetchData() {
         try {
             const _services = await dAppContract._getServices()
@@ -32,7 +32,7 @@ export default function BuyerListServices() {
 
             const _buyerAddress = await getUserAddress()
             setBuyerAddress(_buyerAddress)
-        } catch(error:any) {
+        } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
         }
     }
@@ -49,7 +49,7 @@ export default function BuyerListServices() {
 
             <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-4">
                 <p className="text-6xl font-semibold">Services</p>
-                <Button variant="outline" onClick={()=>navigate(`/buyer/subscriptions/list/`)}>My subscriptions</Button>
+                <Button variant="outline" onClick={() => navigate(`/buyer/subscriptions/list/`)}>My subscriptions</Button>
             </div>
             <p className="mt-3 text-md text-zinc-400 mb-16">
                 Complete list of services currently registered on the blockchain. <br />You can interact with each service individually.
@@ -68,24 +68,25 @@ export default function BuyerListServices() {
                                 <p>Active? {service['isActive'] ? <span className="text-green-400 font-bold">YES</span> : <span className="text-[var(--destructive)] font-bold">NO</span>}</p>
                             </div>
                             {service['isActive'] && (
+
                                 service['subscriptions'].some(subscription =>
-                                    subscription.user == buyerAddress && getStatus(subscription) == 'Ongoing'
+                                    subscription.user == buyerAddress && subscription.status == 'Ongoing'
                                 ) ? (
                                     <Badge>
                                         <Check />
                                         Subscribed
                                     </Badge>
                                 ) : (
+
                                     service['subscriptions'].some(subscription =>
-                                        subscription.user == buyerAddress && getStatus(subscription) == 'Expired'
+                                        subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New')
                                     ) ? (
                                         <>
                                             <Badge className="mr-4">
-                                                <Hourglass />
-                                                Expired
+                                                {service['subscriptions'].find(subscription => subscription.user == buyerAddress && subscription.status == 'Expired') ? <><Hourglass />Expired</> : <><Sparkle />New</>}
                                             </Badge>
-                                            <PaySubscriptionModal 
-                                                subscription={service['subscriptions'].find(subscription => subscription.user == buyerAddress && getStatus(subscription) == 'Expired')} />
+                                            <PaySubscriptionModal
+                                                subscription={service['subscriptions'].find(subscription => subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New'))} />
                                         </>
                                     )
                                         : (

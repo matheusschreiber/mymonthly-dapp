@@ -62,6 +62,7 @@ export default function SellerNewSubscription() {
 
     const [service, setService] = useState<ServiceType>()
     const [error, setError] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const navigate = useNavigate();
 
@@ -71,7 +72,7 @@ export default function SellerNewSubscription() {
         const params = new URLSearchParams(window.location.search)
         let serviceName = params.get('name')
         let serviceFound = _services.filter(service => service['name'] === serviceName)[0]
-        if (!serviceName) {
+        if (!serviceFound) {
             setError(true)
             return
         }
@@ -92,20 +93,21 @@ export default function SellerNewSubscription() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setLoading(true)
         try {
             if (!service) throw new Error("Service not found.")
 
             await dAppContract._addSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
-            navigate("/seller/service/details/?name=" + service.name)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
     return (
         <main className="lg:min-w-[50%] p-16">
             <Topper />
-            
+
             {service && (
                 <>
                     <Navbar />
@@ -163,7 +165,18 @@ export default function SellerNewSubscription() {
                                 )}
                             />
 
-                            <Button type="submit" variant="secondary">Submit</Button>
+                            <Button type="submit" variant="secondary" disabled={loading}>
+                                {
+                                    loading ? (
+                                        <>
+                                            <Loader2 className="animate-spin" />
+                                            <p>Loading</p>
+                                        </>
+                                    ) : (
+                                        <p>Submit</p>
+                                    )
+                                }
+                            </Button>
                         </form>
                     </Form>
                 </>
@@ -183,7 +196,9 @@ export default function SellerNewSubscription() {
                         <p>Error in service's data fetching.</p>
                     </div>
 
-                    <Button onClick={() => navigate('/')} variant="secondary" className="cursor-pointer">Go Home</Button>
+                    <Button onClick={() => navigate('/')} variant="secondary" className="cursor-pointer">
+                        Go Home
+                    </Button>
                 </div>
             )}
             <Toaster />

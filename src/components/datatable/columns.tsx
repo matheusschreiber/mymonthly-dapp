@@ -4,7 +4,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowUpDown } from "lucide-react"
 import { CancelSubscriptionModal } from "../cancel-subscription"
 import { SubscriptionType } from "@/types"
-import { getStatus } from "@/lib/data"
 import { Badge } from "../ui/badge"
 import PaySubscriptionModal from "../pay-subscription"
 
@@ -155,7 +154,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
             )
         },
         cell: ({ row }) => {
-            return <Badge>{getStatus(row.original)}</Badge>
+            return <Badge>{row.original.status}</Badge>
         },
     },
     {
@@ -164,8 +163,8 @@ export const columns: ColumnDef<SubscriptionType>[] = [
         cell: ({ row }) => {
             const subscription = row.original
             const isBuyerRoute = window.location.href.includes("buyer")
-            const isValidSubscription = getStatus(subscription) == "Expired" || getStatus(subscription) == "New"
-            const isCancelled = getStatus(subscription) == "Cancelled"
+            const isValidSubscription = subscription.status == "Expired" || subscription.status == "New"
+            const isCancelled = subscription.status == "Cancelled"
 
             return (
                 <div className="flex items-center gap-2">

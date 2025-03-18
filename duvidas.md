@@ -13,7 +13,6 @@
 
 TASKS
 
-- [ ] Nome deve ser unico
 - [ ] Ver sobre controle de "login"
 - [ ] Adicionar flag de "paid" na subscription
 - [ ] Adicionar função de update das subscriptions (periodica) que checa o status e atualiza os dados (enddate e startdate)
