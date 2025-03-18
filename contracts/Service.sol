@@ -84,7 +84,6 @@ contract Service {
 
     // ######################## EVENTS ########################
     
-    event DataUpdated();
     event SubscriptionCreated(uint256 indexed tokenId);
     event SubscriptionPaid(uint256 indexed tokenId);
     event SubscriptionCancelled(uint256 indexed tokenId);
@@ -97,7 +96,6 @@ contract Service {
 
     function setName(string memory _name) public onlyOwner isActiveService {
         name = _name;
-        emit DataUpdated();
     }
 
     function getDescription() public view returns (string memory) {
@@ -106,7 +104,6 @@ contract Service {
 
     function setDescription(string memory _description) public onlyOwner isActiveService {
         description = _description;
-        emit DataUpdated();
     }
 
     function getIsActive() public view returns (bool) {
@@ -115,7 +112,6 @@ contract Service {
 
     function setIsActive(bool _isActive) public onlyOwner {
         isActive = _isActive;
-        emit DataUpdated();
     }
 
     function getSubscriptions() public view returns (address[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory) {

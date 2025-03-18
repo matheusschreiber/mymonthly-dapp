@@ -10,11 +10,13 @@ class ServiceFactoryContract {
 
     // address of deployed contract on hardhat
     contractAddressFactory: string = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    provider: JsonRpcProvider;
     loaded: Promise<boolean>;
     contract: ethers.Contract;
     signer: ethers.Signer;
 
     constructor() {
+        this.provider = {} as JsonRpcProvider
         this.contract = {} as ethers.Contract
         this.signer = {} as ethers.Signer
 
@@ -26,30 +28,33 @@ class ServiceFactoryContract {
     }
     
     async initializeContract() {
-        const provider = new JsonRpcProvider('http://localhost:8545') // hardhat local address
+        this.provider = new JsonRpcProvider('http://localhost:8545') // hardhat local address
         // const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-        this.signer = await provider.getSigner();
+        this.signer = await this.provider.getSigner();
         this.contract = new ethers.Contract(
             this.contractAddressFactory,
             ServiceFactoryArtifact.abi,
             this.signer
         );
 
-        this.contract.on("ServiceCreated", (serviceAddress: string) => {
-            // window.location.reload() //TODO: improve this, maybe just update the data beeing re-rendered
-            toast("Service created: " + serviceAddress)
-        })
+        this.provider.once("block", () => {
+            this.contract.removeAllListeners("ServiceCreated");
+            this.contract.on("ServiceCreated", (serviceAddress: string) => {
+                toast("Service created: " + serviceAddress)
+            })
 
-        this.contract.on("ServiceDeactivated", (serviceAddress: string) => {
-            // window.location.reload() //TODO: improve this, maybe just update the data beeing re-rendered
-            toast("Service deactivated: " + serviceAddress)
-        })
+
+            this.contract.removeAllListeners("ServiceDeactivated");
+            this.contract.on("ServiceDeactivated", (serviceAddress: string) => {
+                toast("Service deactivated: " + serviceAddress)
+            })
         
-        this.contract.on("ServiceUpdated", (serviceAddress: string) => {
-            // window.location.reload() //TODO: improve this, maybe just update the data beeing re-rendered
-            toast("Service updated: " + serviceAddress)
-        })
+            this.contract.removeAllListeners("ServiceUpdated");
+            this.contract.on("ServiceUpdated", (serviceAddress: string) => {
+                toast("Service updated: " + serviceAddress)
+            })
+        });
 
     }
 
@@ -84,6 +89,24 @@ class ServiceFactoryContract {
                     "endDate": BigInt(subscriptions[5][j])
                 })
             }
+
+            this.provider.once("block", () => {
+                serviceContract.removeAllListeners("SubscriptionCreated");
+                serviceContract.on("SubscriptionCreated", (tokenId:string) => {
+                    toast("Subscription created. ID: " + tokenId)
+                })
+                serviceContract.removeAllListeners("SubscriptionPaid");
+                serviceContract.on("SubscriptionPaid", (tokenId:string) => {
+                    toast("Subscription paid. ID: " + tokenId + ". Refreshing page...")
+                    setTimeout(()=>window.location.reload(), 500)
+                })
+                serviceContract.removeAllListeners("SubscriptionCancelled");
+                serviceContract.on("SubscriptionCancelled", (tokenId:string) => {
+                    toast("Subscription cancelled. ID: " + tokenId + ". Refreshing page...")
+                    setTimeout(()=>window.location.reload(), 500)
+                })
+            })
+
         }
         
 

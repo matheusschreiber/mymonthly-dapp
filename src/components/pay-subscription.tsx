@@ -9,22 +9,28 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog"
 import { SubscriptionType } from "@/types";
 import { Button } from "./ui/button";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Loader2 } from "lucide-react";
 import { dAppContract } from "@/lib/data";
+import { useState } from "react";
 
-  
-export default function PaySubscriptionModal({subscription}:{subscription?:SubscriptionType}) {
 
-    async function confirmPayment(){
+export default function PaySubscriptionModal({ subscription }: { subscription?: SubscriptionType }) {
+
+    const [loading, setLoading] = useState<boolean>(false)
+
+    async function confirmPayment(e: Event) {
+        e.preventDefault()
         if (!subscription || !subscription.serviceAddress) return null
 
+        setLoading(true)
         try {
             await dAppContract._paySubscription(subscription.serviceAddress, subscription.tokenId, subscription.price)
-        } catch(error:any){
+        } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
@@ -45,7 +51,18 @@ export default function PaySubscriptionModal({subscription}:{subscription?:Subsc
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction onClick={()=>confirmPayment()}>Confirm payment</AlertDialogAction>
+                    <AlertDialogAction onClick={(e: any) => confirmPayment(e)} disabled={loading}>
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    <p>Loading</p>
+                                </>
+                            ) : (
+                                <p>Confirm payment</p>
+                            )
+                        }
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

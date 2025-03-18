@@ -11,19 +11,25 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { SubscriptionType } from "@/types";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { dAppContract } from "@/lib/data";
+import { useState } from "react";
 
 export function CancelSubscriptionModal({ subscription }: { subscription: SubscriptionType }) {
 
-    async function confirmCancel() {
+    const [loading, setLoading] = useState<boolean>(false)
+
+    async function confirmCancel(e: Event) {
+        e.preventDefault();
         if (!subscription || !subscription.serviceAddress) return null
 
+        setLoading(true)
         try {
             await dAppContract._cancelSubscription(subscription.serviceAddress, subscription.tokenId)
         } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
@@ -44,8 +50,18 @@ export function CancelSubscriptionModal({ subscription }: { subscription: Subscr
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600" onClick={() => confirmCancel()}>
-                        Cancel subscription
+                    <AlertDialogAction className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600"
+                        onClick={(e: any) => confirmCancel(e)} disabled={loading}>
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    <p>Loading</p>
+                                </>
+                            ) : (
+                                <p>Cancel subscription</p>
+                            )
+                        }
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -12,21 +12,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { dAppContract, getUserAddress } from "@/lib/data"
 import { ServiceType } from "@/types"
-import { Plus } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 import { useState } from "react"
 
 export default function BuySubscriptionModal({ service }: { service: ServiceType }) {
 
     const [price, setPrice] = useState<number>(0)
     const [duration, setDuration] = useState<number>(0)
+    const [loading, setLoading] = useState<boolean>(false)
 
-    async function confirmBuySubscription() {
+    async function confirmBuySubscription(e: Event) {
+        e.preventDefault();
+        if (!service) return null
+
+        setLoading(true)
         try {
             if (!service) throw new Error("Service not found.")
             const user = await getUserAddress()
             await dAppContract._buySubscription(service.address, user, price, duration)
         } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
@@ -42,8 +48,8 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
                 <DialogHeader>
                     <DialogTitle>Buy subscription</DialogTitle>
                     <DialogDescription>
-                    This will add a payment to the subscription and the user
-                    will be able to use the service.
+                        This will add a payment to the subscription and the user
+                        will be able to use the service.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -51,17 +57,28 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
                         <Label htmlFor="price" className="text-right">
                             Price (ETH)
                         </Label>
-                        <Input id="price" placeholder="eg.: 0.1, 0.15, 0.3, etc" className="col-span-2" type="number" onChange={(e)=> setPrice(parseFloat(e.target.value))}/>
+                        <Input id="price" placeholder="eg.: 0.1, 0.15, 0.3, etc" className="col-span-2" type="number" onChange={(e) => setPrice(parseFloat(e.target.value))} />
                     </div>
                     <div className="grid grid-cols-3 items-center gap-4">
                         <Label htmlFor="duration" className="text-right">
                             Duration (days)
                         </Label>
-                        <Input id="duration" placeholder="eg.: 30, 90, 365, etc" className="col-span-2" type="number" onChange={(e)=> setDuration(parseInt(e.target.value))}/>
+                        <Input id="duration" placeholder="eg.: 30, 90, 365, etc" className="col-span-2" type="number" onChange={(e) => setDuration(parseInt(e.target.value))} />
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="button" onClick={()=>confirmBuySubscription()}>Confirm payment</Button>
+                    <Button type="button" onClick={(e: any) => confirmBuySubscription(e)} disabled={loading}>
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    <p>Loading</p>
+                                </>
+                            ) : (
+                                <p>Confirm payment</p>
+                            )
+                        }
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

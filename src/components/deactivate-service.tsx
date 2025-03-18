@@ -12,10 +12,15 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "./ui/button";
 import { dAppContract } from "@/lib/data";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function DeactivateService() {
 
-    async function confirmDeactivation() {
+    const [loading, setLoading] = useState<boolean>(false)
+
+    async function confirmDeactivation(e:Event) {
+        e.preventDefault();
         const _services = await dAppContract._getServices()
 
         const params = new URLSearchParams(window.location.search)
@@ -25,10 +30,12 @@ export default function DeactivateService() {
             return
         }
 
+        setLoading(true)
         try {
             await dAppContract._deactivateService(serviceFound.address)
         } catch (error: any) {
             alert("Problem on blockchain: " + error.message)
+            setLoading(false)
         }
     }
 
@@ -49,8 +56,18 @@ export default function DeactivateService() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600" onClick={() => confirmDeactivation()}>
-                        Deactivate service
+                    <AlertDialogAction className="bg-[var(--destructive)] text-white hover:text-white hover:bg-red-600"
+                        onClick={(e:any) => confirmDeactivation(e)} disabled={loading}>
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" />
+                                    <p>Loading</p>
+                                </>
+                            ) : (
+                                <p>Deactivate service</p>
+                            )
+                        }
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

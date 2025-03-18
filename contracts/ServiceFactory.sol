@@ -22,12 +22,6 @@ contract ServiceFactory {
 
     // ####################### MODIFIERS ###########################
 
-    // Modifier to check if the caller is the owner
-    modifier onlyOwner() {
-        require(msg.sender == ownerDeploy, "Only owner is allowed");
-        _;
-    }
-
     // Ensures that only the seller that owns the service can call the function
     modifier onlySellerOwner(address _serviceaddress) {
         bool serviceFound = false;
@@ -62,12 +56,14 @@ contract ServiceFactory {
         string memory _servicename,
         string memory _servicedescription
     ) public {
-
-        Service service = new Service(msg.sender, _servicename, _servicedescription);
+        Service service = new Service(
+            msg.sender,
+            _servicename,
+            _servicedescription
+        );
         services.push(service);
         
         emit ServiceCreated(address(service));
-
     }
 
     function deactivateService(
@@ -76,7 +72,6 @@ contract ServiceFactory {
         onlySellerOwner(_serviceaddress)
         onlyActiveService(_serviceaddress)
     {
-
         for (uint i = 0; i < services.length; i++) {
             if (address(services[i]) == _serviceaddress) {
                 require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
@@ -96,7 +91,6 @@ contract ServiceFactory {
         onlySellerOwner(_serviceaddress)
         onlyActiveService(_serviceaddress)
     {
-
         for (uint i = 0; i < services.length; i++) {
             if (address(services[i]) == _serviceaddress) {
                 require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
@@ -107,7 +101,6 @@ contract ServiceFactory {
                 break;
             }
         }
-
     }
 
     function getServicesAddresses() public view returns (address[] memory) {

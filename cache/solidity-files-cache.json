@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/matheus/Documents/disciplinas/blockchain/mymonthly-dapp/contracts/Service.sol": {
-      "lastModificationDate": 1742245772609,
-      "contentHash": "5054ad3a04c2d8b896e97cbce26bd3b0",
+      "lastModificationDate": 1742252162971,
+      "contentHash": "4a491d59343591da639df027c0b0aa81",
       "sourceName": "contracts/Service.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -38,8 +38,8 @@
       ]
     },
     "/home/matheus/Documents/disciplinas/blockchain/mymonthly-dapp/contracts/ServiceFactory.sol": {
-      "lastModificationDate": 1742250353751,
-      "contentHash": "8a7dd65a7fb788a12fb03558f7a4b097",
+      "lastModificationDate": 1742253517755,
+      "contentHash": "5ce3b73670c548b5a2a24abd398910cf",
       "sourceName": "contracts/ServiceFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
