@@ -298,7 +298,7 @@ contract Service {
         Subscription memory newSubscription = Subscription({
             user: msg.sender,
             tokenId: subscriptionCounter,
-            price: 100,
+            price: 1 * 10**18,
             duration: 30,
             startDate: (block.timestamp - (60 days)) * 1000, 
             endDate: (block.timestamp - (30 days)) * 1000,

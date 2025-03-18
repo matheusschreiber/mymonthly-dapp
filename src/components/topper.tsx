@@ -5,15 +5,19 @@ import { dAppContract } from "@/lib/data";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import AddContractModal from "./add-contract";
+import { useNavigate } from "react-router";
 
 export function Topper() {
 
+    const navigate  = useNavigate()
     const [loading, setLoading] = useState(true)
     const [walletConnected, setWalletConnected] = useState<boolean>(false)
     const [walletAddress, setWalletAddress] = useState<string>()
 
     const [contractConnected, setContractConnected] = useState<boolean>(false)
     const [contractAddress, setContractAddress] = useState<string>()
+
+    const [autoUpdate, setAutoUpdate] = useState<boolean>(false)
 
     async function connectWallet() {
         setLoading(true)
@@ -65,17 +69,29 @@ export function Topper() {
         window.location.reload()
     }
 
+    async function _temporaryCheckAutoUpdate() {
+        const enabled = dAppContract.getAutoUpdate()
+        setAutoUpdate(enabled)
+    }
+
+    async function _temporaryChangeAutoUpdate(){
+        console.log(!autoUpdate)
+        dAppContract.setAutoUpdate(!autoUpdate)
+        window.location.reload()
+    }
+
     useEffect(() => {
         checkWalletConnected()
         connectContract()
+        _temporaryCheckAutoUpdate()
     }, [])
 
     return (
         <header className="flex flex-col items-center justify-center mb-16">
 
-            <img src="/logo.png" alt="Logo" className="w-[400px]" />
+            <img src="/logo.png" alt="Logo" className="w-[400px] cursor-pointer" onClick={()=>navigate("/")}/>
 
-            <div className="flex items-center gap-5 mt-16">
+            <div className="flex lg:flex-row flex-col items-center gap-5 mt-16">
                 {
                     walletConnected ? (
                         <Alert className={loading ? "text-zinc-400" : "text-green-400"}>
@@ -138,6 +154,12 @@ export function Topper() {
                             <Button variant="outline" onClick={() => _temporaryAddExp()}>Add expired service</Button>
                             <Button variant="outline" onClick={() => _temporaryCheckExp()}>Update expirations</Button>
                         </div>
+                        <Button variant="outline" onClick={() => _temporaryChangeAutoUpdate()}>
+                            Auto update
+                            {
+                                autoUpdate ? <p className="text-green-400">ENABLED</p> : <p className="text-red-400">DISABLED</p>
+                            }
+                        </Button>
                     </AlertDescription>
                 </Alert>
             </div>

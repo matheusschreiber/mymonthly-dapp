@@ -134,8 +134,19 @@ class ServiceFactoryContract {
         await serviceContract.addExpiredSubscription()
     }
 
+    setAutoUpdate(enabled: boolean){
+        localStorage.setItem('autoupdate', enabled ? 'true' : 'false')
+    }
+
+    getAutoUpdate(){
+        return localStorage.getItem('autoupdate') == 'true' ? true : false
+    }
+
     async _getServices() {
-        // await this._checkSubscriptionsExpiration()
+        const autoUpdateEnabled = localStorage.getItem('autoupdate') == 'true' ? true : false;
+        if (autoUpdateEnabled){
+            await this._checkSubscriptionsExpiration()
+        }
 
         let serviceContractsAddresses = await this.contract.getServicesAddresses()
 
