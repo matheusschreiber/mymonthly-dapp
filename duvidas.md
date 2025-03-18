@@ -14,6 +14,5 @@ DUVIDAS
 
 TASKS
 
-- [ ] Ver sobre controle de "login"
 - [ ] Ver sobre o disparo periodico de eventos
 - [ ] Ao pagar/comprar, o buyer recebe o NFT dele (campo de copia-e-cola que soma igual github ssh key)

@@ -1,4 +1,4 @@
-import { ethers, JsonRpcProvider } from 'ethers'
+import { BrowserProvider, ethers, JsonRpcProvider } from 'ethers'
 
 import { ServiceType } from "@/types"
 
@@ -8,28 +8,96 @@ import { toast } from 'sonner';
 
 class ServiceFactoryContract {
 
-    // address of deployed contract on hardhat
+    localProviderEnabled: boolean = true;
     contractAddressFactory: string = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-    provider: JsonRpcProvider;
-    loaded: Promise<boolean>;
-    contract: ethers.Contract;
-    signer: ethers.Signer;
+
+    contractLoaded: Promise<boolean>;
+    provider: JsonRpcProvider | BrowserProvider = {} as BrowserProvider;
+    contract: ethers.Contract = {} as ethers.Contract;
+    signer: ethers.Signer = {} as ethers.Signer;
 
     constructor() {
-        this.provider = new JsonRpcProvider('http://localhost:8545') // hardhat local address
-        // this.provider = new ethers.providers.Web3Provider(window.ethereum);
+        
+        if (this.localProviderEnabled) this.setProvider()
 
-        this.contract = {} as ethers.Contract
-        this.signer = {} as ethers.Signer
-
-        this.loaded = this.initializeContract().then(() => {
+        this.contractLoaded = this.initializeContract().then(() => {
             return true
         }).catch(() => {
             return false
         })
     }
-    
+
+    // ########################## WALLET + DEPLOY RELATED FUNCTIONS ##########################
+
+    setProvider(){
+        if (this.localProviderEnabled){
+            this.provider = new JsonRpcProvider('http://localhost:8545')
+        } else {
+            (window as any).ethereum.on("accountsChanged", () => {
+                window.location.reload()
+            })
+
+            this.provider = new BrowserProvider((window as any).ethereum)
+        }
+    }
+
+    async connectWallet() {
+        this.setProvider()
+
+        this.contractLoaded = this.initializeContract().then(() => {
+            return true
+        }).catch((error:any) => {
+            console.log(error)
+            return false
+        })
+    }
+
+    async getWalletAddress(){
+        const signer = await this.provider.getSigner();
+        const address = await signer.getAddress();
+        return address;
+    }
+
+    async checkWalletConnected() {
+
+        if (this.localProviderEnabled) return true
+        
+        const metamaskExtensionActivated = typeof window !== 'undefined' && (window as any).ethereum;
+        if (!metamaskExtensionActivated) {
+            return false
+        }
+
+        try {
+            const accounts = await (window as any).ethereum.request({
+                method: "eth_accounts",
+            });
+            if (accounts.length == 0) throw Error("No accounts found")
+            this.setProvider()
+        } catch (error: any) {
+            return false
+        }
+
+        return true
+    }
+
+    async getContractAddress(){
+        const contractLoaded = await this.contractLoaded
+        if (contractLoaded || this.localProviderEnabled){
+            return this.contractAddressFactory;
+        }
+
+        return null;
+    }
+
+    addContractAddress(address: string){
+        this.contractAddressFactory = address;
+    }
+
     async initializeContract() {
+        if (!this.checkWalletConnected()) {
+            return
+        }
+
         this.signer = await this.provider.getSigner();
         this.contract = new ethers.Contract(
             this.contractAddressFactory,
@@ -48,31 +116,32 @@ class ServiceFactoryContract {
                 toast("Service not found: " + serviceAddress)
             })
         });
-
     }
+
+    // ########################## CONTRACT RELATED FUNCTIONS ##########################
 
     async _getServices() {
         let serviceContractsAddresses = await this.contract.getServicesAddresses()
 
-        let services:ServiceType[] = [];
+        let services: ServiceType[] = [];
 
-        for(let i=0; i<serviceContractsAddresses.length; i++){
+        for (let i = 0; i < serviceContractsAddresses.length; i++) {
             const serviceContract = new ethers.Contract(
                 serviceContractsAddresses[i],
                 ServiceArtifact.abi,
                 this.signer
             );
-            
+
             services.push({
                 "address": serviceContractsAddresses[i],
-                "name": await serviceContract.getName(), 
-                "description": await serviceContract.getDescription(), 
-                "isActive": await serviceContract.isActive(), 
+                "name": await serviceContract.getName(),
+                "description": await serviceContract.getDescription(),
+                "isActive": await serviceContract.isActive(),
                 "subscriptions": []
             })
 
-            let subscriptions = await serviceContract.getSubscriptions()      
-            for(let j=0; j<subscriptions[0].length; j++){
+            let subscriptions = await serviceContract.getSubscriptions()
+            for (let j = 0; j < subscriptions[0].length; j++) {
                 services[i]['subscriptions'].push({
                     "user": subscriptions[0][j],
                     "tokenId": subscriptions[1][j],
@@ -86,52 +155,52 @@ class ServiceFactoryContract {
 
             this.provider.once("block", () => {
                 serviceContract.removeAllListeners("SubscriptionCreated");
-                serviceContract.on("SubscriptionCreated", (_:string) => {
+                serviceContract.on("SubscriptionCreated", (_: string) => {
                     toast("Subscription created. Redirecting...")
                     const params = new URLSearchParams(window.location.search)
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.href = window.location.origin + "/seller/service/details/?name=" + params.get('name')
                     }, 500)
                 })
                 serviceContract.removeAllListeners("SubscriptionPaid");
-                serviceContract.on("SubscriptionPaid", (_:string) => {
+                serviceContract.on("SubscriptionPaid", (_: string) => {
                     toast("Subscription paid. Refreshing page...")
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.reload()
                     }, 500)
                 })
                 serviceContract.removeAllListeners("SubscriptionBought");
-                serviceContract.on("SubscriptionBought", (_:string) => {
+                serviceContract.on("SubscriptionBought", (_: string) => {
                     toast("Subscription bought. Refreshing page...")
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.reload()
                     }, 500)
                 })
                 serviceContract.removeAllListeners("SubscriptionCancelled");
-                serviceContract.on("SubscriptionCancelled", (_:string) => {
+                serviceContract.on("SubscriptionCancelled", (_: string) => {
                     toast("Subscription cancelled. Refreshing page...")
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.reload()
                     }, 500)
                 })
                 serviceContract.removeAllListeners("ServiceDeactivated");
                 serviceContract.on("ServiceDeactivated", (serviceAddress: string) => {
                     toast("Service deactivated: " + serviceAddress + ". Refreshing page...")
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.reload()
                     }, 500)
                 })
                 serviceContract.removeAllListeners("ServiceUpdated");
-                serviceContract.on("ServiceUpdated", (serviceAddress: string, serviceName:string) => {
+                serviceContract.on("ServiceUpdated", (serviceAddress: string, serviceName: string) => {
                     toast("Service updated: " + serviceAddress + ". Redirecting...")
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         window.location.href = window.location.origin + "/seller/service/details/?name=" + serviceName
                     }, 500)
                 })
             })
 
         }
-        
+
 
 
         for (let i = 0; i < services.length; i++) {
@@ -195,7 +264,7 @@ class ServiceFactoryContract {
         return await serviceContract.createSubscription(user, priceParsed, duration)
     }
 
-    async _paySubscription(serviceAddress: string, tokenId: number, price:number) {
+    async _paySubscription(serviceAddress: string, tokenId: number, price: number) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
             ServiceArtifact.abi,
@@ -203,7 +272,7 @@ class ServiceFactoryContract {
         );
 
         const priceParsed = price.toString()
-        return await serviceContract.paySubscription(tokenId, {value: priceParsed})
+        return await serviceContract.paySubscription(tokenId, { value: priceParsed })
     }
 
     async _buySubscription(serviceAddress: string, user: string, price: number, duration: number) {
@@ -214,7 +283,7 @@ class ServiceFactoryContract {
         );
 
         const priceParsed = price.toString()
-        return await serviceContract.buySubscription(user, price, duration, {value: priceParsed})
+        return await serviceContract.buySubscription(user, price, duration, { value: priceParsed })
     }
 
     async _cancelSubscription(serviceAddress: string, tokenId: number) {
@@ -228,11 +297,6 @@ class ServiceFactoryContract {
     }
 }
 
-export async function getUserAddress() {
-    // return "0x78eaaE5dE26E7D4855Da96Bb1463eAf8f1137496" // matheus
-    return "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" // hardhat
-}
-
 const dAppContract = new ServiceFactoryContract();
-await dAppContract.loaded
+await dAppContract.contractLoaded
 export { dAppContract }

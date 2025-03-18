@@ -11,18 +11,38 @@ import {
 import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
 import { Toaster } from "@/components/ui/sonner";
+import { useEffect, useState } from "react";
+import { dAppContract } from "@/lib/data";
 
 export default function Home() {
 
 	const navigate = useNavigate();
+	const[enabled, setEnabled] = useState(false);
+
+	async function checkContractEnabled(){
+		const contractaddress = await dAppContract.getContractAddress()
+		if (!contractaddress){
+			setEnabled(false)
+		} else {
+			setEnabled(true)
+		}
+	}
+
+	useEffect(()=>{
+		checkContractEnabled();
+	}, [])
 
 	return (
 		<main className="flex flex-col items-center justify-center lg:p-0 p-16">
 			<Topper />
 
 			<div className="flex items-center lg:flex-row flex-col justify-center gap-5 mt-16">
-				<Card className="cursor-pointer w-[370px] h-[230px] hover:border-2 hover:border-[var(--primary)] hover:translate-y-[-5px] hover:translate-x-[-5px] duration-300"
-					onClick={() => navigate('/seller/home/')}>
+				<Card className={`
+					cursor-pointer w-[370px] h-[230px] hover:border-2 hover:border-[var(--primary)] 
+					hover:translate-y-[-5px] hover:translate-x-[-5px] duration-300}
+					${enabled ? '' : 'opacity-50 cursor-not-allowed'}`} 
+
+					onClick={() => {if (enabled) navigate('/seller/home/')}}>
 					<CardHeader>
 						<CardTitle>Seller</CardTitle>
 						<CardDescription>Register your Service to manage users subscriptions</CardDescription>
@@ -39,8 +59,11 @@ export default function Home() {
 					</CardFooter>
 				</Card>
 
-				<Card className="cursor-pointer w-[370px] h-[230px] hover:border-2 hover:border-[var(--primary)] hover:translate-y-[-5px] hover:translate-x-[5px] duration-300"
-					onClick={() => navigate('/buyer/home/')}>
+				<Card className={`
+					cursor-pointer w-[370px] h-[230px] hover:border-2 hover:border-[var(--primary)] 
+					hover:translate-y-[-5px] hover:translate-x-[5px] duration-300
+					${enabled ? '' : 'opacity-50 cursor-not-allowed'}`} 
+					onClick={() => {if (enabled) navigate('/buyer/home/')}}>
 					<CardHeader>
 						<CardTitle>Buyer</CardTitle>
 						<CardDescription>Subscribe to existing Services to access their content</CardDescription>

@@ -41,7 +41,7 @@ export default function SellerHome() {
             <div className="w-full mb-16 mt-8">
                 <Button variant="link" onClick={() => navigate('/')} className="flex items-center gap-2 cursor-pointer">
                     <ChevronLeft />
-                    <span>Back</span>
+                    <span>Back to Start</span>
                 </Button>
             </div>
 			

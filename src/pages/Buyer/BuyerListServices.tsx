@@ -12,7 +12,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Toaster } from "@/components/ui/sonner";
-import { dAppContract, getUserAddress } from "@/lib/data";
+import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { Check, Hourglass, Sparkle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -30,7 +30,7 @@ export default function BuyerListServices() {
             const _services = await dAppContract._getServices()
             setServices(_services)
 
-            const _buyerAddress = await getUserAddress()
+            const _buyerAddress = await dAppContract.getWalletAddress()
             setBuyerAddress(_buyerAddress)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)

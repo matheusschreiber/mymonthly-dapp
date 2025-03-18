@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { dAppContract, getUserAddress } from "@/lib/data"
+import { dAppContract } from "@/lib/data"
 import { ServiceType } from "@/types"
 import { Loader2, Plus } from "lucide-react"
 import { useState } from "react"
@@ -39,7 +39,7 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
         setLoading(true)
         try {
             if (!service) throw new Error("Service not found.")
-            const user = await getUserAddress()
+            const user = await dAppContract.getWalletAddress()
             await dAppContract._buySubscription(service.address, user, price, duration)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)

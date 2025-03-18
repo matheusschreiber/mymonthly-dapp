@@ -4,7 +4,7 @@ import Navbar from "@/components/navbar";
 import { Topper } from "@/components/topper";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
-import { dAppContract, getUserAddress } from "@/lib/data";
+import { dAppContract } from "@/lib/data";
 import { SubscriptionType } from "@/types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -15,7 +15,7 @@ export default function BuyerListSubscriptions() {
     const [subscriptions, setSubscriptions] = useState<SubscriptionType[]>([])
 
     async function fetchData() {
-        const BuyerAddress = await getUserAddress()
+        const BuyerAddress = await dAppContract.getWalletAddress()
         let _services = await dAppContract._getServices()
         let _subscriptions:SubscriptionType[] = []
         _services.map(service =>  {
