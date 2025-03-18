@@ -64,13 +64,13 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
                     </DialogDescription>
                 </DialogHeader>
 
-                <RadioGroup defaultValue="option-one">
+                <RadioGroup>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="option-one" id="option-one" onClick={()=>{setPrice(0.25); setDuration(7);}}/>
                         <Label htmlFor="option-one">Weekly plan (7 days, 0.25 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-twp" id="option-twp" onClick={()=>{setPrice(0.5); setDuration(41);}}/>
+                        <RadioGroupItem value="option-twp" id="option-twp" onClick={()=>{setPrice(0.5); setDuration(14);}}/>
                         <Label htmlFor="option-twp">Bi-weekly plan (14 days, 0.5 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">

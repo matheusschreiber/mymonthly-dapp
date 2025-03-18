@@ -161,7 +161,7 @@ class ServiceFactoryContract {
                 services[i]['subscriptions'].push({
                     "user": subscriptions[0][j],
                     "tokenId": subscriptions[1][j],
-                    "price": subscriptions[2][j],
+                    "price": parseFloat(ethers.formatEther(subscriptions[2][j])),
                     "duration": subscriptions[3][j],
                     "startDate": BigInt(subscriptions[4][j]),
                     "endDate": BigInt(subscriptions[5][j]),
@@ -274,7 +274,7 @@ class ServiceFactoryContract {
             this.signer
         );
 
-        const priceParsed = price.toString()
+        const priceParsed = ethers.parseEther(price.toString());
         return await serviceContract.createSubscription(user, priceParsed, duration)
     }
 
@@ -285,7 +285,7 @@ class ServiceFactoryContract {
             this.signer
         );
 
-        const priceParsed = price.toString()
+        const priceParsed = ethers.parseEther(price.toString());
         return await serviceContract.paySubscription(tokenId, { value: priceParsed })
     }
 
@@ -296,8 +296,8 @@ class ServiceFactoryContract {
             this.signer
         );
 
-        const priceParsed = price.toString()
-        return await serviceContract.buySubscription(user, price, duration, { value: priceParsed })
+        const priceParsed = ethers.parseEther(price.toString());
+        return await serviceContract.buySubscription(user, priceParsed, duration, { value: priceParsed })
     }
 
     async _cancelSubscription(serviceAddress: string, tokenId: number) {
