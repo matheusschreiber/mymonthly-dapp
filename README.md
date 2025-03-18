@@ -1,11 +1,11 @@
 
-<center>
+<p align="center">
     <img src="public/logo.png" height="100" alt="MyMonthly Logo">
     <br/><br/>
     <p align="center">
         A decentralized application for managing subscription services like Netflix, Spotify, and Disney+, leveraging smart contracts to automate payments, renewals, and access control securely and transparently.
     </p>
-</center>
+</p>
 
 [🇧🇷 Readme](README.br.md)
 

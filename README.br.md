@@ -1,11 +1,11 @@
 
-<center>
+<p align="center">
     <img src="public/logo.png" height="100" alt="MyMonthly Logo">
     <br/><br/>
     <p align="center">
         Uma aplicação descentralizada para gerenciamento de serviços por assinatura como Netflix, Spotify e Disney+, utilizando contratos inteligentes para automatizar pagamentos, renovações e controle de acesso de forma segura e transparente.
     </p>
-</center>
+</p>
 
 ## Ideia
 
