@@ -1,60 +1,71 @@
-# MyMonthly
 
-## Ideia
+<center>
+    <img src="public/logo.png" height="100" alt="MyMonthly Logo">
+    <br/><br/>
+    <p align="center">
+        A decentralized application for managing subscription services like Netflix, Spotify, and Disney+, leveraging smart contracts to automate payments, renewals, and access control securely and transparently.
+    </p>
+</center>
 
-Factory de contrato para gerenciamento pagamentos e datas de expiração/vencimento de serviços por assinatura.
+[🇧🇷 Readme](README.br.md)
 
-![foto](diagram.png)
+## Idea
 
-## Descrição
+A contract factory for managing payments and expiration dates of subscription services.
 
-### Domínio e motivação
+![diagram](diagram.png)
 
-O domínio da aplicação é o setor de gerenciamento de serviços por assinatura. O problema a ser resolvido aqui, é a complexa rede de gerenciamento de pagamentos recorrentes e controle de acessos, que atualmente depende de intermediários centralizados e processos manuais. A DApp propõe uma solução descentralizada baseada em contratos inteligentes, automatizando pagamentos, renovações e revogações de acesso sem a necessidade de confiança em terceiros. Utilizando Chainlink Automation, NFTs como credenciais e pagamentos em criptomoedas, a plataforma garante transparência, segurança e eficiência para vendedores e assinantes.
+## Description
+
+### Domain and Motivation
+
+The application's domain is the subscription service management sector. The problem being addressed is the complex network of recurring payment management and access control, which currently relies on centralized intermediaries and manual processes. The DApp proposes a decentralized solution based on smart contracts, automating payments, renewals, and access revocations without the need for third-party trust. By utilizing Chainlink Automation, NFTs as credentials, and cryptocurrency payments, the platform ensures transparency, security, and efficiency for sellers and subscribers.
 
 ### Contract Factory
 
-O conceito de Contract Factory será utilizado para permitir que cada vendedor crie e gerencie múltiplos contratos de assinatura de forma eficiente e descentralizada. A Factory atuará como um contrato mestre responsável por implantar novos contratos filhos sempre que um vendedor registrar um novo serviço (Netflix, OpenAI, SmartFit, Jornais por assinatura, planos de saúde, seguros de vida, seguros de automóveis, etc).
+The concept of a Contract Factory will be used to allow each seller to create and manage multiple subscription contracts efficiently and in a decentralized manner. The Factory will act as a master contract responsible for deploying new child contracts whenever a seller registers a new service (e.g., Netflix, OpenAI, SmartFit, subscription-based newspapers, health plans, life insurance, car insurance, etc.).
 
-Cada contrato filho pertencerá a um desses vendedores (Netflix por exemplo), e então neste contrato haverá o controle dos assinantes, das datas de vencimento e dos estados atuais de cada assinatura.
+Each child contract will belong to one of these sellers (e.g., Netflix), and within this contract, there will be control over subscribers, expiration dates, and the current states of each subscription.
 
-### Eventos
+### Events
 
-O conceito de Events será utilizado para registrar e monitorar ações importantes dentro dos contratos inteligentes, permitindo que interfaces e serviços externos, reajam automaticamente às mudanças no estado da assinatura. 
+The concept of Events will be used to log and monitor important actions within the smart contracts, enabling interfaces and external services to automatically react to changes in the subscription state.
 
-Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da assinatura e então atualizar no front-end da aplicação. O mesmo acontece caso a assinatura seja cancelada ou sua data de vencimento seja extrapolada.
+For example, if a payment is made, the subscription's expiration date should be renewed and then updated on the application's front end. The same applies if the subscription is canceled or its expiration date is exceeded.
 
-## Regras de negócio
+## Business Rules
 
-### Vendedor
+### Seller
 
-- [x] O vendedor deve poder criar contratos para inscrições feitas por clientes em algum de seus serviços. Ex.: Netflix, GYM, Heatlh, Insurance, Newspaper, OpenAI, etc.
+- [x] The seller must be able to create contracts for subscriptions made by customers for one of their services. Examples: Netflix, GYM, Health, Insurance, Newspaper, OpenAI, etc.
 
-- [x] Cada contrato filho é um serviço cadastrado por um vendedor, que contém os compradores que assinaram esse serviço.
+- [x] Each child contract is a service registered by a seller, containing the buyers who subscribed to that service.
 
-- [ ] O vendedor deve poder alterar o nome e a descrição do serviço após a sua criação.
+- [x] The seller must be able to change the name and description of the service after its creation.
 
-- [ ] Os nomes dos serviços devem ser únicos (sem repetição).
+- [x] Service names must be unique (no duplicates).
 
-### Comprador
+### Buyer
 
-- [ ] O contrato filho deve gerenciar pagamentos e datas e expiração. Isso deve ser visível para o comprador (identificado pela chave publica). O comprador deve conseguir:
-    - [x] Contratar nova assinatura
-    - [x] Pagar a assinatura existente
-    - [x] Cancelar a assinatura
-    - [ ] (BONUS) Reembolso parcial ao cancelar
+- [x] The child contract must manage payments and expiration dates. This must be visible to the buyer (identified by their public key). The buyer must be able to:
+    - [x] Subscribe to a new service
+    - [x] Pay for an existing subscription
+    - [x] Cancel a subscription
+- [ ] (BONUS) Partial refund upon cancellation
 
-- [x] Os pagamentos são feitos em cryptomoedas (ETH).
+- [x] Payments are made in cryptocurrencies (ETH).
 
-- [ ] Caso o comprador não pague o serviço até a data de expiração, o acesso ao serviço é revogado. 
+- [x] If the buyer does not pay for the service by the expiration date, access to the service is revoked.
     - Events
-    - [Chainlink Automations](https://chain.link/automation) ou outros serviços automatizados.
-    - A atualização da permissão do comprador acontece quando ele acessa alguma página (alguma dashboard)
 
-- [ ] O acesso ao serviço só é disponibilizado para o comprador mediante o pagamento do contrato. (Talvez usar NFTs aqui, que seria como uma credencial - ERC721)?
+- [ ] (BONUS) Mechanisms for periodic updates
+    - [Chainlink Automations](https://chain.link/automation) or other automated services.
+    - The buyer's permission update occurs when they access a page (e.g., a dashboard).
 
-- [ ] (BONUS) Permitir reembolsos quando cancelada a assinatura ou descontos para pagamentos antecipados.
+- [ ] Access to the service is only granted to the buyer upon payment of the contract. (Possibly use NFTs here as credentials - ERC721)?
 
-### Visualização Global
+- [ ] (BONUS) Allow refunds when a subscription is canceled or discounts for early payments.
 
-- [ ] (BONUS) Utilizar The Graph ou APIs blockchain para visualizar contratos de assinatura sem centralização.
+### Global Visualization
+
+- [ ] (BONUS) Use The Graph or blockchain APIs to visualize subscription contracts without centralization.
