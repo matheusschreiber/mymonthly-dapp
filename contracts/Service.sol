@@ -1,44 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.20;
 
-contract Service {
-    // ####################### VARIABLES #######################
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-    address private immutable ownerDeploy;
-    string public name;
-    string public description;
-    bool public isActive = true;
-
-    enum Status {
-        New,
-        Ongoing,
-        Expired,
-        Cancelled
-    }
+contract SubscriptionService is ERC721 {
+    using Counters for Counters.Counter;
+    
+    // ####################### STRUCTS & ENUMS #######################
+    enum SubscriptionStatus { New, Ongoing, Expired, Cancelled }
 
     struct Subscription {
-        address user;
-        uint256 tokenId;
+        address subscriber;
         uint256 price;
-        uint256 duration; // duration in days
-        uint256 startDate; // timestamp in milliseconds (from January 1st, 1970)
-        uint256 endDate; // timestamp in milliseconds (from January 1st, 1970)
-        Status status;
+        uint256 duration;
+        uint256 startDate;
+        uint256 endDate;
+        SubscriptionStatus status;
     }
 
-    uint256 private subscriptionCounter = 0;
+    // ####################### STATE VARIABLES #######################
+    address private immutable owner;
+    string private serviceName;
+    string private serviceDescription;
+    bool private serviceActive;
+
+    Counters.Counter private _tokenIdCounter;
     mapping(uint256 => Subscription) private subscriptions;
 
     // ###################### CONSTRUCTOR ######################
 
     constructor(
-        address _deployeraddress,
         string memory _name,
         string memory _description
-    ) {
-        ownerDeploy = _deployeraddress;
-        name = _name;
-        description = _description;
+    ) ERC721("ServiceSubscription", "SUBS") {
+        owner = msg.sender;
+        serviceName = _name;
+        serviceDescription = _description;
+        serviceActive = true;
     }
 
     // ####################### MODIFIERS #######################
@@ -55,12 +54,13 @@ contract Service {
         _;
     }
 
-    // Modifier to check if the subscription exists
-    modifier subscriptionExists(uint256 _tokenId) {
-        require(
-            subscriptions[_tokenId].user != address(0),
-            "Subscription does not exist"
-        );
+    modifier validSubscription(uint256 tokenId) {
+        require(_exists(tokenId), "Invalid subscription");
+        _;
+    }
+
+    modifier subscriptionOwner(uint256 tokenId) {
+        require(ownerOf(tokenId) == msg.sender, "Not subscription owner");
         _;
     }
 
@@ -70,12 +70,10 @@ contract Service {
         _;
     }
 
-    // Ensures that only the subscriber can call the function
     modifier onlySubscriberOrSeller(uint256 _tokenId) {
         require(
-            subscriptions[_tokenId].user == msg.sender ||
-                msg.sender == ownerDeploy,
-            "Caller is not the subscriber"
+            ownerOf(_tokenId) == msg.sender || msg.sender == ownerDeploy,
+            "Caller is not the subscriber or owner"
         );
         _;
     }
@@ -93,14 +91,14 @@ contract Service {
         _;
     }
 
-    // ######################## EVENTS ########################
+    // ####################### EVENTS #######################
 
     event SubscriptionCreated(uint256 indexed tokenId);
     event SubscriptionPaid(uint256 indexed tokenId);
-    event SubscriptionBought(uint256 indexed tokenId);
+    event SubscriptionTransferred(uint256 indexed tokenId, address from, address to);
     event SubscriptionCancelled(uint256 indexed tokenId);
-    event ServiceDeactivated(address serviceAddress);
-    event ServiceUpdated(address serviceAddress, string name);
+    event ServiceStatusChanged(bool newStatus);
+    event ServiceMetadataUpdated();
 
     // ####################### GETTERS AND SETTERS ######################
 
@@ -178,135 +176,137 @@ contract Service {
     // ####################### FUNCTIONS #######################
 
     // Allows a subscriber to subscribe to the service
-    function createSubscription(
-        address _user,
-        uint256 _price,
-        uint256 _duration
-    )
-        public
-        subscriberNotSubscribed(_user)
-        valueGreaterThanZero(_price)
-        isActiveService
-    {
-        Subscription memory newSubscription = Subscription({
-            user: _user,
-            tokenId: subscriptionCounter,
-            price: _price,
-            duration: _duration,
+     function createSubscription(
+        address subscriber,
+        uint256 price,
+        uint256 durationDays
+    ) external onlyOwner activeService {
+        require(subscriber != address(0), "Invalid address");
+        
+        _tokenIdCounter.increment();
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        _mint(subscriber, newTokenId);
+        
+        subscriptions[newTokenId] = Subscription({
+            subscriber: subscriber,
+            price: price,
+            duration: durationDays,
             startDate: 0,
             endDate: 0,
-            status: Status.New
+            status: SubscriptionStatus.New
         });
 
-        subscriptions[subscriptionCounter] = newSubscription;
-        emit SubscriptionCreated(subscriptionCounter);
-        subscriptionCounter++;
+        emit SubscriptionCreated(newTokenId);
     }
 
     // Allows a subscriber to pay for the subscription
-    function paySubscription(
-        uint256 _tokenId
-    )
+    function paySubscription(uint256 tokenId)
         public
         payable
-        subscriptionExists(_tokenId)
-        onlySubscriberOrSeller(_tokenId)
-        isActiveService
+        validSubscription(tokenId)
+        subscriptionOwner(tokenId)
+        activeService
     {
-        uint256 _valuePaid = msg.value;
-        uint256 _valueToPay = subscriptions[_tokenId].price;
-        require(_valuePaid == _valueToPay, "Invalid amount");
+        Subscription storage sub = subscriptions[tokenId];
+        require(msg.value == sub.price, "Invalid amount");
+        require(sub.status == Status.New, "Invalid status");
 
-        subscriptions[_tokenId].startDate = block.timestamp * 1000;
-        subscriptions[_tokenId].endDate =
-            (block.timestamp + (subscriptions[_tokenId].duration * 1 days)) *
-            1000;
-        subscriptions[_tokenId].status = Status.Ongoing;
+        sub.startDate = block.timestamp * 1000;
+        sub.endDate = (block.timestamp + sub.duration * 1 days) * 1000;
+        sub.status = Status.Ongoing;
 
-        emit SubscriptionPaid(_tokenId);
+        emit SubscriptionPaid(tokenId);
     }
 
+
     // Allows a subscriber to buy a subscription (first payment)
-    function buySubscription(
-        address _user,
-        uint256 _price,
-        uint256 _duration
-    )
+   function buySubscription(uint256 duration)
         public
         payable
-        subscriberNotSubscribed(_user)
-        valueGreaterThanZero(_price)
-        isActiveService
+        activeService
     {
-        Subscription memory newSubscription = Subscription({
-            user: _user,
-            tokenId: subscriptionCounter,
-            price: _price,
-            duration: _duration,
+        require(msg.value > 0, "Invalid payment");
+        
+        _tokenIdCounter.increment();
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        _mint(msg.sender, newTokenId);
+        
+        subscriptions[newTokenId] = Subscription({
+            subscriber: msg.sender,
+            price: msg.value,
+            duration: duration,
             startDate: block.timestamp * 1000,
-            endDate: (block.timestamp + (_duration * 1 days)) * 1000,
+            endDate: (block.timestamp + duration * 1 days) * 1000,
             status: Status.Ongoing
         });
 
-        subscriptions[subscriptionCounter] = newSubscription;
-        emit SubscriptionBought(subscriptionCounter);
-        subscriptionCounter++;
+        emit SubscriptionBought(newTokenId);
     }
 
     // Subscriber can cancel its own subscription or Seller can cancel subscriber's subscription
-    function cancelSubscription(
-        uint256 _tokenId
-    )
+    function cancelSubscription(uint256 tokenId)
         public
-        subscriptionExists(_tokenId)
-        onlySubscriberOrSeller(_tokenId)
-        isActiveService
+        validSubscription(tokenId)
+        activeService
     {
-        subscriptions[_tokenId].endDate = block.timestamp * 1000;
-        subscriptions[_tokenId].status = Status.Cancelled;
-        emit SubscriptionCancelled(_tokenId);
+        require(
+            msg.sender == owner || ownerOf(tokenId) == msg.sender,
+            "Unauthorized"
+        );
+        
+        Subscription storage sub = subscriptions[tokenId];
+        sub.endDate = block.timestamp * 1000;
+        sub.status = Status.Cancelled;
+        
+        emit SubscriptionCancelled(tokenId);
     }
 
     // Allows the owner to deactivate the service
-    function deactivateService() public onlyOwner isActiveService {
-        isActive = false;
+   function deactivateService() public onlyOwner {
+        serviceActive = false;
         emit ServiceDeactivated(address(this));
     }
 
     // Allows the owner to update the service
-    function updateService(
-        string memory _newname,
-        string memory _newdescription
-    ) public onlyOwner isActiveService {
-        name = _newname;
-        description = _newdescription;
-        emit ServiceUpdated(address(this), name);
+    function updateService(string memory newName, string memory newDescription) 
+        public 
+        onlyOwner 
+        activeService
+    {
+        name = newName;
+        description = newDescription;
+        emit ServiceUpdated(address(this), newName);
     }
 
     // Function to check the subscriptions
     function checkSubscriptions() public {
-        for (uint256 i = 0; i < subscriptionCounter; i++) {
-            if (block.timestamp * 1000 > subscriptions[i].endDate && subscriptions[i].status == Status.Ongoing) {
-                subscriptions[i].status = Status.Expired;
-                emit ServiceUpdated(address(this), name);
+        uint256 currentTokenId = _tokenIdCounter.current();
+        for (uint256 i = 1; i <= currentTokenId; i++) {
+            if (_exists(i) && subscriptions[i].status == Status.Ongoing) {
+                if (block.timestamp * 1000 > subscriptions[i].endDate) {
+                    subscriptions[i].status = Status.Expired;
+                }
             }
         }
     }
 
     // Function to add an expired subscription for testing purposes
-    function addExpiredSubscription() public {
-        Subscription memory newSubscription = Subscription({
-            user: msg.sender,
-            tokenId: subscriptionCounter,
-            price: 1 * 10**18,
+function addExpiredSubscription() public {
+        _tokenIdCounter.increment();
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        _mint(msg.sender, newTokenId);
+        
+        subscriptions[newTokenId] = Subscription({
+            subscriber: msg.sender,
+            price: 1 ether,
             duration: 30,
-            startDate: (block.timestamp - (60 days)) * 1000, 
-            endDate: (block.timestamp - (30 days)) * 1000,
+            startDate: (block.timestamp - 60 days) * 1000,
+            endDate: (block.timestamp - 30 days) * 1000,
             status: Status.Ongoing
         });
-
-        subscriptions[subscriptionCounter] = newSubscription;
-        emit SubscriptionCreated(subscriptionCounter);
-        subscriptionCounter++;
+        
+        emit SubscriptionCreated(newTokenId);
     }
-}
