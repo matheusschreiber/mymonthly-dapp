@@ -12,7 +12,7 @@ contract ServiceFactory {
     event ServiceNotFound(address serviceAddress);
 
     // ####################### CONSTRUCTOR #########################
-    
+
     constructor() {}
 
     // ####################### MODIFIERS ###########################
@@ -22,7 +22,10 @@ contract ServiceFactory {
         bool serviceFound = false;
         for (uint i = 0; i < services.length; i++) {
             if (address(services[i]) == _serviceaddress) {
-                require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
+                require(
+                    msg.sender == services[i].getOwner(),
+                    "Only the seller that owns the service can call this function"
+                );
                 serviceFound = true;
                 break;
             }
@@ -45,72 +48,41 @@ contract ServiceFactory {
         _;
     }
 
+    // Ensures that the service name is available
+    modifier nameAvailable(string memory _newname) {
+        for (uint i = 0; i < services.length; i++) {
+            require(
+                keccak256(abi.encodePacked(services[i].getName())) !=
+                    keccak256(abi.encodePacked(_newname)),
+                "Service name is already taken"
+            );
+        }
+        _;
+    }
+
     // ####################### FUNCTIONS ###########################
 
     function createService(
         string memory _servicename,
         string memory _servicedescription
-    ) public {
+    ) public nameAvailable(_servicename) {
         Service service = new Service(
             msg.sender,
             _servicename,
             _servicedescription
         );
         services.push(service);
-        
+
         emit ServiceCreated(address(service));
     }
 
-    // function deactivateService(
-    //     address _serviceaddress
-    // ) public 
-    //     onlySellerOwner(_serviceaddress)
-    //     onlyActiveService(_serviceaddress)
-    // {
-    //     for (uint i = 0; i < services.length; i++) {
-    //         if (address(services[i]) == _serviceaddress) {
-    //             require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
-    //             services[i].setIsActive(false);
-
-    //             emit ServiceDeactivated(address(services[i]));
-    //             return;
-    //         }
-    //     }
-    //     emit ServiceNotFound(_serviceaddress);
-    // }
-
-    // function updateService(
-    //     address _serviceaddress,
-    //     string memory _newname,
-    //     string memory _newdescription
-    // ) public 
-    //     onlySellerOwner(_serviceaddress)
-    //     onlyActiveService(_serviceaddress)
-    // {
-    //     // Checking if the name is unique
-    //     for (uint i = 0; i < services.length; i++) {
-    //         if (keccak256(abi.encodePacked(services[i].getName())) == keccak256(abi.encodePacked(_newname))) {
-    //             require(false, "Service name must be unique");
-    //         }
-    //     }
-
-    //     for (uint i = 0; i < services.length; i++) {
-    //         if (address(services[i]) == _serviceaddress) {
-    //             require(msg.sender == services[i].getOwner(), "Only the seller that owns the service can call this function");
-                
-    //             services[i].setName(_newname);
-    //             services[i].setDescription(_newdescription);
-
-    //             emit ServiceUpdated(address(services[i]));
-    //             return;
-    //         }
-    //     }
-
-    //     emit ServiceNotFound(_serviceaddress);
-    // }
+    function checkNameAvailability(
+        string memory _servicename
+    ) public view nameAvailable(_servicename) returns (bool) {
+        return true;
+    }
 
     function getServicesAddresses() public view returns (address[] memory) {
-        
         address[] memory deployedServices = new address[](services.length);
 
         for (uint i = 0; i < services.length; i++) {

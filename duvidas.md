@@ -13,8 +13,8 @@
 
 TASKS
 
+- [ ] Nome deve ser unico
 - [ ] Ver sobre controle de "login"
-- [ ] Bug no update do service
 - [ ] Adicionar flag de "paid" na subscription
 - [ ] Adicionar função de update das subscriptions (periodica) que checa o status e atualiza os dados (enddate e startdate)
 - [ ] Ao pagar/comprar o buyer recebe o address NFT dele (campo de copia-e-cola que soma igual github ssh key)

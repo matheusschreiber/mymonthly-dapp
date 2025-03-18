@@ -38,8 +38,8 @@
       ]
     },
     "/home/matheus/Documents/disciplinas/blockchain/mymonthly-dapp/contracts/ServiceFactory.sol": {
-      "lastModificationDate": 1742261918053,
-      "contentHash": "44f860736ac89f77828a83ab7ec072b8",
+      "lastModificationDate": 1742262919544,
+      "contentHash": "24601791716f6993fd3d2b6db32b7978",
       "sourceName": "contracts/ServiceFactory.sol",
       "solcConfig": {
         "version": "0.8.20",

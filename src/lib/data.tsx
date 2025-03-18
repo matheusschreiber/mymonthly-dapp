@@ -138,6 +138,12 @@ class ServiceFactoryContract {
     }
 
     async _updateService(serviceAddress: string, name: string, description: string) {
+
+        const isNameAvailable = await this.contract.checkNameAvailability(name)
+        if (!isNameAvailable) {
+            throw Error("Name already in use")
+        }
+
         const serviceContract = new ethers.Contract(
             serviceAddress,
             ServiceArtifact.abi,
