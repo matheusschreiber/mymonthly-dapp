@@ -26,6 +26,16 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
         e.preventDefault();
         if (!service) return null
 
+        if (!price || price <= 0) {
+            toast("Invalid price")
+            return
+        }
+
+        if (!duration || duration <= 0 || parseInt(duration.toString()) != duration) {
+            toast("Invalid duration")
+            return
+        }
+
         setLoading(true)
         try {
             if (!service) throw new Error("Service not found.")
