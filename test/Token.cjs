@@ -144,7 +144,7 @@ describe("Service Contracts", function () {
       const [,,,,,, statuses] = await service.getSubscriptions();
       
       // Verify if the subscription is marked as expired
-      expect(statuses[0]).to.equal("Expired");
+      expect(statuses[2]).to.equal("Expired");
     });    
   });
 
