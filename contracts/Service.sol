@@ -84,8 +84,9 @@ contract Service {
     modifier subscriberNotSubscribed(address _user) {
         for (uint256 i = 0; i < subscriptionCounter; i++) {
             if (
-                subscriptions[i].user == _user &&
-                block.timestamp * 1000 < subscriptions[i].endDate
+                subscriptions[i].user == _user && 
+                (subscriptions[i].status == Status.Ongoing || 
+                (subscriptions[i].status == Status.New && block.timestamp < subscriptions[i].endDate))
             ) {
                 revert("Subscriber already has an active subscription");
             }
@@ -296,17 +297,16 @@ contract Service {
     // Function to add an expired subscription for testing purposes
     function addExpiredSubscription() public {
         Subscription memory newSubscription = Subscription({
-            user: msg.sender,
+            user: address(1),
             tokenId: subscriptionCounter,
             price: 1 * 10**18,
             duration: 30,
-            startDate: (block.timestamp - (60 days)) * 1000, 
-            endDate: (block.timestamp - (30 days)) * 1000,
+            startDate: (block.timestamp - 60 days) * 1000,
+            endDate: (block.timestamp - 30 days) * 1000,
             status: Status.Ongoing
         });
 
         subscriptions[subscriptionCounter] = newSubscription;
-        emit SubscriptionCreated(subscriptionCounter);
         subscriptionCounter++;
     }
 }
