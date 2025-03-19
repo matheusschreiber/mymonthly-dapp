@@ -41,6 +41,15 @@ contract Service {
         description = _description;
     }
 
+    // ######################## EVENTS ########################
+
+    event SubscriptionCreated(uint256 indexed tokenId);
+    event SubscriptionPaid(uint256 indexed tokenId);
+    event SubscriptionBought(uint256 indexed tokenId);
+    event SubscriptionCancelled(uint256 indexed tokenId);
+    event ServiceDeactivated(address serviceAddress);
+    event ServiceUpdated(address serviceAddress, string name);
+
     // ####################### MODIFIERS #######################
 
     // Modifier to check if the service is active
@@ -92,15 +101,6 @@ contract Service {
         }
         _;
     }
-
-    // ######################## EVENTS ########################
-
-    event SubscriptionCreated(uint256 indexed tokenId);
-    event SubscriptionPaid(uint256 indexed tokenId);
-    event SubscriptionBought(uint256 indexed tokenId);
-    event SubscriptionCancelled(uint256 indexed tokenId);
-    event ServiceDeactivated(address serviceAddress);
-    event ServiceUpdated(address serviceAddress, string name);
 
     // ####################### GETTERS AND SETTERS ######################
 

@@ -144,7 +144,7 @@ export function Topper() {
                     )
                 }
 
-                <Alert>
+                {/* <Alert>
                     <AlertTitle>
                         Testing actions (temporary)
                     </AlertTitle>
@@ -161,7 +161,7 @@ export function Topper() {
                             }
                         </Button>
                     </AlertDescription>
-                </Alert>
+                </Alert> */}
             </div>
 
             {

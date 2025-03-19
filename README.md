@@ -13,7 +13,7 @@
 
 A contract factory for managing payments and expiration dates of subscription services.
 
-![diagram](diagram.png)
+![diagram](public/diagram.png)
 
 ## Description
 
