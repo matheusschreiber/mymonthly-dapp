@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 class ServiceFactoryContract {
 
-    localProviderEnabled: boolean = false;
+    localProviderEnabled: boolean = true;
     contractAddressFactory: string = localStorage.getItem("contractAddress") || "";
     serviceFactoryABI: any = ServiceFactoryArtifact.abi
     serviceABI: any = ServiceArtifact.abi

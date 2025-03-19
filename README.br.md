@@ -17,7 +17,7 @@ Factory de contrato para gerenciamento pagamentos e datas de expiração/vencime
 
 ### Domínio e motivação
 
-O domínio da aplicação é o setor de gerenciamento de serviços por assinatura. O problema a ser resolvido aqui, é a complexa rede de gerenciamento de pagamentos recorrentes e controle de acessos, que atualmente depende de intermediários centralizados e processos manuais. A DApp propõe uma solução descentralizada baseada em contratos inteligentes, automatizando pagamentos, renovações e revogações de acesso sem a necessidade de confiança em terceiros. Utilizando Chainlink Automation, NFTs como credenciais e pagamentos em criptomoedas, a plataforma garante transparência, segurança e eficiência para vendedores e assinantes.
+O domínio da aplicação é o setor de gerenciamento de serviços por assinatura. O problema a ser resolvido aqui, é a complexa rede de gerenciamento de pagamentos recorrentes e controle de acessos, que atualmente depende de intermediários centralizados e processos manuais. A DApp propõe uma solução descentralizada baseada em contratos inteligentes, automatizando pagamentos, renovações e revogações de acesso sem a necessidade de confiança em terceiros. Utilizando Chainlink Automation e pagamentos em criptomoedas, a plataforma garante transparência, segurança e eficiência para vendedores e assinantes.
 
 ### Contract Factory
 
@@ -45,25 +45,104 @@ Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da ass
 
 ### Comprador
 
-- [x] O contrato filho deve gerenciar pagamentos e datas e expiração. Isso deve ser visível para o comprador (identificado pela chave publica). O comprador deve conseguir:
+- [x] O contrato filho deve gerenciar pagamentos e datas de expiração. Isso deve ser visível para o comprador (identificado pela chave pública). O comprador deve conseguir:
     - [x] Contratar nova assinatura
     - [x] Pagar a assinatura existente
     - [x] Cancelar a assinatura
-- [ ] (BONUS) Reembolso parcial ao cancelar
+- [ ] (BÔNUS) Reembolso parcial ao cancelar
 
-- [x] Os pagamentos são feitos em cryptomoedas (ETH).
+- [x] Os pagamentos são feitos em criptomoedas (ETH).
 
-- [x] Caso o comprador não pague o serviço até a data de expiração, o acesso ao serviço é revogado. 
+- [x] Caso o comprador não pague o serviço até a data de expiração, o acesso ao serviço é revogado.
     - Events
 
-- [ ] (BONUS) mecanismos para o update periodico 
+- [ ] (BÔNUS) Mecanismos para o update periódico
     - [Chainlink Automations](https://chain.link/automation) ou outros serviços automatizados.
-    - A atualização da permissão do comprador acontece quando ele acessa alguma página (alguma dashboard)
+    - A atualização da permissão do comprador acontece quando ele acessa alguma página (alguma dashboard).
 
-- [ ] O acesso ao serviço só é disponibilizado para o comprador mediante o pagamento do contrato. (Talvez usar NFTs aqui, que seria como uma credencial - ERC721)?
-
-- [ ] (BONUS) Permitir reembolsos quando cancelada a assinatura ou descontos para pagamentos antecipados.
+- [ ] (BÔNUS) Permitir reembolsos quando a assinatura for cancelada ou descontos para pagamentos antecipados.
 
 ### Visualização Global
 
-- [ ] (BONUS) Utilizar The Graph ou APIs blockchain para visualizar contratos de assinatura sem centralização.
+- [ ] (BÔNUS) Utilizar The Graph ou APIs blockchain para visualizar contratos de assinatura sem centralização.
+
+## Configuração
+
+Primeiramente, instale as dependências:
+```
+npm install
+```
+
+### Deploy local
+
+Para realizar o deploy local do contrato, siga os passos:
+
+**1. Altere a variável da classe ServiceFactoryContract**
+```py
+# @/src/lib/data.tsx
+
+class ServiceFactoryContract {
+    # ...
+    
+    localProviderEnabled: boolean = true;
+    
+    # ...
+}
+```
+
+**2. Limpe os artefatos do Hardhat e inicie o nó worker (mantenha-o em execução)**
+```
+npx hardhat clean && npx hardhat node
+```
+
+**3. Faça o deploy do contrato da fábrica localmente**
+```
+npx hardhat run --network localhost scripts/deploy.cjs
+```
+>Obs.: Salve o endereço do contrato
+
+**4. Execute o servidor Vite**
+```
+npm run dev
+```
+
+**5. Conecte o contrato implantado**
+
+Na página inicial (`http://localhost:5173/`) há um botão para isso
+
+>Obs.: Para os ABIs, você pode inserir qualquer valor. Não importa no deploy local.
+
+### Deploy com Metamask
+
+Para o deploy real do contrato, siga:
+
+**1. Altere a variável da classe do Contrato**
+```py
+# @/src/lib/data.tsx
+
+class ServiceFactoryContract {
+    # ...
+    
+    localProviderEnabled: boolean = false;
+    
+    # ...
+}
+```
+
+**2. Faça o deploy do contrato da fábrica em qualquer plataforma**
+
+Recomendação: [REMIX IDE](https://remix.ethereum.org/) 
+>Obs.: Salve o endereço do contrato e os ABIs (Interface Binária de Aplicação) dos contratos ServiceFactory.sol e Service.sol
+
+**3. Execute o servidor Vite**
+```
+npm run dev
+```
+
+**4. Conecte a carteira Metamask**
+
+Na página inicial (`http://localhost:5173/`) há um botão para isso
+
+**5. Conecte o contrato implantado**
+
+Na página inicial (`http://localhost:5173/`) há um botão para isso

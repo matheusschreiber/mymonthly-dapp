@@ -19,7 +19,7 @@ A contract factory for managing payments and expiration dates of subscription se
 
 ### Domain and Motivation
 
-The application's domain is the subscription service management sector. The problem being addressed is the complex network of recurring payment management and access control, which currently relies on centralized intermediaries and manual processes. The DApp proposes a decentralized solution based on smart contracts, automating payments, renewals, and access revocations without the need for third-party trust. By utilizing Chainlink Automation, NFTs as credentials, and cryptocurrency payments, the platform ensures transparency, security, and efficiency for sellers and subscribers.
+The application's domain is the subscription service management sector. The problem being addressed is the complex network of recurring payment management and access control, which currently relies on centralized intermediaries and manual processes. The DApp proposes a decentralized solution based on smart contracts, automating payments, renewals, and access revocations without the need for third-party trust. By utilizing Chainlink Automation and cryptocurrency payments, the platform ensures transparency, security, and efficiency for sellers and subscribers.
 
 ### Contract Factory
 
@@ -33,39 +33,84 @@ The concept of Events will be used to log and monitor important actions within t
 
 For example, if a payment is made, the subscription's expiration date should be renewed and then updated on the application's front end. The same applies if the subscription is canceled or its expiration date is exceeded.
 
-## Business Rules
+## Setup
 
-### Seller
+Firstly, install dependencies
+```
+npm install
+```
 
-- [x] The seller must be able to create contracts for subscriptions made by customers for one of their services. Examples: Netflix, GYM, Health, Insurance, Newspaper, OpenAI, etc.
+### Local deploy
 
-- [x] Each child contract is a service registered by a seller, containing the buyers who subscribed to that service.
+For local deploy of the contract, follow:
 
-- [x] The seller must be able to change the name and description of the service after its creation.
+**1. Alter the variable for the ServiceFactoryContract class**
+```py
+# @/src/lib/data.tsx
 
-- [x] Service names must be unique (no duplicates).
+class ServiceFactoryContract {
+    # ...
+    
+    localProviderEnabled: boolean = true;
+    
+    # ...
+}
+```
 
-### Buyer
+**2. Clean hardhat artifacts and start node worker (keep it running)**
+```
+npx hardhat clean && npx hardhat node
+```
 
-- [x] The child contract must manage payments and expiration dates. This must be visible to the buyer (identified by their public key). The buyer must be able to:
-    - [x] Subscribe to a new service
-    - [x] Pay for an existing subscription
-    - [x] Cancel a subscription
-- [ ] (BONUS) Partial refund upon cancellation
+**3. Deploy the factory contract locally**
+```
+npx hardhat run --network localhost scripts/deploy.cjs
+```
+>Obs.: Save contract address
 
-- [x] Payments are made in cryptocurrencies (ETH).
+**4. Run vite server**
+```
+npm run dev
+```
 
-- [x] If the buyer does not pay for the service by the expiration date, access to the service is revoked.
-    - Events
+**5. Connect the deployed contract**
 
-- [ ] (BONUS) Mechanisms for periodic updates
-    - [Chainlink Automations](https://chain.link/automation) or other automated services.
-    - The buyer's permission update occurs when they access a page (e.g., a dashboard).
+On the home page (`http://localhost:5173/`) theres a button for that
 
-- [ ] Access to the service is only granted to the buyer upon payment of the contract. (Possibly use NFTs here as credentials - ERC721)?
+>Obs.: For ABIs you can input any value. Doesn't matter on local deployment.
 
-- [ ] (BONUS) Allow refunds when a subscription is canceled or discounts for early payments.
+### Metamask deploy
 
-### Global Visualization
+For real deploy of the contract, follow:
 
-- [ ] (BONUS) Use The Graph or blockchain APIs to visualize subscription contracts without centralization.
+**1. Alter the variable for the Contract class**
+```py
+# @/src/lib/data.tsx
+
+class ServiceFactoryContract {
+    # ...
+    
+    localProviderEnabled: boolean = false;
+    
+    # ...
+}
+```
+
+**2. Deploy the factory contract on any platform**
+
+Recomendation: [REMIX IDE](https://remix.ethereum.org/) 
+>Obs.: Save contract address and contracts ABIs (Application Binary Interface) for ServiceFactory.sol and Service.sol
+
+
+**3. Run vite server**
+```
+npm run dev
+```
+
+**4. Connect Metamask Wallet**
+
+On the home page (`http://localhost:5173/`) theres a button for that
+
+**5. Connect the deployed contract**
+
+On the home page (`http://localhost:5173/`) theres a button for that

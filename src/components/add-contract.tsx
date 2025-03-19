@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog" 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { dAppContract } from "@/lib/data"
 import { Loader2, Plus } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -37,17 +38,19 @@ export default function AddContractModal() {
         setLoading(true)
         localStorage.setItem("contractAddress", address)
         
-        try {
-            const cleanedAbiFactory = abiFactory.replace(/\s+/g, '');
-            const cleanedAbi = abi.replace(/\s+/g, '');
-            JSON.parse(cleanedAbiFactory);
-            JSON.parse(cleanedAbi);
-            localStorage.setItem("serviceFactoryABI", cleanedAbiFactory);
-            localStorage.setItem("serviceABI", cleanedAbi);
-        } catch (error) {
-            toast("Invalid JSON format in ABI");
-            setLoading(false);
-            return;
+        if (!dAppContract.localProviderEnabled){
+            try {
+                const cleanedAbiFactory = abiFactory.replace(/\s+/g, '');
+                const cleanedAbi = abi.replace(/\s+/g, '');
+                JSON.parse(cleanedAbiFactory);
+                JSON.parse(cleanedAbi);
+                localStorage.setItem("serviceFactoryABI", cleanedAbiFactory);
+                localStorage.setItem("serviceABI", cleanedAbi);
+            } catch (error) {
+                toast("Invalid JSON format in ABI");
+                setLoading(false);
+                return;
+            }
         }
 
         window.location.reload()
