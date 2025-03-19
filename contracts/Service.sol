@@ -297,16 +297,17 @@ contract Service {
     // Function to add an expired subscription for testing purposes
     function addExpiredSubscription() public {
         Subscription memory newSubscription = Subscription({
-            user: address(1),
+            user: msg.sender,
             tokenId: subscriptionCounter,
             price: 1 * 10**18,
             duration: 30,
-            startDate: (block.timestamp - 60 days) * 1000,
-            endDate: (block.timestamp - 30 days) * 1000,
+            startDate: (block.timestamp - (60 days)) * 1000, 
+            endDate: (block.timestamp - (30 days)) * 1000,
             status: Status.Ongoing
         });
 
         subscriptions[subscriptionCounter] = newSubscription;
+        emit SubscriptionCreated(subscriptionCounter);
         subscriptionCounter++;
     }
 }

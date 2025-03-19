@@ -127,20 +127,25 @@ describe("Service Contracts", function () {
 
     // Test that subscription statuses are updated based on expiration.
     it("Should check subscriptions", async () => {
-      // Add an expired subscription for a new user (not owner/user1/user2).
-      await service.connect(owner).addExpiredSubscription();
-      
-      // Advance the blockchain time by 31 days (in seconds) to ensure expiration.
-      await ethers.provider.send("evm_increaseTime", [31 * 86400]);
+      // Create a new subscription with a duration of 30 days
+      const durationDays = 30;
+      await service.connect(user1).buySubscription(user1.address, 100, durationDays, {
+        value: 100,
+      });
+    
+      // Advance time by 31 days AFTER the subscription duration (in seconds)
+      await ethers.provider.send("evm_increaseTime", [(durationDays + 1) * 86400]);
       await ethers.provider.send("evm_mine");
-      
-      // Check and update the subscription statuses.
+    
+      // Check and update the subscription statuses
       await service.checkSubscriptions();
-      
-      // Retrieve the subscription statuses and verify that the status has been updated to "Cancelled".
+    
+      // Retrieve the subscription statuses (7th element of the array)
       const [,,,,,, statuses] = await service.getSubscriptions();
-      expect(statuses[0]).to.equal("Cancelled");
-    });
+      
+      // Verify if the subscription is marked as expired
+      expect(statuses[0]).to.equal("Expired");
+    });    
   });
 
   /*
