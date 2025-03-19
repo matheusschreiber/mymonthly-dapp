@@ -45,6 +45,16 @@ class ServiceFactoryContract {
             this.provider = new JsonRpcProvider('http://localhost:8545')
         } else {
             this.provider = new BrowserProvider((window as any).ethereum)
+            await (window as any).ethereum.request({ method: "eth_requestAccounts" });
+
+            (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
+                if (accounts.length > 0) {
+                    toast("Wallet connected: " + accounts[0]);
+                } else {
+                    toast("Wallet disconnected");
+                }
+                window.location.reload()
+            });
         }
     }
 
@@ -67,10 +77,12 @@ class ServiceFactoryContract {
 
     async checkWalletConnected() {
 
-        if (this.localProviderEnabled) return true
+        if (this.localProviderEnabled) {
+            return true
+        }
         
-        const metamaskExtensionActivated = typeof window !== 'undefined' && (window as any).ethereum;
-        if (!metamaskExtensionActivated) {
+        const metamaskExtensionInstalled = typeof window !== 'undefined' && (window as any).ethereum;
+        if (!metamaskExtensionInstalled) {
             return false
         }
 
@@ -78,7 +90,7 @@ class ServiceFactoryContract {
             const accounts = await (window as any).ethereum.request({
                 method: "eth_accounts",
             });
-            
+
             if (accounts.length == 0) {
                 throw Error("No accounts found")
             }
@@ -99,7 +111,8 @@ class ServiceFactoryContract {
     }
 
     async initializeContract() {
-        if (!this.checkWalletConnected()) {
+        const walletConnected = await this.checkWalletConnected()
+        if (!walletConnected) {
             return
         }
 
@@ -330,5 +343,10 @@ class ServiceFactoryContract {
 }
 
 const dAppContract = new ServiceFactoryContract();
-await dAppContract.contractLoaded
+dAppContract.contractLoaded.then(() => {
+    console.log("Contract loaded successfully");
+}).catch((error) => {
+    console.error("Error loading contract:", error);
+});
+
 export { dAppContract }

@@ -130,3 +130,11 @@ Na página inicial (`http://localhost:5173/`) há um botão para isso
 **5. Conecte o contrato implantado**
 
 Na página inicial (`http://localhost:5173/`) há um botão para isso
+
+## Testes
+
+Para rodar os testes:
+
+```
+npx mocha 
+```

@@ -23,7 +23,6 @@ export function Topper() {
         setLoading(true)
         try {
             await dAppContract.connectWallet()
-            window.location.reload()
         } catch (error: any) {
             toast("Error connecting wallet: " + error.message)
         }
@@ -155,7 +154,7 @@ export function Topper() {
                     )
                 }
 
-                {/* <Alert>
+                <Alert className={import.meta.env.VITE_TEST_BUTTONS == 'true' ? "" : "hidden"}>
                     <AlertTitle>
                         Testing actions (temporary)
                     </AlertTitle>
@@ -172,7 +171,7 @@ export function Topper() {
                             }
                         </Button>
                     </AlertDescription>
-                </Alert> */}
+                </Alert>
             </div>
 
             {
