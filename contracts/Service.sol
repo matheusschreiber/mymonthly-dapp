@@ -184,6 +184,7 @@ contract Service {
         uint256 _duration
     )
         public
+        onlyOwner
         subscriberNotSubscribed(_user)
         valueGreaterThanZero(_price)
         isActiveService
