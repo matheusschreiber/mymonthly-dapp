@@ -44,17 +44,9 @@ npm install
 
 For local deploy of the contract, follow:
 
-**1. Alter the variable for the ServiceFactoryContract class**
-```py
-# @/src/lib/data.tsx
-
-class ServiceFactoryContract {
-    # ...
-    
-    localProviderEnabled: boolean = true;
-    
-    # ...
-}
+**1. Alter the local provider on `.env`**
+```
+VITE_LOCAL_PROVIDER_ENABLED='true'
 ```
 
 **2. Clean hardhat artifacts and start node worker (keep it running)**
@@ -83,17 +75,9 @@ On the home page (`http://localhost:5173/`) theres a button for that
 
 For real deploy of the contract, follow:
 
-**1. Alter the variable for the Contract class**
-```py
-# @/src/lib/data.tsx
-
-class ServiceFactoryContract {
-    # ...
-    
-    localProviderEnabled: boolean = false;
-    
-    # ...
-}
+**1. Alter the local provider on `.env`**
+```
+VITE_LOCAL_PROVIDER_ENABLED='false'
 ```
 
 **2. Deploy the factory contract on any platform**

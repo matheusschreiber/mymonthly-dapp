@@ -77,17 +77,9 @@ npm install
 
 Para realizar o deploy local do contrato, siga os passos:
 
-**1. Altere a variável da classe ServiceFactoryContract**
-```py
-# @/src/lib/data.tsx
-
-class ServiceFactoryContract {
-    # ...
-    
-    localProviderEnabled: boolean = true;
-    
-    # ...
-}
+**1. Altere o provider no `.env`**
+```
+VITE_LOCAL_PROVIDER_ENABLED='true'
 ```
 
 **2. Limpe os artefatos do Hardhat e inicie o nó worker (mantenha-o em execução)**
@@ -116,17 +108,9 @@ Na página inicial (`http://localhost:5173/`) há um botão para isso
 
 Para o deploy real do contrato, siga:
 
-**1. Altere a variável da classe do Contrato**
-```py
-# @/src/lib/data.tsx
-
-class ServiceFactoryContract {
-    # ...
-    
-    localProviderEnabled: boolean = false;
-    
-    # ...
-}
+**1. Altere o provider no `.env`**
+```
+VITE_LOCAL_PROVIDER_ENABLED='false'
 ```
 
 **2. Faça o deploy do contrato da fábrica em qualquer plataforma**
