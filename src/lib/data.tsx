@@ -4,12 +4,15 @@ import { ServiceType } from "@/types"
 
 import ServiceFactoryArtifact from "@/artifacts/contracts/ServiceFactory.sol/ServiceFactory.json"
 import ServiceArtifact from "@/artifacts/contracts/Service.sol/Service.json"
+
 import { toast } from 'sonner';
 
 class ServiceFactoryContract {
 
-    localProviderEnabled: boolean = true;
-    contractAddressFactory: string = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    localProviderEnabled: boolean = false;
+    contractAddressFactory: string = localStorage.getItem("contractAddress") || "";
+    serviceFactoryABI: any = ServiceFactoryArtifact.abi
+    serviceABI: any = ServiceArtifact.abi
 
     contractLoaded: Promise<boolean>;
     provider: JsonRpcProvider | BrowserProvider = {} as BrowserProvider;
@@ -18,31 +21,35 @@ class ServiceFactoryContract {
 
     constructor() {
         
-        if (this.localProviderEnabled) this.setProvider()
+        if (this.localProviderEnabled) {
+            this.setProvider()
+        }  else {
+            try {
+                this.serviceFactoryABI = JSON.parse(localStorage.getItem('serviceFactoryABI') || "{}")
+                this.serviceABI = JSON.parse(localStorage.getItem('serviceABI') || "{}")
+            } catch (error: any) {}
+        }
 
         this.contractLoaded = this.initializeContract().then(() => {
             return true
-        }).catch(() => {
+        }).catch((error:any) => {
+            console.log(error)
             return false
         })
     }
 
     // ########################## WALLET + DEPLOY RELATED FUNCTIONS ##########################
 
-    setProvider(){
+    async setProvider(){
         if (this.localProviderEnabled){
             this.provider = new JsonRpcProvider('http://localhost:8545')
         } else {
-            (window as any).ethereum.on("accountsChanged", () => {
-                window.location.reload()
-            })
-
             this.provider = new BrowserProvider((window as any).ethereum)
         }
     }
 
     async connectWallet() {
-        this.setProvider()
+        await this.setProvider()
 
         this.contractLoaded = this.initializeContract().then(() => {
             return true
@@ -71,8 +78,10 @@ class ServiceFactoryContract {
             const accounts = await (window as any).ethereum.request({
                 method: "eth_accounts",
             });
-            if (accounts.length == 0) throw Error("No accounts found")
-            this.setProvider()
+            
+            if (accounts.length == 0) {
+                throw Error("No accounts found")
+            }
         } catch (error: any) {
             return false
         }
@@ -89,19 +98,17 @@ class ServiceFactoryContract {
         return null;
     }
 
-    addContractAddress(address: string){
-        this.contractAddressFactory = address;
-    }
-
     async initializeContract() {
         if (!this.checkWalletConnected()) {
             return
         }
 
+        await this.setProvider()
+
         this.signer = await this.provider.getSigner();
         this.contract = new ethers.Contract(
             this.contractAddressFactory,
-            ServiceFactoryArtifact.abi,
+            this.serviceFactoryABI,
             this.signer
         );
 
@@ -127,7 +134,7 @@ class ServiceFactoryContract {
     async _addExpiredSubscription(serviceAddress: string){
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
         
@@ -155,7 +162,7 @@ class ServiceFactoryContract {
         for (let i = 0; i < serviceContractsAddresses.length; i++) {
             const serviceContract = new ethers.Contract(
                 serviceContractsAddresses[i],
-                ServiceArtifact.abi,
+                this.serviceABI,
                 this.signer
             );
 
@@ -261,7 +268,7 @@ class ServiceFactoryContract {
 
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
 
@@ -271,7 +278,7 @@ class ServiceFactoryContract {
     async _deactivateService(serviceAddress: string) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
 
@@ -281,7 +288,7 @@ class ServiceFactoryContract {
     async _addSubscription(serviceAddress: string, user: string, price: number, duration: number) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
 
@@ -292,7 +299,7 @@ class ServiceFactoryContract {
     async _paySubscription(serviceAddress: string, tokenId: number, price: number) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
 
@@ -303,7 +310,7 @@ class ServiceFactoryContract {
     async _buySubscription(serviceAddress: string, user: string, price: number, duration: number) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
 
@@ -314,7 +321,7 @@ class ServiceFactoryContract {
     async _cancelSubscription(serviceAddress: string, tokenId: number) {
         const serviceContract = new ethers.Contract(
             serviceAddress,
-            ServiceArtifact.abi,
+            this.serviceABI,
             this.signer
         );
 

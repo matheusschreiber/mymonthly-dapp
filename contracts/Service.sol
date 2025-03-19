@@ -2,8 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract Service {
-    // ####################### VARIABLES #######################
-
+    
     address private immutable ownerDeploy;
     string public name;
     string public description;
