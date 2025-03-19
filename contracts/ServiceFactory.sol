@@ -80,8 +80,17 @@ contract ServiceFactory {
     // Function to check if the service name is available
     function checkNameAvailability(
         string memory _servicename
-    ) public view nameAvailable(_servicename) returns (bool) {
-        return true;
+    ) public view returns (bool) {
+        // Usa a mesma lógica do modificador, mas retorna um booleano
+        for (uint i = 0; i < services.length; i++) {
+            if (
+                keccak256(abi.encodePacked(services[i].getName())) == 
+                keccak256(abi.encodePacked(_servicename))
+            ) {
+                return false; // Nome já existe
+            }
+        }
+        return true; // Nome disponível
     }
 
     // Function to get the addresses of all deployed contracts
