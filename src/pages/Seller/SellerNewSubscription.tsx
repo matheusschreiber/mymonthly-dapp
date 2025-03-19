@@ -80,7 +80,7 @@ export default function SellerNewSubscription() {
     }
 
     useEffect(() => {
-        fetchData()
+        setTimeout(()=>fetchData(), 500)
     }, [])
 
     const form = useForm<z.infer<typeof formSchema>>({

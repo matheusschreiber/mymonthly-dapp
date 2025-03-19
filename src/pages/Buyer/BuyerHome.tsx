@@ -31,7 +31,7 @@ export default function BuyerHome() {
 				toast("Problem on blockchain: " + error.message)
 			}
 		}
-		fetchServices()
+		setTimeout(()=>fetchServices(), 500)
 	}, [])
 
 	return (

@@ -39,7 +39,7 @@ export default function BuyerListServices() {
     }
 
     useEffect(() => {
-        fetchData()
+        setTimeout(()=>fetchData(), 500)
     }, [])
 
     return (

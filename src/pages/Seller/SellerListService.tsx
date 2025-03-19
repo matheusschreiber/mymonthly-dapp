@@ -32,7 +32,7 @@ export default function SellerListServices() {
     }
 
     useEffect(() => {
-        fetchData()
+        setTimeout(()=>fetchData(), 500)
     }, [])
 
     return (

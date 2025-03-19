@@ -26,7 +26,7 @@ export default function BuyerListSubscriptions() {
     }
 
     useEffect(() => {
-        fetchData()
+        setTimeout(()=>fetchData(), 500)
     }, [])
 
     return (
