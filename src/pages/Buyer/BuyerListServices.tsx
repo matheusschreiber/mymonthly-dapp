@@ -15,7 +15,7 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
-import { Check, Hourglass, Sparkle } from "lucide-react";
+import { Check, Hourglass, Loader2, Sparkle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -39,7 +39,7 @@ export default function BuyerListServices() {
     }
 
     useEffect(() => {
-        setTimeout(()=>fetchData(), 500)
+        setTimeout(() => fetchData(), 500)
     }, [])
 
     return (
@@ -57,51 +57,62 @@ export default function BuyerListServices() {
             </p>
 
             <div className="flex flex-wrap gap-8 justify-center">
-                {services.map((service, index) => (
-                    <Card key={index} className={`w-[500px] duration-300 ${service.isActive ? 'hover:border-2 hover:border-[var(--primary)]' : ''}`}>
-                        <CardHeader>
-                            <CardTitle>{service['name']}</CardTitle>
-                            <CardDescription>{service['description']}</CardDescription>
-                        </CardHeader>
+                {
+                    services.length == 0 ? (
+                        <div className="flex items-center justify-center gap-4">
+                            <Loader2 className="animate-spin" />
+                            <p>Loading Services</p>
+                        </div>
+                    )
+                    
+                    :
+                    
+                    services.map((service, index) => (
+                        <Card key={index} className={`w-[500px] duration-300 ${service.isActive ? 'hover:border-2 hover:border-[var(--primary)]' : ''}`}>
+                            <CardHeader>
+                                <CardTitle>{service['name']}</CardTitle>
+                                <CardDescription>{service['description']}</CardDescription>
+                            </CardHeader>
 
-                        <CardContent>
-                            <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
-                        </CardContent>
+                            <CardContent>
+                                <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
+                            </CardContent>
 
-                        <CardFooter>
-                            <div className="flex justify-between items-center w-full">
-                                <p>Active? {service['isActive'] ? <span className="text-green-400 font-bold">YES</span> : <span className="text-[var(--destructive)] font-bold">NO</span>}</p>
-                            </div>
-                            {service['isActive'] && (
-
-                                service['subscriptions'].some(subscription =>
-                                    subscription.user == buyerAddress && subscription.status == 'Ongoing'
-                                ) ? (
-                                    <Badge>
-                                        <Check />
-                                        Subscribed
-                                    </Badge>
-                                ) : (
+                            <CardFooter>
+                                <div className="flex justify-between items-center w-full">
+                                    <p>Active? {service['isActive'] ? <span className="text-green-400 font-bold">YES</span> : <span className="text-[var(--destructive)] font-bold">NO</span>}</p>
+                                </div>
+                                {service['isActive'] && (
 
                                     service['subscriptions'].some(subscription =>
-                                        subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New')
+                                        subscription.user == buyerAddress && subscription.status == 'Ongoing'
                                     ) ? (
-                                        <>
-                                            <Badge className="mr-4">
-                                                {service['subscriptions'].find(subscription => subscription.user == buyerAddress && subscription.status == 'Expired') ? <><Hourglass />Expired</> : <><Sparkle />New</>}
-                                            </Badge>
-                                            <PaySubscriptionModal
-                                                subscription={service['subscriptions'].find(subscription => subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New'))} />
-                                        </>
-                                    )
-                                        : (
-                                            <BuySubscriptionModal service={service} />
+                                        <Badge>
+                                            <Check />
+                                            Subscribed
+                                        </Badge>
+                                    ) : (
+
+                                        service['subscriptions'].some(subscription =>
+                                            subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New')
+                                        ) ? (
+                                            <>
+                                                <Badge className="mr-4">
+                                                    {service['subscriptions'].find(subscription => subscription.user == buyerAddress && subscription.status == 'Expired') ? <><Hourglass />Expired</> : <><Sparkle />New</>}
+                                                </Badge>
+                                                <PaySubscriptionModal
+                                                    subscription={service['subscriptions'].find(subscription => subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New'))} />
+                                            </>
                                         )
-                                )
-                            )}
-                        </CardFooter>
-                    </Card>
-                ))}
+                                            : (
+                                                <BuySubscriptionModal service={service} />
+                                            )
+                                    )
+                                )}
+                            </CardFooter>
+                        </Card>
+                    ))
+                }
             </div>
             <Toaster />
         </main>

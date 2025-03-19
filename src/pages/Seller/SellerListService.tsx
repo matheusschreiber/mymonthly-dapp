@@ -12,6 +12,7 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -26,13 +27,13 @@ export default function SellerListServices() {
         try {
             const _services = await dAppContract._getServices()
             setServices(_services)
-        } catch(error:any) {
+        } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
         }
     }
 
     useEffect(() => {
-        setTimeout(()=>fetchData(), 500)
+        setTimeout(() => fetchData(), 500)
     }, [])
 
     return (
@@ -50,7 +51,14 @@ export default function SellerListServices() {
             </p>
 
             <div className="flex flex-wrap gap-8 justify-center">
-                {services.map((service, index) => (
+                {services.length == 0 ? (
+                    <div className="flex items-center justify-center gap-4">
+                        <Loader2 className="animate-spin" />
+                        <p>Loading Services</p>
+                    </div>
+                )
+                :
+                services.map((service, index) => (
                     <Card key={index} className="w-[500px] hover:border-2 hover:border-[var(--primary)] duration-300">
                         <CardHeader>
                             <CardTitle>{service['name']}</CardTitle>

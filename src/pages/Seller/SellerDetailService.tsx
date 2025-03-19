@@ -23,6 +23,10 @@ export default function SellerDetailService() {
 
     async function fetchData() {
         const _services = await dAppContract._getServices()
+        if (!_services) {
+            setError(true)
+            return
+        }
 
         const params = new URLSearchParams(window.location.search)
         let serviceName = params.get('name')
