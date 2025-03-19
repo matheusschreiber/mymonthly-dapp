@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 class ServiceFactoryContract {
 
-    localProviderEnabled: boolean = true;
+    localProviderEnabled: boolean = import.meta.env.VITE_LOCAL_PROVIDER_ENABLED == 'true';
     contractAddressFactory: string = localStorage.getItem("contractAddress") || "";
     serviceFactoryABI: any = ServiceFactoryArtifact.abi
     serviceABI: any = ServiceArtifact.abi
