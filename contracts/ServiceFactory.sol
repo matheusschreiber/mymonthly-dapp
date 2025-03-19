@@ -8,12 +8,12 @@ contract ServiceFactory {
 
     // ####################### CONSTRUCTOR #########################
 
+    constructor() {}
+    
+    // ####################### EVENTS #########################
+
     event ServiceCreated(address serviceAddress);
     event ServiceNotFound(address serviceAddress);
-
-    // ####################### CONSTRUCTOR #########################
-
-    constructor() {}
 
     // ####################### MODIFIERS ###########################
 

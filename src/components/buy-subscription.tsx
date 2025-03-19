@@ -66,24 +66,24 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
 
                 <RadioGroup>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-one" id="option-one" onClick={()=>{setPrice(0.25); setDuration(7);}}/>
-                        <Label htmlFor="option-one">Weekly plan (7 days, 0.25 ETH)</Label>
+                        <RadioGroupItem value="option-one" id="option-one" onClick={()=>{setPrice(0.00125); setDuration(7);}}/>
+                        <Label htmlFor="option-one">Weekly plan (7 days, 0.00125 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-twp" id="option-twp" onClick={()=>{setPrice(0.5); setDuration(14);}}/>
-                        <Label htmlFor="option-twp">Bi-weekly plan (14 days, 0.5 ETH)</Label>
+                        <RadioGroupItem value="option-twp" id="option-twp" onClick={()=>{setPrice(0.0025); setDuration(14);}}/>
+                        <Label htmlFor="option-twp">Bi-weekly plan (14 days, 0.0025 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-three" id="option-three" onClick={()=>{setPrice(1); setDuration(30);}}/>
-                        <Label htmlFor="option-three">Monthly plan (30 days, 1 ETH)</Label>
+                        <RadioGroupItem value="option-three" id="option-three" onClick={()=>{setPrice(0.005); setDuration(30);}}/>
+                        <Label htmlFor="option-three">Monthly plan (30 days, 0.005 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-fourth" id="option-fourth" onClick={()=>{setPrice(6); setDuration(180);}}/>
-                        <Label htmlFor="option-fourth">Semester plan (180 days, 6 ETH)</Label>
+                        <RadioGroupItem value="option-fourth" id="option-fourth" onClick={()=>{setPrice(0.03); setDuration(180);}}/>
+                        <Label htmlFor="option-fourth">Semester plan (180 days, 0.03 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-fifth" id="option-fifth" onClick={()=>{setPrice(12); setDuration(365);}}/>
-                        <Label htmlFor="option-fifth">Annual plan (365 days, 12 ETH)</Label>
+                        <RadioGroupItem value="option-fifth" id="option-fifth" onClick={()=>{setPrice(0.06); setDuration(365);}}/>
+                        <Label htmlFor="option-fifth">Annual plan (365 days, 0.06 ETH)</Label>
                     </div>
                 </RadioGroup>
 

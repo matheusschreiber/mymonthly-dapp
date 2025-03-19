@@ -1,4 +1,4 @@
-import { Check, Loader2, Plus, Sparkle } from "lucide-react";
+import { Check, Loader2, Plus, Sparkle, X } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useEffect, useState } from "react";
 import { dAppContract } from "@/lib/data";
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router";
 
 export function Topper() {
 
-    const navigate  = useNavigate()
+    const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [walletConnected, setWalletConnected] = useState<boolean>(false)
     const [walletAddress, setWalletAddress] = useState<string>()
@@ -74,7 +74,7 @@ export function Topper() {
         setAutoUpdate(enabled)
     }
 
-    async function _temporaryChangeAutoUpdate(){
+    async function _temporaryChangeAutoUpdate() {
         console.log(!autoUpdate)
         dAppContract.setAutoUpdate(!autoUpdate)
         window.location.reload()
@@ -89,7 +89,7 @@ export function Topper() {
     return (
         <header className="flex flex-col items-center justify-center mb-16">
 
-            <img src="/logo.png" alt="Logo" className="w-[400px] cursor-pointer" onClick={()=>navigate("/")}/>
+            <img src="/logo.png" alt="Logo" className="w-[400px] cursor-pointer" onClick={() => navigate("/")} />
 
             <div className="flex lg:flex-row flex-col items-center gap-5 mt-16">
                 {
@@ -124,7 +124,18 @@ export function Topper() {
                         <Alert className={loading ? "text-zinc-400" : "text-green-400"}>
                             {loading ? <Loader2 className="animate-spin" /> : <Check className="h-4 w-4" />}
                             <AlertTitle>
-                                {loading ? "Loading..." : "Contract connected"}
+                                <div className="flex items-center gap-2 justify-between">
+                                    {
+                                        loading ? 
+                                        "Loading..."
+                                        :
+                                        <>
+                                            Contract connected
+                                            <X onClick={() => { localStorage.clear(); window.location.reload() }} className="cursor-pointer text-red-400" size={18} />
+                                        </>
+                                    }
+
+                                </div>
                             </AlertTitle>
                             <AlertDescription>
                                 Contract successfully connected. <br /> <p className="text-zinc-700">{contractAddress}</p>
@@ -144,7 +155,7 @@ export function Topper() {
                     )
                 }
 
-                <Alert>
+                {/* <Alert>
                     <AlertTitle>
                         Testing actions (temporary)
                     </AlertTitle>
@@ -161,7 +172,7 @@ export function Topper() {
                             }
                         </Button>
                     </AlertDescription>
-                </Alert>
+                </Alert> */}
             </div>
 
             {

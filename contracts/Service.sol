@@ -2,8 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract Service {
-    // ####################### VARIABLES #######################
-
+    
     address private immutable ownerDeploy;
     string public name;
     string public description;
@@ -40,6 +39,15 @@ contract Service {
         name = _name;
         description = _description;
     }
+
+    // ######################## EVENTS ########################
+
+    event SubscriptionCreated(uint256 indexed tokenId);
+    event SubscriptionPaid(uint256 indexed tokenId);
+    event SubscriptionBought(uint256 indexed tokenId);
+    event SubscriptionCancelled(uint256 indexed tokenId);
+    event ServiceDeactivated(address serviceAddress);
+    event ServiceUpdated(address serviceAddress, string name);
 
     // ####################### MODIFIERS #######################
 
@@ -93,15 +101,6 @@ contract Service {
         }
         _;
     }
-
-    // ######################## EVENTS ########################
-
-    event SubscriptionCreated(uint256 indexed tokenId);
-    event SubscriptionPaid(uint256 indexed tokenId);
-    event SubscriptionBought(uint256 indexed tokenId);
-    event SubscriptionCancelled(uint256 indexed tokenId);
-    event ServiceDeactivated(address serviceAddress);
-    event ServiceUpdated(address serviceAddress, string name);
 
     // ####################### GETTERS AND SETTERS ######################
 
