@@ -161,7 +161,7 @@ class ServiceFactoryContract {
     getAutoUpdate(){
         return localStorage.getItem('autoupdate') == 'true' ? true : false
     }
-
+    
     async _getServices() {
         const autoUpdateEnabled = localStorage.getItem('autoupdate') == 'true' ? true : false;
         if (autoUpdateEnabled){
@@ -256,7 +256,8 @@ class ServiceFactoryContract {
                     "ongoing": services[i]['subscriptions'].filter((sub: any) => sub.status == 'Ongoing').length,
                     "expired": services[i]['subscriptions'].filter((sub: any) => sub.status == 'Expired' || sub.status == 'New').length,
                     "cancelled": services[i]['subscriptions'].filter((sub: any) => sub.status == 'Cancelled').length,
-                }
+                },
+                "owner": await this._getOwner(serviceContractsAddresses[i])
             }
             services[i]['subscriptions'] = services[i]['subscriptions'].map((sub: any) => {
                 sub['serviceAddress'] = services[i]['address']
@@ -266,6 +267,16 @@ class ServiceFactoryContract {
         }
 
         return services
+    }
+
+    async _getOwner(serviceAddress: string){
+        const serviceContract = new ethers.Contract(
+            serviceAddress,
+            this.serviceABI,
+            this.signer
+        );
+
+        return await serviceContract.getOwner()
     }
 
     async _addService(name: string, description: string) {

@@ -22,6 +22,7 @@ export type ServiceType = {
             expired: number;
             cancelled: number;
         },
+        owner?: string;
     }
 }
 

@@ -22,11 +22,15 @@ export default function SellerListServices() {
     const navigate = useNavigate();
 
     const [services, setServices] = useState<ServiceType[]>([])
+    const [userAddress, setUserAddress] = useState<string>("")
 
     async function fetchData() {
         try {
             const _services = await dAppContract._getServices()
             setServices(_services)
+            
+            const _useraddress = await dAppContract.getWalletAddress()
+            setUserAddress(_useraddress)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
         }
@@ -37,12 +41,12 @@ export default function SellerListServices() {
     }, [])
 
     return (
-        <main className="lg:min-w-[50%] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] max-w-[80%] p-16">
             <Topper />
 
             <Navbar />
 
-            <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-4">
+            <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-">
                 <p className="text-6xl font-semibold">Services</p>
                 <Button variant="secondary" onClick={() => navigate("/seller/service/new/")} className="cursor-pointer">Add service</Button>
             </div>
@@ -65,20 +69,22 @@ export default function SellerListServices() {
                             <CardDescription>{service['description']}</CardDescription>
                         </CardHeader>
 
-                        <CardContent>
-                            <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
+                        {service.metadata?.owner === userAddress && (
+                            <CardContent>
+                                <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
 
-                            {service['metadata'] && service['metadata']['subscribers'] && (
-                                <>
-                                    <p className="mb-3">Subscriptions</p>
-                                    <ul>
-                                        <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['ongoing']}</span> ongoing subscriptions</li>
-                                        <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['expired']}</span> expired subscriptions</li>
-                                        <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['cancelled']}</span> cancelled subscriptions</li>
-                                    </ul>
-                                </>
-                            )}
-                        </CardContent>
+                                {service['metadata'] && service['metadata']['subscribers'] && (
+                                    <>
+                                        <p className="mb-3">Subscriptions</p>
+                                        <ul>
+                                            <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['ongoing']}</span> ongoing subscriptions</li>
+                                            <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['expired']}</span> expired subscriptions</li>
+                                            <li><span className="font-mono text-lg font-bold">{service['metadata']['subscribers']['cancelled']}</span> cancelled subscriptions</li>
+                                        </ul>
+                                    </>
+                                )}
+                            </CardContent>
+                        )}
 
                         <CardFooter>
                             <div className="flex justify-between items-center w-full">
