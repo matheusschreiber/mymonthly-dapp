@@ -14,12 +14,14 @@ import SellerNewSubscription from "./pages/Seller/SellerNewSubscription";
 import BuyerHome from "./pages/Buyer/BuyerHome";
 import BuyerListServices from "./pages/Buyer/BuyerListServices";
 import BuyerListSubscriptions from "./pages/Buyer/BuyerListSubscriptions";
+import Hero from "./pages/Hero";
 
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Hero />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/seller/home" element={<SellerHome />} />
         <Route path="/seller/service/new/" element={<SellerNewService />} />
         <Route path="/seller/services/list/" element={<SellerListServices />} />

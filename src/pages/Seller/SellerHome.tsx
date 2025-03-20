@@ -8,14 +8,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card"
-import { ChevronLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { dAppContract } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { toast } from "sonner";
+import Navbar from "@/components/navbar";
 
 export default function SellerHome() {
 
@@ -35,15 +34,17 @@ export default function SellerHome() {
 	}, [])
 
 	return (
-		<main className="flex flex-col items-center justify-center lg:p-0 p-16">
+		<main className="lg:min-w-[50%] lg:p-0 p-16">
 			<Topper />
 
-            <div className="w-full mb-16 mt-8">
-                <Button variant="link" onClick={() => navigate('/')} className="flex items-center gap-2 cursor-pointer">
-                    <ChevronLeft />
-                    <span>Back to Start</span>
-                </Button>
+            <Navbar />
+
+			<div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-4">
+                <p className="text-6xl font-semibold">Seller</p>
             </div>
+			<p className="mt-3 text-md text-zinc-400 mb-16">
+                Choose one of the actions as a Seller user
+            </p>
 			
 			<div className="flex items-center lg:flex-row flex-col justify-center gap-5">
 				<Card className="w-[370px] h-[230px] hover:border-2 hover:border-[var(--primary)] cursor-pointer hover:translate-y-[-5px] hover:translate-x-[-5px] duration-300"

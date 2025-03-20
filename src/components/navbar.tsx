@@ -19,20 +19,36 @@ export default function Navbar() {
     var breadcrumbs = <></>;
     var page = window.location.pathname;
 
+    const SELLER_HOME = "/seller/home/"
     const SELLER_SERVICES_LIST = "/seller/services/list/"
     const SELLER_SERVICE_NEW = "/seller/service/new/"
     const SELLER_SERVICE_DETAILS = "/seller/service/details/"
     const SELLER_SUBSCRIPTION_NEW = "/seller/subscription/new/"
     const SELLER_SUBSCRIPTION_PAYMENT = "/seller/subscription/payment/"
 
+    const BUYER_HOME = "/buyer/home/"
     const BUYER_SERVICES_LIST = "/buyer/services/list/"
     const BUYER_SUBSCRIPTIONS_LIST = "/buyer/subscriptions/list/"
 
     switch (page) {
+        case SELLER_HOME:
+            breadcrumbs = <>
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbPage>Seller</BreadcrumbPage>
+                </BreadcrumbItem>
+            </>
+            break
+
         case SELLER_SERVICES_LIST:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
@@ -45,7 +61,13 @@ export default function Navbar() {
         case SELLER_SERVICE_NEW:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Seller</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
@@ -65,7 +87,13 @@ export default function Navbar() {
         case SELLER_SERVICE_DETAILS:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Seller</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
@@ -84,7 +112,13 @@ export default function Navbar() {
         case SELLER_SUBSCRIPTION_NEW:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Seller</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
@@ -110,7 +144,13 @@ export default function Navbar() {
         case SELLER_SUBSCRIPTION_PAYMENT:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Seller</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
@@ -133,10 +173,30 @@ export default function Navbar() {
             </>
             break;
         
+        case BUYER_HOME:
+            breadcrumbs = <>
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbPage>Buyer</BreadcrumbPage>
+                </BreadcrumbItem>
+            </>
+            break;
+        
         case BUYER_SERVICES_LIST:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/buyer/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/buyer/home/")} className="cursor-pointer">Buyer</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
@@ -150,7 +210,13 @@ export default function Navbar() {
         case BUYER_SUBSCRIPTIONS_LIST:
             breadcrumbs = <>
                 <BreadcrumbItem>
-                    <BreadcrumbLink onClick={() => navigate("/buyer/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                    <BreadcrumbLink onClick={() => navigate("/home/")} className="cursor-pointer">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/buyer/home/")} className="cursor-pointer">Buyer</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />

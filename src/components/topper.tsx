@@ -88,9 +88,11 @@ export function Topper() {
     return (
         <header className="flex flex-col items-center justify-center mb-16">
 
-            <img src="/logo.png" alt="Logo" className="w-[400px] cursor-pointer" onClick={() => navigate("/")} />
+            {window.location.pathname != '/' && (
+                <img src="/logo.png" alt="Logo" className="w-[400px] cursor-pointer mb-16" onClick={() => navigate("/")} />
+            )}
 
-            <div className="flex lg:flex-row flex-col items-center gap-5 mt-16">
+            <div className="flex lg:flex-row flex-col items-center gap-5">
                 {
                     walletConnected ? (
                         <Alert className={loading ? "text-zinc-400" : "text-green-400"}>
@@ -173,16 +175,6 @@ export function Topper() {
                     </AlertDescription>
                 </Alert>
             </div>
-
-            {
-                window.location.pathname == "/" && (
-                    <p className="text-zinc-300 lg:w-[500px] text-center mt-16">
-                        Stop Wasting Time on Subscriptions Headaches! Take Charge with Flawless, Effortless Management.
-                        <br /><br />
-                        <b>Stay Organized. Stay in Control.</b>
-                    </p>
-                )
-            }
         </header >
     )
 }

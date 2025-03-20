@@ -33,7 +33,7 @@ export default function Home() {
 	}, [])
 
 	return (
-		<main className="flex flex-col items-center justify-center lg:p-0 p-16">
+		<main className="flex flex-col items-center justify-center lg:py-8 lg:px-0 p-16">
 			<Topper />
 
 			<div className="flex items-center lg:flex-row flex-col justify-center gap-5 mt-16">
@@ -80,6 +80,7 @@ export default function Home() {
 					</CardFooter>
 				</Card>
 			</div>
+			
 			<Toaster />
 		</main>
 	)
