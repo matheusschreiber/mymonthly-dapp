@@ -7,10 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { UpdateService } from "@/components/update-service";
-import { dAppContract } from "@/lib/data";
+import { ServicesContext } from "@/routes";
 import { ServiceType } from "@/types";
 import { Loader2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 
@@ -21,26 +21,23 @@ export default function SellerDetailService() {
     const [service, setService] = useState<ServiceType>()
     const [error, setError] = useState<boolean>(false)
 
-    async function fetchData() {
-        const _services = await dAppContract._getServices()
-        if (!_services) {
-            setError(true)
-            return
-        }
+    const { services, loaded } = useContext(ServicesContext);
 
+    async function fetchData() {
         const params = new URLSearchParams(window.location.search)
         let serviceName = params.get('name')
-        let serviceFound = _services.filter(service => service['name'] === serviceName)[0]
-        if (!serviceFound) {
+        let serviceFound = services.filter(service => service['name'] == serviceName)[0]
+        if (!serviceFound && loaded) {
             setError(true)
-            return
+        } else {
+            setService(serviceFound)
+            setError(false)
         }
-        setService(serviceFound)
     }
 
     useEffect(() => {
-        setTimeout(()=>fetchData(), 500)
-    }, [])
+        fetchData()
+    }, [loaded])
 
     return (
         <main className="lg:min-w-[50%] p-16">
@@ -54,10 +51,10 @@ export default function SellerDetailService() {
                             <p className="text-6xl font-bold">{service['name']}</p>
                             {service['isActive'] ? <Badge>Active</Badge> : <Badge>Inactive</Badge>}
                         </div>
-                        { service['isActive'] && (
+                        {service['isActive'] && (
                             <div className="flex lg:flex-row flex-col gap-4">
                                 <Button variant="outline" onClick={() => navigate(`/seller/subscription/new/?name=${service['name']}`)} className="cursor-pointer">Add subscription</Button>
-                                <UpdateService service={service}/> 
+                                <UpdateService service={service} />
                                 <DeactivateService />
                             </div>
                         )}
@@ -84,7 +81,7 @@ export default function SellerDetailService() {
                         <p>Error in service's data fetching.</p>
                     </div>
 
-                    <Button onClick={()=>navigate('/')} variant="secondary" className="cursor-pointer">Go Home</Button>
+                    <Button onClick={() => navigate('/')} variant="secondary" className="cursor-pointer">Go Home</Button>
                 </div>
             )}
             <Toaster />

@@ -4,31 +4,35 @@ import Navbar from "@/components/navbar";
 import { Topper } from "@/components/topper";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
-import { dAppContract } from "@/lib/data";
+import { ServicesContext } from "@/routes";
 import { SubscriptionType } from "@/types";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useAccount } from "wagmi";
 
 export default function BuyerListSubscriptions() {
 
     const navigate = useNavigate()
+    const account = useAccount()
+    
     const [subscriptions, setSubscriptions] = useState<SubscriptionType[]>([])
+    const { services, loaded } = useContext(ServicesContext)
 
     async function fetchData() {
-        const BuyerAddress = await dAppContract.getWalletAddress()
-        let _services = await dAppContract._getServices()
-        let _subscriptions:SubscriptionType[] = []
-        _services.map(service =>  {
-            let userSubscriptions = service['subscriptions'].filter(subscription => subscription['user'] === BuyerAddress)
-            _subscriptions = _subscriptions.concat(userSubscriptions);
+        
+        const _subscriptions:SubscriptionType[] = []
+        services.map((service) =>{
+            service.subscriptions.filter((subscription) => subscription.user == account.address).map((subscription) => {
+                _subscriptions.push(subscription)
+            })
         })
         setSubscriptions(_subscriptions)
     }
 
     useEffect(() => {
-        setTimeout(()=>fetchData(), 500)
-    }, [])
+        fetchData()
+    }, [loaded])
 
     return (
         <main className="lg:min-w-[50%] p-16">

@@ -10,35 +10,18 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Toaster } from "@/components/ui/sonner";
-import { dAppContract } from "@/lib/data";
-import { ServiceType } from "@/types";
+import { ServicesContext } from "@/routes";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import { useAccount } from "wagmi";
 
 export default function SellerListServices() {
 
     const navigate = useNavigate();
+    const account = useAccount()
 
-    const [services, setServices] = useState<ServiceType[]>([])
-    const [userAddress, setUserAddress] = useState<string>("")
-
-    async function fetchData() {
-        try {
-            const _services = await dAppContract._getServices()
-            setServices(_services)
-            
-            const _useraddress = await dAppContract.getWalletAddress()
-            setUserAddress(_useraddress)
-        } catch (error: any) {
-            toast("Problem on blockchain: " + error.message)
-        }
-    }
-
-    useEffect(() => {
-        setTimeout(() => fetchData(), 500)
-    }, [])
+    const { services, loaded } = useContext(ServicesContext);
 
     return (
         <main className="lg:min-w-[50%] max-w-[80%] p-16">
@@ -46,7 +29,7 @@ export default function SellerListServices() {
 
             <Navbar />
 
-            <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-">
+            <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-4">
                 <p className="text-6xl font-semibold">Services</p>
                 <Button variant="secondary" onClick={() => navigate("/seller/service/new/")} className="cursor-pointer">Add service</Button>
             </div>
@@ -55,7 +38,7 @@ export default function SellerListServices() {
             </p>
 
             <div className="flex flex-wrap gap-8 justify-center">
-                {services.length == 0 ? (
+                {!loaded ? (
                     <div className="flex items-center justify-center gap-4">
                         <Loader2 className="animate-spin" />
                         <p>Loading Services</p>
@@ -69,11 +52,11 @@ export default function SellerListServices() {
                             <CardDescription>{service['description']}</CardDescription>
                         </CardHeader>
 
-                        {service.metadata?.owner === userAddress && (
+                        {service.metadata?.owner == account.address && (
                             <CardContent>
                                 <p className="text-zinc-700 -mt-6 mb-6">{service.address}</p>
 
-                                {service['metadata'] && service['metadata']['subscribers'] && (
+                                {service['metadata'] && typeof(service['metadata']['subscribers']) != 'undefined' && (
                                     <>
                                         <p className="mb-3">Subscriptions</p>
                                         <ul>

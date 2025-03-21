@@ -10,20 +10,24 @@ import {
 } from "@/components/ui/dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { dAppContract } from "@/lib/data"
 import { ServiceType } from "@/types"
 import { Loader2, Plus } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
+import { useAccount } from "wagmi"
+import { buySubscription } from "@/lib/utils"
+
 
 export default function BuySubscriptionModal({ service }: { service: ServiceType }) {
 
+    const account = useAccount()
     const [price, setPrice] = useState<number>(0)
     const [duration, setDuration] = useState<number>(0)
     const [loading, setLoading] = useState<boolean>(false)
 
     async function confirmBuySubscription(e: Event) {
         e.preventDefault();
+        
         if (!service) return null
 
         if (!price || price <= 0) {
@@ -37,10 +41,11 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
         }
 
         setLoading(true)
+
         try {
             if (!service) throw new Error("Service not found.")
-            const user = await dAppContract.getWalletAddress()
-            await dAppContract._buySubscription(service.address, user, price, duration)
+            if (!account.address) throw new Error("Account not found.")
+            await buySubscription(service.address, account.address, price, duration)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

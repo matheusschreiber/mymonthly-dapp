@@ -127,9 +127,9 @@ npm run dev
 
 Na página inicial (`http://localhost:5173/`) há um botão para isso
 
-**5. Conecte o contrato implantado**
+**5. Use**
 
-Na página inicial (`http://localhost:5173/`) há um botão para isso
+Aproveite o MyMonthly
 
 ## Testes
 

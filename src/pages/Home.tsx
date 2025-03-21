@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router"
-
 import {
 	Card,
 	CardContent,
@@ -12,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
-import { dAppContract } from "@/lib/data";
 
 export default function Home() {
 
@@ -20,11 +18,10 @@ export default function Home() {
 	const[enabled, setEnabled] = useState(false);
 
 	async function checkContractEnabled(){
-		const contractaddress = await dAppContract.getContractAddress()
-		if (!contractaddress){
-			setEnabled(false)
-		} else {
+		if (true) {
 			setEnabled(true)
+		} else {
+			setEnabled(false)
 		}
 	}
 
@@ -64,6 +61,7 @@ export default function Home() {
 					hover:translate-y-[-5px] hover:translate-x-[5px] duration-300
 					${enabled ? '' : 'opacity-50 cursor-not-allowed'}`} 
 					onClick={() => {if (enabled) navigate('/buyer/home/')}}>
+						
 					<CardHeader>
 						<CardTitle>Buyer</CardTitle>
 						<CardDescription>Subscribe to existing Services to access their content</CardDescription>

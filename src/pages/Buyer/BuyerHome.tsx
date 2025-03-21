@@ -10,28 +10,16 @@ import {
 } from "@/components/ui/card"
 import { Topper } from "@/components/topper";
 import { Toaster } from "@/components/ui/sonner";
-import { useEffect, useState } from "react";
-import { ServiceType } from "@/types";
-import { dAppContract } from "@/lib/data";
-import { toast } from "sonner";
+import { useContext } from "react";
 import Navbar from "@/components/navbar";
+import { ServicesContext } from "@/routes";
+import { Loader2 } from "lucide-react";
 
 export default function BuyerHome() {
 
 	const navigate = useNavigate();
-	const [services, setServices] = useState<ServiceType[]>([]);
-
-	useEffect(() => {
-		async function fetchServices() {
-			try {
-				const _services = await dAppContract._getServices()
-				setServices(_services)
-			} catch (error:any) {
-				toast("Problem on blockchain: " + error.message)
-			}
-		}
-		setTimeout(()=>fetchServices(), 500)
-	}, [])
+	
+	const { services, loaded } = useContext(ServicesContext);
 
 	return (
 		<main className="lg:min-w-[50%] lg:p-0 p-16">
@@ -75,7 +63,11 @@ export default function BuyerHome() {
 					</CardContent>
 
 					<CardFooter>
-						<p>There are currently <span className="font-mono font-bold">{services.length}</span> registered services.</p>
+						<div className="flex items-center gap-1">
+							<p>There are currently</p>
+							{!loaded ? <Loader2 className="animate-spin"/> : <span className="font-mono font-bold text-green-400"> {services.length} </span> }
+							<p>registered services.</p>
+						</div>
 					</CardFooter>
 				</Card>
 			</div>

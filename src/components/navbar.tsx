@@ -54,6 +54,12 @@ export default function Navbar() {
                 <BreadcrumbSeparator />
 
                 <BreadcrumbItem>
+                    <BreadcrumbLink onClick={() => navigate("/seller/home/")} className="cursor-pointer">Seller</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
                     <BreadcrumbPage>Services</BreadcrumbPage>
                 </BreadcrumbItem>
             </>

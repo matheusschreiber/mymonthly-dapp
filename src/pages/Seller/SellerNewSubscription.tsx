@@ -13,14 +13,15 @@ import {
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import Navbar from "@/components/navbar"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ServiceType } from "@/types"
-import { dAppContract } from "@/lib/data"
 import { Loader2, X } from "lucide-react"
 import { useNavigate } from "react-router"
 import { Toaster } from "@/components/ui/sonner"
 import { Topper } from "@/components/topper"
 import { toast } from "sonner"
+import { ServicesContext } from "@/routes"
+import { addSubscription } from "@/lib/utils"
 
 const uint256Max = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
@@ -64,24 +65,25 @@ export default function SellerNewSubscription() {
     const [error, setError] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
 
+    const { services, loaded } = useContext(ServicesContext)
+
     const navigate = useNavigate();
 
     async function fetchData() {
-        const _services = await dAppContract._getServices()
-
         const params = new URLSearchParams(window.location.search)
         let serviceName = params.get('name')
-        let serviceFound = _services.filter(service => service['name'] === serviceName)[0]
-        if (!serviceFound) {
+        let serviceFound = services.filter(service => service['name'] === serviceName)[0]
+        if (!serviceFound && loaded) {
             setError(true)
-            return
+        } else {
+            setError(false)
+            setService(serviceFound)
         }
-        setService(serviceFound)
     }
 
     useEffect(() => {
-        setTimeout(()=>fetchData(), 500)
-    }, [])
+        fetchData()
+    }, [loaded])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -96,8 +98,7 @@ export default function SellerNewSubscription() {
         setLoading(true)
         try {
             if (!service) throw new Error("Service not found.")
-
-            await dAppContract._addSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
+            await addSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

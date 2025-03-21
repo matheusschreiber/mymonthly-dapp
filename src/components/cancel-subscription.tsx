@@ -13,9 +13,9 @@ import {
 import { SubscriptionType } from "@/types";
 import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { dAppContract } from "@/lib/data";
 import { useState } from "react";
 import { toast } from "sonner";
+import { cancelSubscription } from "@/lib/utils";
 
 export function CancelSubscriptionModal({ subscription }: { subscription: SubscriptionType }) {
 
@@ -27,7 +27,7 @@ export function CancelSubscriptionModal({ subscription }: { subscription: Subscr
 
         setLoading(true)
         try {
-            await dAppContract._cancelSubscription(subscription.serviceAddress, subscription.tokenId)
+            await cancelSubscription(subscription.serviceAddress, subscription.tokenId)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

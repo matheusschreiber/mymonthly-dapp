@@ -95,9 +95,9 @@ npm run dev
 
 On the home page (`http://localhost:5173/`) theres a button for that
 
-**5. Connect the deployed contract**
+**5. Use it**
 
-On the home page (`http://localhost:5173/`) theres a button for that
+Enjoy MyMonthly
 
 ## Tests
 

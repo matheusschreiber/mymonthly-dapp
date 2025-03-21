@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { dAppContract } from "@/lib/data"
+import { updateService } from "@/lib/utils"
+import { ServicesContext } from "@/routes"
 import { ServiceType } from "@/types"
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { toast } from "sonner"
 
 export function UpdateService({ service }: { service: ServiceType }) {
@@ -23,19 +24,20 @@ export function UpdateService({ service }: { service: ServiceType }) {
     const [name, setName] = useState<string>(service.name)
     const [description, setDescription] = useState<string>(service.description)
 
-    async function updateService() {
+    const { services } = useContext(ServicesContext);
+
+    async function handleUpdateService() {
         setLoading(true)
-        const _services = await dAppContract._getServices()
 
         const params = new URLSearchParams(window.location.search)
         let serviceName = params.get('name')
-        let serviceFound = _services.filter(service => service['name'] === serviceName)[0]
+        let serviceFound = services.filter(service => service['name'] === serviceName)[0]
         if (!serviceFound) {
             return
         }
 
         try {
-            await dAppContract._updateService(serviceFound.address, name, description)
+            await updateService(serviceFound.address, name, description)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)
@@ -86,7 +88,7 @@ export function UpdateService({ service }: { service: ServiceType }) {
                         </Button>
                     </DialogClose>
 
-                    <Button type="button" size="sm" className="px-3" onClick={() => updateService()} disabled={loading}>
+                    <Button type="button" size="sm" className="px-3" onClick={() => handleUpdateService()} disabled={loading}>
                         {
                             loading ? (
                                 <>

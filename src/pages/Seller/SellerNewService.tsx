@@ -12,12 +12,12 @@ import {
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import Navbar from "@/components/navbar"
-import { dAppContract } from "@/lib/data"
 import { Toaster } from "@/components/ui/sonner"
 import { Topper } from "@/components/topper"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
+import { addService } from "@/lib/utils"
 
 const formSchema = z.object({
     name: z.string().min(5, {
@@ -43,7 +43,7 @@ export default function SellerNewService() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true)
         try {
-            await dAppContract._addService(values.name, values.description)
+            await addService(values.name, values.description)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

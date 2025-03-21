@@ -13,9 +13,9 @@ import {
 import { SubscriptionType } from "@/types";
 import { Button } from "./ui/button";
 import { DollarSign, Loader2 } from "lucide-react";
-import { dAppContract } from "@/lib/data";
 import { useState } from "react";
 import { toast } from "sonner";
+import { paySubscription } from "@/lib/utils";
 
 
 export default function PaySubscriptionModal({ subscription }: { subscription?: SubscriptionType }) {
@@ -28,7 +28,7 @@ export default function PaySubscriptionModal({ subscription }: { subscription?: 
 
         setLoading(true)
         try {
-            await dAppContract._paySubscription(subscription.serviceAddress, subscription.tokenId, subscription.price)
+            await paySubscription(subscription.serviceAddress, subscription.tokenId, subscription.price)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

@@ -11,29 +11,30 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "./ui/button";
-import { dAppContract } from "@/lib/data";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { ServicesContext } from "@/routes";
+import { deactivateService } from "@/lib/utils";
 
 export default function DeactivateService() {
 
     const [loading, setLoading] = useState<boolean>(false)
+    const { services } = useContext(ServicesContext)
 
     async function confirmDeactivation(e:Event) {
         e.preventDefault();
-        const _services = await dAppContract._getServices()
-
+        
         const params = new URLSearchParams(window.location.search)
         let serviceName = params.get('name')
-        let serviceFound = _services.filter(service => service['name'] === serviceName)[0]
+        let serviceFound = services.filter(service => service['name'] === serviceName)[0]
         if (!serviceFound) {
             return
         }
 
         setLoading(true)
         try {
-            await dAppContract._deactivateService(serviceFound.address)
+            await deactivateService(serviceFound.address)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)

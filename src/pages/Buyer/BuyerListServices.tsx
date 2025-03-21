@@ -13,37 +13,21 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Toaster } from "@/components/ui/sonner";
-import { dAppContract } from "@/lib/data";
-import { ServiceType } from "@/types";
+import { ServicesContext } from "@/routes";
 import { Check, Hourglass, Loader2, Sparkle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import { useAccount } from "wagmi";
 
 export default function BuyerListServices() {
 
     const navigate = useNavigate()
-    const [services, setServices] = useState<ServiceType[]>([])
-    const [buyerAddress, setBuyerAddress] = useState<string>('')
-
-    async function fetchData() {
-        try {
-            const _services = await dAppContract._getServices()
-            setServices(_services)
-
-            const _buyerAddress = await dAppContract.getWalletAddress()
-            setBuyerAddress(_buyerAddress)
-        } catch (error: any) {
-            toast("Problem on blockchain: " + error.message)
-        }
-    }
-
-    useEffect(() => {
-        setTimeout(() => fetchData(), 500)
-    }, [])
+    const account = useAccount()
+    
+    const { services, loaded } = useContext(ServicesContext);
 
     return (
-        <main className="lg:min-w-[50%] lg:p-0 p-16">
+        <main className="lg:min-w-[50%] max-w-[80%] p-16">
             <Topper />
 
             <Navbar />
@@ -58,7 +42,7 @@ export default function BuyerListServices() {
 
             <div className="flex flex-wrap gap-8 justify-center">
                 {
-                    services.length == 0 ? (
+                    !loaded ? (
                         <div className="flex items-center justify-center gap-4">
                             <Loader2 className="animate-spin" />
                             <p>Loading Services</p>
@@ -85,7 +69,7 @@ export default function BuyerListServices() {
                                 {service['isActive'] && (
 
                                     service['subscriptions'].some(subscription =>
-                                        subscription.user == buyerAddress && subscription.status == 'Ongoing'
+                                        subscription.user == account.address && subscription.status == 'Ongoing'
                                     ) ? (
                                         <Badge>
                                             <Check />
@@ -94,14 +78,14 @@ export default function BuyerListServices() {
                                     ) : (
 
                                         service['subscriptions'].some(subscription =>
-                                            subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New')
+                                            subscription.user == account.address && (subscription.status == 'Expired' || subscription.status == 'New')
                                         ) ? (
                                             <>
                                                 <Badge className="mr-4">
-                                                    {service['subscriptions'].find(subscription => subscription.user == buyerAddress && subscription.status == 'Expired') ? <><Hourglass />Expired</> : <><Sparkle />New</>}
+                                                    {service['subscriptions'].find(subscription => subscription.user == account.address && subscription.status == 'Expired') ? <><Hourglass />Expired</> : <><Sparkle />New</>}
                                                 </Badge>
                                                 <PaySubscriptionModal
-                                                    subscription={service['subscriptions'].find(subscription => subscription.user == buyerAddress && (subscription.status == 'Expired' || subscription.status == 'New'))} />
+                                                    subscription={service['subscriptions'].find(subscription => subscription.user == account.address && (subscription.status == 'Expired' || subscription.status == 'New'))} />
                                             </>
                                         )
                                             : (
