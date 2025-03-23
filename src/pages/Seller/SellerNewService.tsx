@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { addService } from "@/lib/utils"
+import { Footer } from "@/components/footer"
 
 const formSchema = z.object({
     name: z.string().min(5, {
@@ -51,7 +52,7 @@ export default function SellerNewService() {
     }
 
     return (
-        <main className="lg:min-w-[50%] p-16">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
             <Topper />
 
             <Navbar />
@@ -108,7 +109,9 @@ export default function SellerNewService() {
                     </Button>
                 </form>
             </Form>
+
             <Toaster />
+            <Footer />
         </main>
     )
 }

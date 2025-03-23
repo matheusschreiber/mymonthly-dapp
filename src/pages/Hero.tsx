@@ -2,6 +2,7 @@ import { useNavigate } from "react-router"
 import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
 import { Toaster } from "@/components/ui/sonner";
+import { Footer } from "@/components/footer";
 
 export default function Hero() {
 
@@ -38,6 +39,8 @@ export default function Hero() {
 			</p>
 
 			<Toaster />
+
+			<Footer />
 		</main>
 	)
 }

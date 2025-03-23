@@ -1,6 +1,7 @@
 import { columns } from "@/components/datatable/columns";
 import { DataTable } from "@/components/datatable/datatable";
 import DeactivateService from "@/components/deactivate-service";
+import { Footer } from "@/components/footer";
 import Navbar from "@/components/navbar";
 import { Topper } from "@/components/topper";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +41,7 @@ export default function SellerDetailService() {
     }, [loaded])
 
     return (
-        <main className="lg:min-w-[50%] p-16">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
             <Topper />
 
             {service && (
@@ -84,7 +85,9 @@ export default function SellerDetailService() {
                     <Button onClick={() => navigate('/')} variant="secondary" className="cursor-pointer">Go Home</Button>
                 </div>
             )}
+            
             <Toaster />
+            <Footer />
         </main>
     );
 }

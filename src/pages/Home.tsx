@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Topper } from "@/components/topper";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
 
@@ -30,7 +31,7 @@ export default function Home() {
 	}, [])
 
 	return (
-		<main className="flex flex-col items-center justify-center lg:py-8 lg:px-0 p-16">
+		<main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
 			<Topper />
 
 			<div className="flex items-center lg:flex-row flex-col justify-center gap-5 mt-16">
@@ -80,6 +81,7 @@ export default function Home() {
 			</div>
 			
 			<Toaster />
+			<Footer />
 		</main>
 	)
 }

@@ -1,5 +1,6 @@
 import { columns } from "@/components/datatable/columns";
 import { DataTable } from "@/components/datatable/datatable";
+import { Footer } from "@/components/footer";
 import Navbar from "@/components/navbar";
 import { Topper } from "@/components/topper";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ export default function BuyerListSubscriptions() {
     }, [loaded])
 
     return (
-        <main className="lg:min-w-[50%] p-16">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
             <Topper />
 
             <Navbar />
@@ -64,6 +65,7 @@ export default function BuyerListSubscriptions() {
             </div>
 
             <Toaster />
+            <Footer />
         </main>
     )
 }

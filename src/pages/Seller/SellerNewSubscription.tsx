@@ -22,6 +22,7 @@ import { Topper } from "@/components/topper"
 import { toast } from "sonner"
 import { ServicesContext } from "@/routes"
 import { addSubscription } from "@/lib/utils"
+import { Footer } from "@/components/footer"
 
 const uint256Max = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
@@ -106,7 +107,7 @@ export default function SellerNewSubscription() {
     }
 
     return (
-        <main className="lg:min-w-[50%] p-16">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
             <Topper />
 
             {service && (
@@ -202,7 +203,9 @@ export default function SellerNewSubscription() {
                     </Button>
                 </div>
             )}
+            
             <Toaster />
+            <Footer />
         </main>
     )
 }

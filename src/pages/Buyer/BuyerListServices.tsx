@@ -1,4 +1,5 @@
 import BuySubscriptionModal from "@/components/buy-subscription";
+import { Footer } from "@/components/footer";
 import Navbar from "@/components/navbar";
 import PaySubscriptionModal from "@/components/pay-subscription";
 import { Topper } from "@/components/topper";
@@ -27,7 +28,7 @@ export default function BuyerListServices() {
     const { services, loaded } = useContext(ServicesContext);
 
     return (
-        <main className="lg:min-w-[50%] max-w-[80%] p-16">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
             <Topper />
 
             <Navbar />
@@ -98,7 +99,9 @@ export default function BuyerListServices() {
                     ))
                 }
             </div>
+
             <Toaster />
+            <Footer />
         </main>
     )
 }

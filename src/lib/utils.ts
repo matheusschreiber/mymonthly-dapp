@@ -3,10 +3,9 @@ import { twMerge } from "tailwind-merge"
 
 import { factoryContractConfig, serviceContractConfig } from "./data";
 import { config } from "./wagmi";
-import { readContract, watchContractEvent, writeContract } from '@wagmi/core'
+import { readContract, writeContract } from '@wagmi/core'
 import { SubscriptionType } from "@/types";
 import { formatUnits, parseEther } from 'viem'
-import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))

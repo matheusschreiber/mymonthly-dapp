@@ -14,6 +14,7 @@ import { useContext } from "react";
 import Navbar from "@/components/navbar";
 import { ServicesContext } from "@/routes";
 import { Loader2 } from "lucide-react";
+import { Footer } from "@/components/footer";
 
 export default function BuyerHome() {
 
@@ -22,7 +23,7 @@ export default function BuyerHome() {
 	const { services, loaded } = useContext(ServicesContext);
 
 	return (
-		<main className="lg:min-w-[50%] lg:p-0 p-16">
+		<main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
 			<Topper />
 
             <Navbar />
@@ -71,7 +72,9 @@ export default function BuyerHome() {
 					</CardFooter>
 				</Card>
 			</div>
+			
 			<Toaster />
+			<Footer />
 		</main>
 	)
 }

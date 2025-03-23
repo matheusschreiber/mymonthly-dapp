@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
+import ContractEvents from "./events";
 
 export function Topper() {
 
@@ -91,6 +92,8 @@ export function Topper() {
                     )
                 }
             </div>
+
+            <ContractEvents />
         </header >
     )
 }
