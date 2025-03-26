@@ -1,45 +1,11 @@
-// import LocalServiceFactoryArtifact from "@/artifacts/contracts/ServiceFactory.sol/ServiceFactory.json";
-// import LocalServiceArtifact from "@/artifacts/contracts/Service.sol/Service.json";
-// const isLocal = import.meta.env.VITE_LOCAL_PROVIDER_ENABLED == 'true';
-
 const factoryContractConfig = {
-    address: '0x4cc20C856d504450af3D1C98fC57f0fE864F53e4',
+    address: '0xD72435dD4F4a711C734AFf4C26A5B6953b47CD74',
     abi: [
-        {
-            "inputs": [],
-            "name": "checkServices",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "string",
-                    "name": "_servicename",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "_servicedescription",
-                    "type": "string"
-                }
-            ],
-            "name": "createService",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
         {
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
+                    "indexed": true,
                     "internalType": "address",
                     "name": "serviceAddress",
                     "type": "address"
@@ -65,7 +31,7 @@ const factoryContractConfig = {
             "inputs": [
                 {
                     "internalType": "string",
-                    "name": "_servicename",
+                    "name": "_serviceName",
                     "type": "string"
                 }
             ],
@@ -78,6 +44,31 @@ const factoryContractConfig = {
                 }
             ],
             "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "checkServices",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "_serviceName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "_serviceDescription",
+                    "type": "string"
+                }
+            ],
+            "name": "createService",
+            "outputs": [],
+            "stateMutability": "nonpayable",
             "type": "function"
         },
         {
@@ -96,6 +87,44 @@ const factoryContractConfig = {
         {
             "inputs": [
                 {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "name": "serviceNames",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "serviceOwners",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
                     "internalType": "uint256",
                     "name": "",
                     "type": "uint256"
@@ -104,7 +133,7 @@ const factoryContractConfig = {
             "name": "services",
             "outputs": [
                 {
-                    "internalType": "contract Service",
+                    "internalType": "address",
                     "name": "",
                     "type": "address"
                 }
@@ -142,7 +171,7 @@ const serviceContractConfig = {
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
+                    "indexed": true,
                     "internalType": "address",
                     "name": "serviceAddress",
                     "type": "address"
@@ -155,7 +184,7 @@ const serviceContractConfig = {
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
+                    "indexed": true,
                     "internalType": "address",
                     "name": "serviceAddress",
                     "type": "address"
@@ -221,13 +250,6 @@ const serviceContractConfig = {
             ],
             "name": "SubscriptionPaid",
             "type": "event"
-        },
-        {
-            "inputs": [],
-            "name": "addExpiredSubscription",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
         },
         {
             "inputs": [
@@ -317,58 +339,6 @@ const serviceContractConfig = {
         },
         {
             "inputs": [],
-            "name": "getDescription",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "getIsActive",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "getName",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "getOwner",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
             "name": "getSubscriptions",
             "outputs": [
                 {
@@ -437,6 +407,19 @@ const serviceContractConfig = {
             "type": "function"
         },
         {
+            "inputs": [],
+            "name": "ownerDeploy",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
             "inputs": [
                 {
                     "internalType": "uint256",
@@ -452,52 +435,62 @@ const serviceContractConfig = {
         {
             "inputs": [
                 {
-                    "internalType": "string",
-                    "name": "_description",
-                    "type": "string"
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
                 }
             ],
-            "name": "setDescription",
-            "outputs": [],
-            "stateMutability": "nonpayable",
+            "name": "subscriptions",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "duration",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "startDate",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "endDate",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "enum Service.Status",
+                    "name": "status",
+                    "type": "uint8"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         },
         {
             "inputs": [
                 {
-                    "internalType": "bool",
-                    "name": "_isActive",
-                    "type": "bool"
-                }
-            ],
-            "name": "setIsActive",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
                     "internalType": "string",
-                    "name": "_name",
-                    "type": "string"
-                }
-            ],
-            "name": "setName",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "string",
-                    "name": "_newname",
+                    "name": "_newName",
                     "type": "string"
                 },
                 {
                     "internalType": "string",
-                    "name": "_newdescription",
+                    "name": "_newDescription",
                     "type": "string"
                 }
             ],

@@ -17,7 +17,7 @@ import { Topper } from "@/components/topper"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
-import { addService } from "@/lib/utils"
+import { createService } from "@/lib/utils"
 import { Footer } from "@/components/footer"
 
 const formSchema = z.object({
@@ -44,7 +44,7 @@ export default function SellerNewService() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true)
         try {
-            await addService(values.name, values.description)
+            await createService(values.name, values.description)
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)
@@ -52,7 +52,7 @@ export default function SellerNewService() {
     }
 
     return (
-        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[70%]">
             <Topper />
 
             <Navbar />

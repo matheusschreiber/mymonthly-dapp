@@ -2,12 +2,22 @@ import { useWatchContractEvent } from "wagmi"
 
 import { useContext } from "react";
 import { ServicesContext } from "@/routes";
-import { serviceContractConfig } from "@/lib/data";
+import { factoryContractConfig, serviceContractConfig } from "@/lib/data";
 import { ServiceType } from "@/types";
 import { toast } from "sonner";
 
 export default function ContractEvents() {
     const { services, loaded } = useContext(ServicesContext)
+
+    useWatchContractEvent({
+        address: factoryContractConfig.address as `0x${string}`, abi: factoryContractConfig.abi, eventName: 'ServiceCreated',
+        onLogs(_) {
+            toast("Service created. Redirecting...")
+            setTimeout(() => {
+                window.location.href = window.location.origin + "/seller/services/list/"
+            }, 500)
+        },
+    })
 
     return (
         <>

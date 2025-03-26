@@ -1,113 +1,58 @@
-//SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
 import "./Service.sol";
 
 contract ServiceFactory {
-    Service[] public services;
+    address[] public services;
+    mapping(address => address) public serviceOwners;
+    mapping(string => bool) public serviceNames;
 
-    // ####################### CONSTRUCTOR #########################
-
-    constructor() {}
-    
-    // ####################### EVENTS #########################
-
-    event ServiceCreated(address serviceAddress);
+    event ServiceCreated(address indexed serviceAddress);
     event ServiceNotFound(address serviceAddress);
 
-    // ####################### MODIFIERS ###########################
-
-    // Ensures that only the seller that owns the service can call the function
-    modifier onlySellerOwner(address _serviceaddress) {
-        bool serviceFound = false;
-        for (uint i = 0; i < services.length; i++) {
-            if (address(services[i]) == _serviceaddress) {
-                require(
-                    msg.sender == services[i].getOwner(),
-                    "Only the seller that owns the service can call this function"
-                );
-                serviceFound = true;
-                break;
-            }
-        }
-        require(serviceFound, "Service not found");
+    modifier onlySellerOwner(address _serviceAddress) {
+        require(serviceOwners[_serviceAddress] == msg.sender, "Only the seller that owns the service can call this function");
         _;
     }
 
-    // Ensures that only active services can call the function
-    modifier onlyActiveService(address _serviceaddress) {
-        bool serviceFound = false;
-        for (uint i = 0; i < services.length; i++) {
-            if (address(services[i]) == _serviceaddress) {
-                require(services[i].isActive(), "Service is not active");
-                serviceFound = true;
-                break;
-            }
-        }
-        require(serviceFound, "Service not found");
+    modifier onlyActiveService(address _serviceAddress) {
+        require(Service(_serviceAddress).isActive(), "Service is not active");
         _;
     }
 
-    // Ensures that the service name is available
-    modifier nameAvailable(string memory _newname) {
-        for (uint i = 0; i < services.length; i++) {
-            require(
-                keccak256(abi.encodePacked(services[i].getName())) !=
-                    keccak256(abi.encodePacked(_newname)),
-                "Service name is already taken"
-            );
-        }
+    modifier nameAvailable(string memory _newName) {
+        require(!serviceNames[_newName], "Service name is already taken");
         _;
     }
 
-    // ####################### FUNCTIONS ###########################
-
-    // Function to deploy child contract
     function createService(
-        string memory _servicename,
-        string memory _servicedescription
-    ) public nameAvailable(_servicename) {
-        Service service = new Service(
-            msg.sender,
-            _servicename,
-            _servicedescription
-        );
-        services.push(service);
+        string memory _serviceName,
+        string memory _serviceDescription
+    ) public nameAvailable(_serviceName) {
+        Service service = new Service(msg.sender, _serviceName, _serviceDescription);
+        address serviceAddress = address(service);
 
-        emit ServiceCreated(address(service));
+        services.push(serviceAddress);
+        serviceOwners[serviceAddress] = msg.sender;
+        serviceNames[_serviceName] = true;
+
+        emit ServiceCreated(serviceAddress);
     }
 
-    // Function to check if the service name is available
     function checkNameAvailability(
-        string memory _servicename
+        string memory _serviceName
     ) public view returns (bool) {
-        // Usa a mesma lógica do modificador, mas retorna um booleano
-        for (uint i = 0; i < services.length; i++) {
-            if (
-                keccak256(abi.encodePacked(services[i].getName())) == 
-                keccak256(abi.encodePacked(_servicename))
-            ) {
-                return false; // Nome já existe
-            }
-        }
-        return true; // Nome disponível
+        return !serviceNames[_serviceName];
     }
 
-    // Function to get the addresses of all deployed contracts
     function getServicesAddresses() public view returns (address[] memory) {
-        address[] memory deployedServices = new address[](services.length);
-
-        for (uint i = 0; i < services.length; i++) {
-            deployedServices[i] = address(services[i]);
-        }
-
-        return deployedServices;
+        return services;
     }
 
-    // Function to check for expired subscriptions on each service
     function checkServices() public {
         for (uint i = 0; i < services.length; i++) {
-            services[i].checkSubscriptions();
+            Service(services[i]).checkSubscriptions();
         }
     }
 }

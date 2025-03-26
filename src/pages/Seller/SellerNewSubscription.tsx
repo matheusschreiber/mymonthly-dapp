@@ -21,7 +21,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { Topper } from "@/components/topper"
 import { toast } from "sonner"
 import { ServicesContext } from "@/routes"
-import { addSubscription } from "@/lib/utils"
+import { createSubscription } from "@/lib/utils"
 import { Footer } from "@/components/footer"
 
 const uint256Max = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
@@ -99,7 +99,8 @@ export default function SellerNewSubscription() {
         setLoading(true)
         try {
             if (!service) throw new Error("Service not found.")
-            await addSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
+            if (!values.user) throw new Error("Account not found.")
+            await createSubscription(service.address, values.user, parseFloat(values.price), parseInt(values.duration))
         } catch (error: any) {
             toast("Problem on blockchain: " + error.message)
             setLoading(false)
@@ -107,7 +108,7 @@ export default function SellerNewSubscription() {
     }
 
     return (
-        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[70%]">
             <Topper />
 
             {service && (

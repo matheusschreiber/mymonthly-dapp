@@ -41,7 +41,7 @@ export default function SellerDetailService() {
     }, [loaded])
 
     return (
-        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[70%]">
             <Topper />
 
             {service && (

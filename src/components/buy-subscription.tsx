@@ -75,8 +75,8 @@ export default function BuySubscriptionModal({ service }: { service: ServiceType
                         <Label htmlFor="option-one">Weekly plan (7 days, 0.00125 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-twp" id="option-twp" onClick={()=>{setPrice(0.0025); setDuration(14);}}/>
-                        <Label htmlFor="option-twp">Bi-weekly plan (14 days, 0.0025 ETH)</Label>
+                        <RadioGroupItem value="option-two" id="option-two" onClick={()=>{setPrice(0.0025); setDuration(14);}}/>
+                        <Label htmlFor="option-two">Bi-weekly plan (14 days, 0.0025 ETH)</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="option-three" id="option-three" onClick={()=>{setPrice(0.005); setDuration(30);}}/>

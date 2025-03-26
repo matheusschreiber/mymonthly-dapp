@@ -43,6 +43,9 @@ export const columns: ColumnDef<SubscriptionType>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            return row.original.user.slice(0, 4) + "..." + row.original.user.slice(-4)
+        }
     },
     {
         id: "service",
@@ -118,7 +121,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
             )
         },
         cell: ({ getValue }) => {
-            if (getValue<number>() != 0) return new Date(Number(getValue<number>())).toLocaleDateString("pt-BR")
+            if (getValue<number>() != 0) return new Date(Number(getValue<number>())*1000).toLocaleDateString("pt-BR")
             else return <span className="text-gray-400">Not set</span>
         },
     },
@@ -136,7 +139,7 @@ export const columns: ColumnDef<SubscriptionType>[] = [
             )
         },
         cell: ({ getValue }) => {
-            if (getValue<number>() != 0) return new Date(Number(getValue<number>())).toLocaleDateString("pt-BR")
+            if (getValue<number>() != 0) return new Date(Number(getValue<number>())*1000).toLocaleDateString("pt-BR")
             else return <span className="text-gray-400">Not set</span>
         },
     },

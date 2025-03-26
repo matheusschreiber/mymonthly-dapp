@@ -31,7 +31,7 @@ export default function Home() {
 	}, [])
 
 	return (
-		<main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
+		<main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[70%]">
 			<Topper />
 
 			<div className="flex items-center lg:flex-row flex-col justify-center gap-5 mt-16">

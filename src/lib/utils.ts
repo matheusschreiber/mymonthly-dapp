@@ -15,10 +15,10 @@ async function addrsToServices(servicesAddresses: string[]) {
     return await Promise.all(
         servicesAddresses.map(async (address) => {
 
-            const name = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'getName', })
-            const description = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'getDescription', })
-            const isActive = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'getIsActive', })
-            const owner = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'getOwner', })
+            const name = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'name', })
+            const description = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'description', })
+            const isActive = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'isActive', })
+            const owner = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'ownerDeploy', })
 
             const subscriptionsRaw = await readContract(config, { abi: serviceContractConfig.abi, address: address as `0x${string}`, functionName: 'getSubscriptions', })
             const subscriptions: SubscriptionType[] = [];
@@ -47,67 +47,6 @@ async function addrsToServices(servicesAddresses: string[]) {
                 "owner": owner as string
             }
 
-            // watchContractEvent(config, {
-            //     address: address as `0x${string}`, abi: serviceContractConfig.abi, eventName: 'SubscriptionCreated',
-            //     onLogs(_) {
-            //         toast("Subscription created. Redirecting...")
-            //         const params = new URLSearchParams(window.location.search)
-            //         setTimeout(() => {
-            //             window.location.href = window.location.origin + "/seller/service/details/?name=" + params.get('name')
-            //         }, 500)
-            //     },
-            // })
-
-            // watchContractEvent(config, {
-            //     address: address as `0x${string}`, abi: serviceContractConfig.abi, eventName: 'SubscriptionPaid',
-            //     onLogs(_) {
-            //         toast("Subscription paid. Refreshing page...")
-            //         setTimeout(() => {
-            //             window.location.reload()
-            //         }, 500)
-            //     },
-            // })
-
-            // watchContractEvent(config, {
-            //     address: address as `0x${string}`, abi: serviceContractConfig.abi, eventName: 'SubscriptionBought',
-            //     onLogs(_) {
-            //         toast("Subscription bought. Refreshing page...")
-            //         setTimeout(() => {
-            //             window.location.reload()
-            //         }, 500)
-            //     },
-            // })
-
-            // watchContractEvent(config, {
-            //     address: address as `0x${string}`, abi: serviceContractConfig.abi, eventName: 'SubscriptionCancelled',
-            //     onLogs(_) {
-            //         toast("Subscription cancelled. Refreshing page...")
-            //         setTimeout(() => {
-            //             window.location.reload()
-            //         }, 500)
-            //     },
-            // })
-
-            // watchContractEvent(config, {
-            //     address: address as `0x${string}`, abi: serviceContractConfig.abi, eventName: 'ServiceDeactivated',
-            //     onLogs(_) {
-            //         toast("Service deactivated. Refreshing page...")
-            //         setTimeout(() => {
-            //             window.location.reload()
-            //         }, 500)
-            //     },
-            // })
-
-            // watchContractEvent(config, {
-            //     address: address as `0x${string}`, abi: serviceContractConfig.abi, eventName: 'ServiceUpdated',
-            //     onLogs(_) {
-            //         toast("Service updated. Redirecting...")
-            //         setTimeout(() => {
-            //             window.location.href = window.location.origin + "/seller/services/list/"
-            //         }, 500)
-            //     },
-            // })
-
             return {
                 address,
                 name: name as string,
@@ -131,7 +70,7 @@ export async function getServices() {
     return await addrsToServices(servicesAddresses as string[]);
 }
 
-export async function addService(name: string, description: string) {
+export async function createService(name: string, description: string) {
     await writeContract(config, {
         abi: factoryContractConfig.abi,
         address: factoryContractConfig.address,
@@ -159,14 +98,13 @@ export async function updateService(serviceAddress: string, name: string, descri
     })
 }
 
-export async function addSubscription(serviceAddress: string, user: string, price: number, duration: number) {
+export async function createSubscription(serviceAddress: string, user: string, price: number, duration: number) {
     const priceParsed = parseEther(price.toString());
     await writeContract(config, {
         abi: serviceContractConfig.abi,
         address: serviceAddress as `0x${string}`,
         functionName: 'createSubscription',
-        args: [user, priceParsed, duration],
-        value: priceParsed
+        args: [user, priceParsed, duration]
     })
 }
 

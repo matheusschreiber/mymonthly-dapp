@@ -16,14 +16,14 @@ export default function BuyerListSubscriptions() {
 
     const navigate = useNavigate()
     const account = useAccount()
-    
+
     const [subscriptions, setSubscriptions] = useState<SubscriptionType[]>([])
     const { services, loaded } = useContext(ServicesContext)
 
     async function fetchData() {
-        
-        const _subscriptions:SubscriptionType[] = []
-        services.map((service) =>{
+
+        const _subscriptions: SubscriptionType[] = []
+        services.map((service) => {
             service.subscriptions.filter((subscription) => subscription.user == account.address).map((subscription) => {
                 _subscriptions.push(subscription)
             })
@@ -36,14 +36,14 @@ export default function BuyerListSubscriptions() {
     }, [loaded])
 
     return (
-        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[50%]">
+        <main className="flex flex-col lg:py-8 lg:px-0 p-16 mx-auto lg:max-w-[70%]">
             <Topper />
 
             <Navbar />
 
             <div className="flex items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-4">
                 <p className="text-6xl font-semibold">My Subscriptions</p>
-                <Button variant="outline" onClick={()=>navigate(`/buyer/services/list/`)}>Available services</Button>
+                <Button variant="outline" onClick={() => navigate(`/buyer/services/list/`)}>Available services</Button>
             </div>
             <p className="mt-3 text-md text-zinc-400 mb-16">
                 Complete list of yours subscriptions. <br />You can interact with each subscription individually.
@@ -51,14 +51,12 @@ export default function BuyerListSubscriptions() {
 
             <div className="flex flex-wrap gap-8 justify-center">
                 {
-                    subscriptions.length == 0 ? (
+                    !loaded ? (
                         <div className="flex items-center justify-center gap-4">
                             <Loader2 className="animate-spin" />
                             <p>Loading Subscriptions</p>
                         </div>
-                    )
-                :
-                    subscriptions && (
+                    ) : (
                         <DataTable columns={columns} data={subscriptions} />
                     )
                 }

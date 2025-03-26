@@ -73,8 +73,9 @@ describe("Service Contracts", function () {
   describe("Service Contract", () => {
     // Test that the service contract is initialized with the correct name and owner.
     it("Should initialize correctly", async () => {
-      expect(await service.getName()).to.equal("Test Service");
-      expect(await service.getOwner()).to.equal(owner.address);
+      expect(await service.name()).to.equal("Test Service");
+      expect(await service.description()).to.equal("Test Description");
+      expect(await service.ownerDeploy()).to.equal(owner.address);
     });
 
     // Test the creation of a subscription and verify that the subscriber's address is recorded.
@@ -110,19 +111,12 @@ describe("Service Contracts", function () {
       expect(statuses[0]).to.equal("Cancelled");
     });
 
-    // Test that the service can be deactivated by the owner.
-    it("Should deactivate service", async () => {
-      await service.connect(owner).deactivateService();
-      expect(await service.isActive()).to.be.false;
-    });
-
     // Test updating the service information and reactivating the service.
     it("Should update service info", async () => {
-      // Reactivate the service.
-      await service.connect(owner).setIsActive(true);
       // Update the service name and description.
       await service.connect(owner).updateService("Updated", "New Desc");
-      expect(await service.getName()).to.equal("Updated");
+      expect(await service.name()).to.equal("Updated");
+      expect(await service.description()).to.equal("New Desc");
     });
 
     // Test that subscription statuses are updated based on expiration.
@@ -163,7 +157,7 @@ describe("Service Contracts", function () {
     it("Should prevent invalid payments", async () => {
       await expect(
         service.connect(user1).paySubscription(0, { value: 50 })
-      ).to.be.revertedWith("Invalid amount");
+      ).to.be.revertedWith("Invalid payment amount");
     });
 
     // Test that duplicate subscriptions for the same user are not allowed.
@@ -177,5 +171,12 @@ describe("Service Contracts", function () {
         service.connect(owner).createSubscription(user1.address, 100, 30)
       ).to.be.revertedWith("Subscriber already has an active subscription");
     });
+
+    // Test that the service can be deactivated by the owner.
+    it("Should deactivate service", async () => {
+      await service.connect(owner).deactivateService();
+      expect(await service.isActive()).to.be.false;
+    });
+
   });
 });
