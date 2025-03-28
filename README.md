@@ -11,7 +11,7 @@
 
 ## Idea
 
-A contract factory for managing payments and expiration dates of subscription services.
+A contracts factory for managing payments and expiration dates of subscription services.
 
 ![diagram](public/diagram.png)
 
@@ -19,7 +19,25 @@ A contract factory for managing payments and expiration dates of subscription se
 
 ### Domain and Motivation
 
-The application's domain is the subscription service management sector. The problem being addressed is the complex network of recurring payment management and access control, which currently relies on centralized intermediaries and manual processes. The DApp proposes a decentralized solution based on smart contracts, automating payments, renewals, and access revocations without the need for third-party trust. By utilizing Chainlink Automation and cryptocurrency payments, the platform ensures transparency, security, and efficiency for sellers and subscribers.
+The application's domain is the subscription service management sector. The problem being addressed is the complex network of recurring payment management and access control, which currently relies on centralized intermediaries and manual processes. A handful of problem about this precedure can be listed such as:
+
+1. Charge Disputes and Lack of Transparency
+
+Traditional payment systems allow users to dispute charges, leading to lengthy and costly resolution processes for businesses. With blockchain, all transactions are immutable and transparent, providing verifiable proof of payments and reducing disputes.
+
+2. High Transaction Fees with Traditional Processors
+
+Companies like Netflix and Spotify pay high fees to payment processors like Visa and Mastercard. Blockchain transactions bypass intermediaries, significantly reducing costs and increasing profitability.
+
+3. Complexity and Cost of International Payments
+
+Processing international payments involves currency conversions and banking fees, making it expensive and complex. Cryptocurrencies enable fast, borderless payments with minimal fees, simplifying global subscriptions.
+
+4. Privacy and Security of Personal Data
+
+Traditional payments require sensitive personal and financial data, increasing the risk of fraud and data breaches. Blockchain-based payments preserve user privacy by eliminating the need for personal information, enhancing security.
+
+With that in mind, this project proposes a decentralized solution based on smart contracts, automating payments, renewals, and access revocations without the need for third-party trust. By utilizing automations and cryptocurrency payments, the platform ensures transparency, security, and efficiency for sellers and subscribers.
 
 ### Contract Factory
 
@@ -58,18 +76,16 @@ npx hardhat clean && npx hardhat node
 ```
 npx hardhat run --network localhost scripts/deploy.cjs
 ```
->Obs.: Save contract address
+>Obs.: Save contract address and abi's
 
 **4. Run vite server**
 ```
 npm run dev
 ```
 
-**5. Connect the deployed contract**
+**5. Use it**
 
-On the home page (`http://localhost:5173/`) theres a button for that
-
->Obs.: For ABIs you can input any value. Doesn't matter on local deployment.
+Enjoy MyMonthly
 
 ### Metamask deploy
 

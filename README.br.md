@@ -9,7 +9,7 @@
 
 ## Ideia
 
-Factory de contrato para gerenciamento pagamentos e datas de expiração/vencimento de serviços por assinatura.
+Factory de contratos para gerenciamento pagamentos e datas de expiração/vencimento de serviços por assinatura.
 
 ![diagram](public/diagram.png)
 
@@ -17,7 +17,21 @@ Factory de contrato para gerenciamento pagamentos e datas de expiração/vencime
 
 ### Domínio e motivação
 
-O domínio da aplicação é o setor de gerenciamento de serviços por assinatura. O problema a ser resolvido aqui, é a complexa rede de gerenciamento de pagamentos recorrentes e controle de acessos, que atualmente depende de intermediários centralizados e processos manuais. A DApp propõe uma solução descentralizada baseada em contratos inteligentes, automatizando pagamentos, renovações e revogações de acesso sem a necessidade de confiança em terceiros. Utilizando Chainlink Automation e pagamentos em criptomoedas, a plataforma garante transparência, segurança e eficiência para vendedores e assinantes.
+O domínio da aplicação é o setor de gerenciamento de serviços por assinatura. O problema abordado é a complexa rede de gerenciamento de pagamentos recorrentes e controle de acesso, que atualmente depende de intermediários centralizados e processos manuais. Alguns dos principais problemas desse procedimento incluem:
+
+1. Contestações de Cobrança e Falta de Transparência
+Os sistemas de pagamento tradicionais permitem que os usuários contestem cobranças, resultando em processos longos e custosos para as empresas. Com a blockchain, todas as transações são imutáveis e transparentes, fornecendo provas verificáveis de pagamento e reduzindo disputas.
+
+2. Taxas Elevadas de Transação com Processadores Tradicionais
+Empresas como Netflix e Spotify pagam altas taxas para processadores de pagamento como Visa e Mastercard. As transações em blockchain eliminam intermediários, reduzindo significativamente os custos e aumentando a lucratividade.
+
+3. Complexidade e Custo de Pagamentos Internacionais
+O processamento de pagamentos internacionais envolve conversões de moeda e tarifas bancárias, tornando o processo caro e complexo. As criptomoedas permitem pagamentos rápidos e sem fronteiras, com taxas mínimas, simplificando as assinaturas globais.
+
+4. Privacidade e Segurança dos Dados Pessoais
+Os pagamentos tradicionais exigem dados financeiros e pessoais sensíveis, aumentando o risco de fraudes e vazamentos de informações. Os pagamentos baseados em blockchain preservam a privacidade do usuário, eliminando a necessidade de fornecer informações pessoais e aumentando a segurança.
+
+Com isso em mente, este projeto propõe uma solução descentralizada baseada em contratos inteligentes, automatizando pagamentos, renovações e revogações de acesso sem a necessidade de confiança em terceiros. Ao utilizar automações e pagamentos em criptomoedas, a plataforma garante transparência, segurança e eficiência para vendedores e assinantes.
 
 ### Contract Factory
 
