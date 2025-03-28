@@ -33,6 +33,16 @@ Os pagamentos tradicionais exigem dados financeiros e pessoais sensíveis, aumen
 
 Com isso em mente, este projeto propõe uma solução descentralizada baseada em contratos inteligentes, automatizando pagamentos, renovações e revogações de acesso sem a necessidade de confiança em terceiros. Ao utilizar automações e pagamentos em criptomoedas, a plataforma garante transparência, segurança e eficiência para vendedores e assinantes.
 
+### Capturas de tela
+
+![screenshot1](public/page1.png)
+
+![screenshot2](public/page2.png)
+
+![screenshot3](public/page3.png)
+
+![screenshot4](public/page4.png)
+
 ### Contract Factory
 
 O conceito de Contract Factory será utilizado para permitir que cada vendedor crie e gerencie múltiplos contratos de assinatura de forma eficiente e descentralizada. A Factory atuará como um contrato mestre responsável por implantar novos contratos filhos sempre que um vendedor registrar um novo serviço (Netflix, OpenAI, SmartFit, Jornais por assinatura, planos de saúde, seguros de vida, seguros de automóveis, etc).
@@ -44,41 +54,6 @@ Cada contrato filho pertencerá a um desses vendedores (Netflix por exemplo), e 
 O conceito de Events será utilizado para registrar e monitorar ações importantes dentro dos contratos inteligentes, permitindo que interfaces e serviços externos, reajam automaticamente às mudanças no estado da assinatura. 
 
 Por exemplo, se houver o pagamento, deve-se renovar a data de expiração da assinatura e então atualizar no front-end da aplicação. O mesmo acontece caso a assinatura seja cancelada ou sua data de vencimento seja extrapolada.
-
-## Regras de negócio
-
-### Vendedor
-
-- [x] O vendedor deve poder criar contratos para inscrições feitas por clientes em algum de seus serviços. Ex.: Netflix, GYM, Heatlh, Insurance, Newspaper, OpenAI, etc.
-
-- [x] Cada contrato filho é um serviço cadastrado por um vendedor, que contém os compradores que assinaram esse serviço.
-
-- [x] O vendedor deve poder alterar o nome e a descrição do serviço após a sua criação.
-
-- [x] Os nomes dos serviços devem ser únicos (sem repetição).
-
-### Comprador
-
-- [x] O contrato filho deve gerenciar pagamentos e datas de expiração. Isso deve ser visível para o comprador (identificado pela chave pública). O comprador deve conseguir:
-    - [x] Contratar nova assinatura
-    - [x] Pagar a assinatura existente
-    - [x] Cancelar a assinatura
-- [ ] (BÔNUS) Reembolso parcial ao cancelar
-
-- [x] Os pagamentos são feitos em criptomoedas (ETH).
-
-- [x] Caso o comprador não pague o serviço até a data de expiração, o acesso ao serviço é revogado.
-    - Events
-
-- [ ] (BÔNUS) Mecanismos para o update periódico
-    - [Chainlink Automations](https://chain.link/automation) ou outros serviços automatizados.
-    - A atualização da permissão do comprador acontece quando ele acessa alguma página (alguma dashboard).
-
-- [ ] (BÔNUS) Permitir reembolsos quando a assinatura for cancelada ou descontos para pagamentos antecipados.
-
-### Visualização Global
-
-- [ ] (BÔNUS) Utilizar The Graph ou APIs blockchain para visualizar contratos de assinatura sem centralização.
 
 ## Configuração
 

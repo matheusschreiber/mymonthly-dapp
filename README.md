@@ -39,6 +39,16 @@ Traditional payments require sensitive personal and financial data, increasing t
 
 With that in mind, this project proposes a decentralized solution based on smart contracts, automating payments, renewals, and access revocations without the need for third-party trust. By utilizing automations and cryptocurrency payments, the platform ensures transparency, security, and efficiency for sellers and subscribers.
 
+### App screenshots
+
+![screenshot1](public/page1.png)
+
+![screenshot2](public/page2.png)
+
+![screenshot3](public/page3.png)
+
+![screenshot4](public/page4.png)
+
 ### Contract Factory
 
 The concept of a Contract Factory will be used to allow each seller to create and manage multiple subscription contracts efficiently and in a decentralized manner. The Factory will act as a master contract responsible for deploying new child contracts whenever a seller registers a new service (e.g., Netflix, OpenAI, SmartFit, subscription-based newspapers, health plans, life insurance, car insurance, etc.).
