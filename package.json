@@ -52,7 +52,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "ethers": "^6.13.5",
-    "globals": "^15.15.0",
+    "globals": "^17.9.0",
     "hardhat": "^2.22.19",
     "ts-node": "^10.9.2",
     "typescript": "~5.7.2",
